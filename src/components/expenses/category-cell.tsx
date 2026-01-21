@@ -1,7 +1,7 @@
 "use client";
 
-import { memo } from "react";
-import { CategoryIcon } from "@/lib/category-icons";
+import {memo} from "react";
+import {CategoryIcon} from "@/lib/category-icons";
 
 interface CategoryCellProps {
   readonly category: string;
