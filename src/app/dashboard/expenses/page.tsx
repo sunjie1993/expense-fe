@@ -16,11 +16,11 @@ import { useExpenses } from "@/hooks/use-expenses";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { CategoryIcon } from "@/lib/category-icons";
 
-function SpenderBadge({ spender }: { spender: string }) {
+function SpenderBadge({ spender }: Readonly<{ spender: string }>) {
   const styles: Record<string, string> = {
-    SJ: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-    YS: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
-    Shared: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+    SJ: "bg-lime-200 text-green-800",
+    YS: "bg-fuchsia-300 text-fuchsia-900",
+    Shared: "bg-blue-200 text-blue-800",
   };
 
   return (
@@ -40,12 +40,12 @@ function CategoryCell({
   parentCategory,
   icon,
   color
-}: {
+}: Readonly<{
   category: string;
   parentCategory: string;
   icon?: string;
   color?: string;
-}) {
+}>) {
   return (
     <div className="flex items-center gap-3">
       <div
@@ -120,15 +120,17 @@ export default function ExpensesPage() {
           <CardTitle>Recent Expenses</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
+          {isLoading && (
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
-          ) : expenses.length ? (
+          )}
+
+          {!isLoading && expenses.length > 0 && (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Date</TableHead>
+                  <TableHead className="w-25">Date</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Spent By</TableHead>
@@ -178,7 +180,9 @@ export default function ExpensesPage() {
                 })}
               </TableBody>
             </Table>
-          ) : (
+          )}
+
+          {!isLoading && expenses.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-12">
               No expenses found
             </p>
