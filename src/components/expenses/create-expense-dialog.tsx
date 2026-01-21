@@ -7,13 +7,13 @@ import {Form} from "@/components/ui/form";
 import {AlertCircle, DollarSign, Loader2} from "lucide-react";
 import {useExpenseForm} from "@/hooks/use-expense-form";
 import {
-  AmountField,
-  CategoryField,
-  DateField,
-  DescriptionField,
-  PaymentMethodField,
-  SpentByField,
-  SubcategoryField,
+    AmountField,
+    CategoryField,
+    DateField,
+    DescriptionField,
+    PaymentMethodField,
+    SpentByField,
+    SubcategoryField,
 } from "./form-fields";
 
 interface CreateExpenseDialogProps {

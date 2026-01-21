@@ -1,16 +1,10 @@
 "use client";
 
-import { memo } from "react";
-import { Control } from "react-hook-form";
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import type { ExpenseFormValues } from "@/lib/validations/expense";
+import {memo} from "react";
+import {Control} from "react-hook-form";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
+import {Input} from "@/components/ui/input";
+import type {ExpenseFormValues} from "@/lib/validations/expense";
 
 interface DescriptionFieldProps {
     readonly control: Control<ExpenseFormValues>;
@@ -25,7 +19,7 @@ export const DescriptionField = memo(function DescriptionField({
         <FormField
             control={control}
             name="description"
-            render={({ field }) => (
+            render={({field}) => (
                 <FormItem>
                     <FormLabel className="text-sm font-medium">
                         Description<span className="text-muted-foreground ml-1">(Optional)</span>
@@ -40,7 +34,7 @@ export const DescriptionField = memo(function DescriptionField({
                             aria-label="Expense description"
                         />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                 </FormItem>
             )}
         />
