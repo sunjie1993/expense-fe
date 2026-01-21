@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Trophy, Medal, Award } from "lucide-react";
 import type { CategoryRanking } from "@/types/api";
+import { CategoryIcon } from "@/lib/category-icons";
 
 interface CategoryRankingBoardProps {
   categories: CategoryRanking[];
@@ -70,7 +71,9 @@ export function CategoryRankingBoard({ categories }: CategoryRankingBoardProps) 
             >
               <div className="shrink-0">{getRankIcon(category.rank)}</div>
 
-              <div className="shrink-0 text-2xl">{category.icon}</div>
+              <div className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${category.color}20` }}>
+                <CategoryIcon iconName={category.icon} className="h-5 w-5" color={category.color} />
+              </div>
 
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">
