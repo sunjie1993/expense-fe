@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSWRConfig } from "swr";
@@ -12,12 +12,17 @@ import {
   getTodayDate,
 } from "@/lib/validations/expense";
 
+interface UseExpenseFormProps {
+  readonly open: boolean;
+  readonly onSuccess: () => void;
+}
+
 /**
  * Custom hook for managing expense form state and submission
  * @param open - Whether the dialog is open
  * @param onSuccess - Callback when form submission succeeds
  */
-export function useExpenseForm(open: boolean, onSuccess: () => void) {
+export function useExpenseForm({ open, onSuccess }: UseExpenseFormProps) {
   const { mutate } = useSWRConfig();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,15 +30,26 @@ export function useExpenseForm(open: boolean, onSuccess: () => void) {
 
   // Fetch data
   const { data: mainCategoriesData, isLoading: loadingMainCategories } =
-    useMainCategories();
+      useMainCategories();
   const { data: subCategoriesData, isLoading: loadingSubCategories } =
-    useSubCategories(selectedMainCategory);
+      useSubCategories(selectedMainCategory);
   const { data: paymentMethodsData, isLoading: loadingPaymentMethods } =
-    usePaymentMethods();
+      usePaymentMethods();
 
-  const mainCategories = mainCategoriesData?.data || [];
-  const subCategories = subCategoriesData?.data || [];
-  const paymentMethods = paymentMethodsData?.data || [];
+  const mainCategories = useMemo(() =>
+          mainCategoriesData?.data || [],
+      [mainCategoriesData?.data]
+  );
+
+  const subCategories = useMemo(() =>
+          subCategoriesData?.data || [],
+      [subCategoriesData?.data]
+  );
+
+  const paymentMethods = useMemo(() =>
+          paymentMethodsData?.data || [],
+      [paymentMethodsData?.data]
+  );
 
   // Form setup
   const form = useForm<ExpenseFormValues>({
@@ -69,55 +85,55 @@ export function useExpenseForm(open: boolean, onSuccess: () => void) {
    * Handle main category change
    */
   const handleMainCategoryChange = useCallback(
-    (value: string) => {
-      form.setValue("main_category_id", value);
-      setSelectedMainCategory(Number.parseInt(value, 10));
-    },
-    [form]
+      (value: string) => {
+        form.setValue("main_category_id", value);
+        setSelectedMainCategory(Number.parseInt(value, 10));
+      },
+      [form]
   );
 
   /**
    * Handle form submission
    */
   const onSubmit = useCallback(
-    async (data: ExpenseFormValues) => {
-      setError(null);
-      setIsSubmitting(true);
+      async (data: ExpenseFormValues) => {
+        setError(null);
+        setIsSubmitting(true);
 
-      try {
-        await api.post("/api/expenses", {
-          spent_by: data.spent_by,
-          category_id: Number.parseInt(data.category_id, 10),
-          payment_method_id: Number.parseInt(data.payment_method_id, 10),
-          amount: Number.parseFloat(data.amount),
-          expense_date: data.expense_date,
-          description: data.description || undefined,
-        });
+        try {
+          await api.post("/api/expenses", {
+            spent_by: data.spent_by,
+            category_id: Number.parseInt(data.category_id, 10),
+            payment_method_id: Number.parseInt(data.payment_method_id, 10),
+            amount: Number.parseFloat(data.amount),
+            expense_date: data.expense_date,
+            description: data.description || undefined,
+          });
 
-        // Revalidate expenses and dashboard data
-        await mutate(
-          (key) =>
-            typeof key === "string" &&
-            (key.includes("/api/expenses") || key.includes("/api/dashboard"))
-        );
+          // Revalidate expenses and dashboard data
+          await mutate(
+              (key) =>
+                  typeof key === "string" &&
+                  (key.includes("/api/expenses") || key.includes("/api/dashboard"))
+          );
 
-        toast.success("Expense added successfully", {
-          description: "Your expense has been recorded.",
-        });
-        onSuccess();
-      } catch (err: unknown) {
-        const apiError = err as { response?: { data?: { error?: string } } };
-        const errorMessage =
-          apiError.response?.data?.error || "Failed to create expense";
-        setError(errorMessage);
-        toast.error("Failed to add expense", {
-          description: errorMessage,
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [mutate, onSuccess]
+          toast.success("Expense added successfully", {
+            description: "Your expense has been recorded.",
+          });
+          onSuccess();
+        } catch (err: unknown) {
+          const apiError = err as { response?: { data?: { error?: string } } };
+          const errorMessage =
+              apiError.response?.data?.error || "Failed to create expense";
+          setError(errorMessage);
+          toast.error("Failed to add expense", {
+            description: errorMessage,
+          });
+        } finally {
+          setIsSubmitting(false);
+        }
+      },
+      [mutate, onSuccess]
   );
 
   /**
@@ -129,25 +145,21 @@ export function useExpenseForm(open: boolean, onSuccess: () => void) {
     return "Select subcategory";
   }, [loadingSubCategories, selectedMainCategory]);
 
+  const isLoadingData = loadingMainCategories || loadingPaymentMethods;
+  const subcategoryPlaceholder = getSubcategoryPlaceholder();
+
   return {
-    // Form
     form,
     onSubmit,
-
-    // State
     isSubmitting,
     error,
     selectedMainCategory,
-
-    // Data
     mainCategories,
     subCategories,
     paymentMethods,
-    isLoadingData: loadingMainCategories || loadingPaymentMethods,
+    isLoadingData,
     loadingSubCategories,
-
-    // Handlers
     handleMainCategoryChange,
-    subcategoryPlaceholder: getSubcategoryPlaceholder(),
+    subcategoryPlaceholder,
   };
 }
