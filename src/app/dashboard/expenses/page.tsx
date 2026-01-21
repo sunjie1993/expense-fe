@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -9,9 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useExpenses } from "@/hooks/use-expenses";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { CategoryIcon } from "@/lib/category-icons";
 
 function SpenderBadge({ spender }: { spender: string }) {
@@ -76,10 +78,18 @@ function formatAmount(amount: number, currency: string) {
 }
 
 export default function ExpensesPage() {
-  const { data, error, isLoading } = useExpenses({ limit: 50 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const offset = (currentPage - 1) * pageSize;
+  const { data, error, isLoading } = useExpenses({ limit: pageSize, offset });
 
   const expenses = data?.data?.expenses || [];
   const pagination = data?.data?.pagination;
+
+  const totalPages = pagination ? Math.ceil(pagination.total / pageSize) : 0;
+  const hasNextPage = pagination?.has_more || false;
+  const hasPrevPage = currentPage > 1;
 
   if (error) {
     return (
@@ -172,6 +182,38 @@ export default function ExpensesPage() {
             <p className="text-sm text-muted-foreground text-center py-12">
               No expenses found
             </p>
+          )}
+
+          {/* Pagination Controls */}
+          {pagination && pagination.total > pageSize && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                Showing {offset + 1} to {Math.min(offset + pageSize, pagination.total)} of {pagination.total} expenses
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={!hasPrevPage || isLoading}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="text-sm font-medium px-3">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={!hasNextPage || isLoading}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
