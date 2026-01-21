@@ -141,8 +141,8 @@ export default function ExpensesPage() {
                         <CategoryCell
                           category={expense.category_name}
                           parentCategory={expense.parent_category_name}
-                          icon={expense.parent_category_icon}
-                          color={expense.parent_category_color}
+                          icon={expense.main_cat_icon}
+                          color={expense.main_cat_color}
                         />
                       </TableCell>
                       <TableCell>

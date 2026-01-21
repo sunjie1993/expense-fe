@@ -25,8 +25,8 @@ export interface Expense {
   category_id: number;
   category_name: string;
   parent_category_name: string;
-  parent_category_icon?: string;
-  parent_category_color?: string;
+  main_cat_icon?: string;
+  main_cat_color?: string;
   payment_method_id: number;
   payment_method: string;
   amount: number;

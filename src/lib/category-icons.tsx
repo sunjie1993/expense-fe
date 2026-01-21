@@ -45,7 +45,7 @@ interface CategoryIconProps {
 }
 
 export function CategoryIcon({ iconName, className = "h-5 w-5", color }: CategoryIconProps) {
-  const IconComponent = iconMap[iconName] || CreditCard; // Fallback to CreditCard if icon not found
+  const IconComponent = iconMap[iconName] || CreditCard;
 
   return (
     <IconComponent
