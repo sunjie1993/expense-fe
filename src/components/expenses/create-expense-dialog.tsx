@@ -43,7 +43,7 @@ const expenseSchema = z.object({
   category_id: z.string().min(1, "Please select a subcategory"),
   payment_method_id: z.string().min(1, "Please select a payment method"),
   amount: z.string().min(1, "Amount is required").refine(
-    (val) => !Number.isNaN(parseFloat(val)) && parseFloat(val) >= 0.01,
+    (val) => !Number.isNaN(Number.parseFloat(val)) && Number.parseFloat(val) >= 0.01,
     "Amount must be at least 0.01"
   ),
   expense_date: z.string().min(1, "Date is required"),
