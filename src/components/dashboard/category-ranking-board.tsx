@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, type CSSProperties } from "react";
 import {
   Card,
   CardContent,
@@ -63,26 +63,16 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {!hasCategories ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-2">
-            <p className="text-sm text-muted-foreground text-center">
-              No category data available for this period
-            </p>
-            <p className="text-xs text-muted-foreground text-center">
-              Add some expenses to see your spending breakdown
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3" role="list" aria-label="Category rankings">
+        {hasCategories ? (
+          <ul className="space-y-3 list-none" aria-label="Category rankings">
             {categories.map((category, index) => (
-              <div
+              <li
                 key={category.main_category_id}
                 className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 hover:bg-muted/70 transition-all duration-200 hover:shadow-sm animate-in fade-in slide-in-from-left"
                 style={{
                   animationDelay: `${index * 50}ms`,
                   animationFillMode: "backwards",
                 }}
-                role="listitem"
               >
                 <div className="shrink-0" aria-hidden="true">
                   {getRankIcon(category.rank)}
@@ -106,7 +96,7 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {category.transaction_count} transaction
-                    {category.transaction_count !== 1 ? "s" : ""}
+                    {category.transaction_count === 1 ? "" : "s"}
                   </p>
                 </div>
 
@@ -120,25 +110,25 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
                 </div>
 
                 <div className="w-16 shrink-0" aria-hidden="true">
-                  <div
-                    className="h-2 bg-background rounded-full overflow-hidden"
-                    role="progressbar"
-                    aria-valuenow={category.percentage}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
+                  <progress
+                    className="h-2 w-full rounded-full overflow-hidden [&::-webkit-progress-bar]:bg-background [&::-webkit-progress-value]:rounded-full [&::-moz-progress-bar]:rounded-full"
+                    value={category.percentage}
+                    max={100}
                     aria-label={`${category.percentage.toFixed(1)}% of total spending`}
-                  >
-                    <div
-                      className="h-full transition-all duration-500 ease-out"
-                      style={{
-                        width: `${category.percentage}%`,
-                        backgroundColor: category.color,
-                      }}
-                    />
-                  </div>
+                    style={{ "--progress-color": category.color } as CSSProperties}
+                  />
                 </div>
-              </div>
+              </li>
             ))}
+          </ul>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 space-y-2">
+            <p className="text-sm text-muted-foreground text-center">
+              No category data available for this period
+            </p>
+            <p className="text-xs text-muted-foreground text-center">
+              Add some expenses to see your spending breakdown
+            </p>
           </div>
         )}
       </CardContent>
