@@ -86,3 +86,67 @@ export interface DashboardSummary {
   total_spent: number;
   category_breakdown: CategoryBreakdown[];
 }
+
+// Dashboard Overview types (new API)
+export interface ExpenseCard {
+  current: number;
+  previous: number;
+  change_percentage: number;
+}
+
+export interface CategoryCard {
+  category_id: number;
+  category_name: string;
+  icon: string;
+  color: string;
+  total: number;
+  previous_total: number;
+  change_percentage: number;
+}
+
+export interface SpenderCard {
+  spent_by: string;
+  total: number;
+  previous_total: number;
+  change_percentage: number;
+}
+
+export interface ChartCategory {
+  category_id: number;
+  category_name: string;
+  color: string;
+  amount: number;
+}
+
+export interface ChartPeriod {
+  period: string;
+  total: number;
+  categories: ChartCategory[];
+}
+
+export interface CategoryRanking {
+  rank: number;
+  main_category_id: number;
+  main_category_name: string;
+  icon: string;
+  color: string;
+  total: number;
+  transaction_count: number;
+  percentage: number;
+}
+
+export interface DashboardOverview {
+  period: "monthly" | "yearly";
+  date: string;
+  date_range: {
+    start: string;
+    end: string;
+  };
+  cards: {
+    total_expenses: ExpenseCard;
+    top_category: CategoryCard | null;
+    top_spender: SpenderCard | null;
+  };
+  spending_chart: ChartPeriod[];
+  category_ranking: CategoryRanking[];
+}
