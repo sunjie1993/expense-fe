@@ -1,27 +1,33 @@
 "use client";
 
+import { memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface StatCardProps {
-  title: string;
-  value: string;
-  change: number;
-  previousValue?: string;
-  icon: ReactNode;
-  iconColor?: string;
-  iconBgColor?: string;
+  readonly title: string;
+  readonly value: string;
+  readonly change: number;
+  readonly previousValue?: string;
+  readonly icon: ReactNode;
+  readonly iconColor?: string;
+  readonly iconBgColor?: string;
 }
 
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-SG", {
-    style: "currency",
-    currency: "SGD",
-  }).format(amount);
+/**
+ * Check if a color string is a hex color
+ * @param color - The color string to check
+ * @returns True if the color is a hex color
+ */
+function isHexColor(color: string): boolean {
+  return color.startsWith("#");
 }
 
-export function StatCard({
+/**
+ * StatCard component displays a stat with an icon, value, and trend indicator
+ */
+export const StatCard = memo(function StatCard({
   title,
   value,
   change,
@@ -33,41 +39,46 @@ export function StatCard({
   const isIncrease = change > 0;
   const isNoChange = change === 0;
 
-  const isHexColor = (color: string) => color.startsWith('#');
-
   const iconColorStyle = isHexColor(iconColor) ? { color: iconColor } : undefined;
-  const iconBgStyle = isHexColor(iconBgColor) ? { backgroundColor: iconBgColor } : undefined;
+  const iconBgStyle = isHexColor(iconBgColor)
+    ? { backgroundColor: iconBgColor }
+    : undefined;
+
+  const trendColor = isIncrease ? "text-red-500" : "text-green-500";
+  const trendIcon = isIncrease ? (
+    <TrendingUp className="h-3 w-3 mr-1" aria-label="Increased" />
+  ) : (
+    <TrendingDown className="h-3 w-3 mr-1" aria-label="Decreased" />
+  );
 
   return (
-    <Card>
+    <Card className="transition-all duration-200 hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div
-          className={`h-8 w-8 rounded-full flex items-center justify-center ${isHexColor(iconBgColor) ? '' : iconBgColor}`}
+          className={`h-10 w-10 rounded-full flex items-center justify-center transition-transform duration-200 hover:scale-110 ${isHexColor(iconBgColor) ? "" : iconBgColor}`}
           style={iconBgStyle}
+          aria-hidden="true"
         >
-          <div className={isHexColor(iconColor) ? '' : iconColor} style={iconColorStyle}>{icon}</div>
+          <div
+            className={isHexColor(iconColor) ? "" : iconColor}
+            style={iconColorStyle}
+          >
+            {icon}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="flex items-center gap-2 mt-1">
+        <div className="text-3xl font-bold tracking-tight">{value}</div>
+        <div className="flex items-center gap-2 mt-2">
           {isNoChange ? (
             <div className="flex items-center text-muted-foreground">
-              <Minus className="h-3 w-3 mr-1" />
+              <Minus className="h-3 w-3 mr-1" aria-label="No change" />
               <span className="text-xs">No change</span>
             </div>
           ) : (
-            <div
-              className={`flex items-center ${
-                isIncrease ? "text-red-500" : "text-green-500"
-              }`}
-            >
-              {isIncrease ? (
-                <TrendingUp className="h-3 w-3 mr-1" />
-              ) : (
-                <TrendingDown className="h-3 w-3 mr-1" />
-              )}
+            <div className={`flex items-center ${trendColor}`} role="status">
+              {trendIcon}
               <span className="text-xs font-medium">
                 {Math.abs(change).toFixed(1)}%
               </span>
@@ -82,4 +93,4 @@ export function StatCard({
       </CardContent>
     </Card>
   );
-}
+});
