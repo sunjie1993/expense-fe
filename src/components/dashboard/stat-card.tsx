@@ -33,7 +33,6 @@ export function StatCard({
   const isIncrease = change > 0;
   const isNoChange = change === 0;
 
-  // Check if color is a hex color or a Tailwind class
   const isHexColor = (color: string) => color.startsWith('#');
 
   const iconColorStyle = isHexColor(iconColor) ? { color: iconColor } : undefined;
@@ -44,10 +43,10 @@ export function StatCard({
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div
-          className={`h-8 w-8 rounded-full flex items-center justify-center ${!isHexColor(iconBgColor) ? iconBgColor : ''}`}
+          className={`h-8 w-8 rounded-full flex items-center justify-center ${isHexColor(iconBgColor) ? '' : iconBgColor}`}
           style={iconBgStyle}
         >
-          <div className={!isHexColor(iconColor) ? iconColor : ''} style={iconColorStyle}>{icon}</div>
+          <div className={isHexColor(iconColor) ? '' : iconColor} style={iconColorStyle}>{icon}</div>
         </div>
       </CardHeader>
       <CardContent>
