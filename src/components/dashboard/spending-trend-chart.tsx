@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import {
   Card,
   CardContent,
@@ -14,24 +14,34 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import type { ChartPeriod } from "@/types/api";
+import { formatCurrency } from "@/lib/utils";
 
 interface SpendingTrendChartProps {
-  data: ChartPeriod[];
-  period: "monthly" | "yearly";
+  readonly data: ChartPeriod[];
+  readonly period: "monthly" | "yearly";
 }
 
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-SG", {
-    style: "currency",
-    currency: "SGD",
+/**
+ * Format currency for chart display (abbreviated)
+ * @param amount - The amount to format
+ * @returns Formatted currency string without decimals
+ */
+function formatChartCurrency(amount: number): string {
+  return formatCurrency(amount, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
+  });
 }
 
-export function SpendingTrendChart({ data, period }: SpendingTrendChartProps) {
+/**
+ * SpendingTrendChart displays spending trends over time with category breakdown
+ */
+export const SpendingTrendChart = memo(function SpendingTrendChart({
+  data,
+  period,
+}: SpendingTrendChartProps) {
   // Collect all unique categories
   const allCategories = useMemo(() => {
     const categoryMap = new Map<number, { name: string; color: string }>();
@@ -80,82 +90,88 @@ export function SpendingTrendChart({ data, period }: SpendingTrendChartProps) {
     return config;
   }, [allCategories]);
 
-  const title = period === "monthly" ? "Last 6 Months" : "Last 3 Years";
+  const title = period === "monthly" ? "Spending Trends" : "Yearly Overview";
   const description =
     period === "monthly"
       ? "Monthly spending breakdown by category"
       : "Yearly spending breakdown by category";
 
-  if (!data || data.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-8">
-            No spending data available
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const hasData = data && data.length > 0;
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription>
+          {hasData ? description : "No spending data to display"}
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[350px] w-full">
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="period"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tick={{ fontSize: 12 }}
-              tickFormatter={(value) => formatCurrency(value)}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  formatter={(value, name) => {
-                    const categoryId = name.toString().replace("cat_", "");
-                    const category = allCategories.find(
-                      (c) => c.id === Number.parseInt(categoryId)
-                    );
-                    return (
-                      <div className="flex items-center justify-between gap-4">
-                        <span>{category?.name || name}</span>
-                        <span className="font-bold">
-                          {formatCurrency(value as number)}
-                        </span>
-                      </div>
-                    );
-                  }}
-                />
-              }
-            />
-            {allCategories.map((cat) => (
-              <Bar
-                key={cat.id}
-                dataKey={`cat_${cat.id}`}
-                stackId="a"
-                fill={cat.color}
-                radius={0}
+        {!hasData ? (
+          <div className="flex flex-col items-center justify-center py-16 space-y-2">
+            <p className="text-sm text-muted-foreground text-center">
+              No spending data available for this period
+            </p>
+            <p className="text-xs text-muted-foreground text-center">
+              Your spending trends will appear here once you add expenses
+            </p>
+          </div>
+        ) : (
+          <ChartContainer config={chartConfig} className="h-87.5 w-full">
+            <BarChart data={chartData} accessibilityLayer>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                className="stroke-muted"
               />
-            ))}
-          </BarChart>
-        </ChartContainer>
+              <XAxis
+                dataKey="period"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 12 }}
+                className="text-muted-foreground"
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => formatChartCurrency(value)}
+                className="text-muted-foreground"
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value, name) => {
+                      const categoryId = name.toString().replaceAll("cat_", "");
+                      const category = allCategories.find(
+                        (c) => c.id === Number.parseInt(categoryId, 10)
+                      );
+                      return (
+                        <div className="flex items-center justify-between gap-4">
+                          <span>{category?.name || name}</span>
+                          <span className="font-bold tabular-nums">
+                            {formatCurrency(value as number)}
+                          </span>
+                        </div>
+                      );
+                    }}
+                  />
+                }
+              />
+              {allCategories.map((cat) => (
+                <Bar
+                  key={cat.id}
+                  dataKey={`cat_${cat.id}`}
+                  stackId="a"
+                  fill={cat.color}
+                  radius={[0, 0, 0, 0]}
+                  className="transition-opacity hover:opacity-80"
+                />
+              ))}
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );
-}
+});
