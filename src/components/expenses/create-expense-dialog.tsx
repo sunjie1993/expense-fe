@@ -1,16 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useSWRConfig } from "swr";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { useMainCategories, useSubCategories } from "@/hooks/use-categories";
 import { usePaymentMethods } from "@/hooks/use-payment-methods";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -18,54 +16,61 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Form } from "@/components/ui/form";
+import { Loader2, AlertCircle, DollarSign } from "lucide-react";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  expenseSchema,
+  type ExpenseFormValues,
+  getTodayDate,
+} from "@/lib/validations/expense";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
-
-const expenseSchema = z.object({
-  spent_by: z.enum(["SJ", "YS", "Shared"], {
-    message: "Please select who spent",
-  }),
-  main_category_id: z.string().min(1, "Please select a category"),
-  category_id: z.string().min(1, "Please select a subcategory"),
-  payment_method_id: z.string().min(1, "Please select a payment method"),
-  amount: z.string().min(1, "Amount is required").refine(
-    (val) => !Number.isNaN(Number.parseFloat(val)) && Number.parseFloat(val) >= 0.01,
-    "Amount must be at least 0.01"
-  ),
-  expense_date: z.string().min(1, "Date is required"),
-  description: z.string().max(500, "Description must be 500 characters or less").optional(),
-});
-
-type ExpenseFormValues = z.infer<typeof expenseSchema>;
+  AmountField,
+  SpentByField,
+  CategoryField,
+  SubcategoryField,
+  PaymentMethodField,
+  DateField,
+  DescriptionField,
+} from "./form-fields";
 
 interface CreateExpenseDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
 }
 
-export function CreateExpenseDialog({ open, onOpenChange }: Readonly<CreateExpenseDialogProps>) {
+/**
+ * Get subcategory placeholder text based on state
+ */
+function getSubcategoryPlaceholder(
+  loadingSubCategories: boolean,
+  selectedMainCategory: number | null
+): string {
+  if (loadingSubCategories) return "Loading...";
+  if (!selectedMainCategory) return "Select category first";
+  return "Select subcategory";
+}
+
+/**
+ * CreateExpenseDialog component for adding new expenses
+ * Provides a form to create expenses with validation and error handling
+ */
+export const CreateExpenseDialog = memo(function CreateExpenseDialog({
+  open,
+  onOpenChange,
+}: CreateExpenseDialogProps) {
   const { mutate } = useSWRConfig();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMainCategory, setSelectedMainCategory] = useState<number | null>(null);
+  const [selectedMainCategory, setSelectedMainCategory] = useState<number | null>(
+    null
+  );
 
-  const { data: mainCategoriesData, isLoading: loadingMainCategories } = useMainCategories();
-  const { data: subCategoriesData, isLoading: loadingSubCategories } = useSubCategories(selectedMainCategory);
-  const { data: paymentMethodsData, isLoading: loadingPaymentMethods } = usePaymentMethods();
+  const { data: mainCategoriesData, isLoading: loadingMainCategories } =
+    useMainCategories();
+  const { data: subCategoriesData, isLoading: loadingSubCategories } =
+    useSubCategories(selectedMainCategory);
+  const { data: paymentMethodsData, isLoading: loadingPaymentMethods } =
+    usePaymentMethods();
 
   const mainCategories = mainCategoriesData?.data || [];
   const subCategories = subCategoriesData?.data || [];
@@ -79,17 +84,19 @@ export function CreateExpenseDialog({ open, onOpenChange }: Readonly<CreateExpen
       category_id: "",
       payment_method_id: "",
       amount: "",
-      expense_date: new Date().toISOString().split("T")[0],
+      expense_date: getTodayDate(),
       description: "",
     },
   });
 
+  // Reset subcategory when main category changes
   useEffect(() => {
     if (selectedMainCategory) {
       form.setValue("category_id", "");
     }
   }, [selectedMainCategory, form]);
 
+  // Reset form when dialog closes
   useEffect(() => {
     if (!open) {
       form.reset();
@@ -98,246 +105,180 @@ export function CreateExpenseDialog({ open, onOpenChange }: Readonly<CreateExpen
     }
   }, [open, form]);
 
-  async function onSubmit(data: ExpenseFormValues) {
-    setError(null);
-    setIsSubmitting(true);
+  /**
+   * Handle main category change
+   */
+  const handleMainCategoryChange = useCallback(
+    (value: string) => {
+      form.setValue("main_category_id", value);
+      setSelectedMainCategory(Number.parseInt(value, 10));
+    },
+    [form]
+  );
 
-    try {
-      await api.post("/api/expenses", {
-        spent_by: data.spent_by,
-        category_id: Number.parseInt(data.category_id),
-        payment_method_id: Number.parseInt(data.payment_method_id),
-        amount: Number.parseFloat(data.amount),
-        expense_date: data.expense_date,
-        description: data.description || undefined,
-      });
+  /**
+   * Handle form submission
+   */
+  const onSubmit = useCallback(
+    async (data: ExpenseFormValues) => {
+      setError(null);
+      setIsSubmitting(true);
 
-      // Revalidate expenses and dashboard data
-      await mutate((key) => typeof key === "string" && (key.includes("/api/expenses") || key.includes("/api/dashboard")));
+      try {
+        await api.post("/api/expenses", {
+          spent_by: data.spent_by,
+          category_id: Number.parseInt(data.category_id, 10),
+          payment_method_id: Number.parseInt(data.payment_method_id, 10),
+          amount: Number.parseFloat(data.amount),
+          expense_date: data.expense_date,
+          description: data.description || undefined,
+        });
 
-      toast.success("Expense added successfully");
+        // Revalidate expenses and dashboard data
+        await mutate(
+          (key) =>
+            typeof key === "string" &&
+            (key.includes("/api/expenses") || key.includes("/api/dashboard"))
+        );
+
+        toast.success("Expense added successfully", {
+          description: "Your expense has been recorded.",
+        });
+        onOpenChange(false);
+      } catch (err: unknown) {
+        const apiError = err as { response?: { data?: { error?: string } } };
+        const errorMessage =
+          apiError.response?.data?.error || "Failed to create expense";
+        setError(errorMessage);
+        toast.error("Failed to add expense", {
+          description: errorMessage,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [mutate, onOpenChange]
+  );
+
+  /**
+   * Handle dialog close
+   */
+  const handleClose = useCallback(() => {
+    if (!isSubmitting) {
       onOpenChange(false);
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { error?: string } } };
-      const errorMessage = error.response?.data?.error || "Failed to create expense";
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
     }
-  }
+  }, [isSubmitting, onOpenChange]);
 
   const isLoadingData = loadingMainCategories || loadingPaymentMethods;
+  const subcategoryPlaceholder = getSubcategoryPlaceholder(
+    loadingSubCategories,
+    selectedMainCategory
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-106.25">
+      <DialogContent className="sm:max-w-106.25 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add Expense</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <DollarSign className="h-5 w-5" aria-hidden="true" />
+            Add New Expense
+          </DialogTitle>
           <DialogDescription>
-            Record a new expense. Fill in all required fields.
+            Record a new expense transaction. All fields marked with * are
+            required.
           </DialogDescription>
         </DialogHeader>
 
         {isLoadingData ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <div
+            className="flex flex-col items-center justify-center py-12 space-y-3"
+            role="status"
+            aria-label="Loading form data"
+          >
+            <Loader2
+              className="h-8 w-8 animate-spin text-primary"
+              aria-hidden="true"
+            />
+            <p className="text-sm text-muted-foreground">
+              Loading form data...
+            </p>
           </div>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Amount */}
-              <FormField
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-5 animate-in fade-in duration-300"
+              noValidate
+            >
+              <AmountField control={form.control} disabled={isSubmitting} />
+
+              <SpentByField control={form.control} disabled={isSubmitting} />
+
+              <CategoryField
                 control={form.control}
-                name="amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Amount (SGD)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        placeholder="0.00"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                categories={mainCategories}
+                onCategoryChange={handleMainCategoryChange}
+                disabled={isSubmitting}
               />
 
-              {/* Spent By */}
-              <FormField
+              <SubcategoryField
                 control={form.control}
-                name="spent_by"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Spent By</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select who spent" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="SJ">SJ</SelectItem>
-                        <SelectItem value="YS">YS</SelectItem>
-                        <SelectItem value="Shared">Shared</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                subcategories={subCategories}
+                placeholder={subcategoryPlaceholder}
+                disabled={
+                  !selectedMainCategory || loadingSubCategories || isSubmitting
+                }
               />
 
-              {/* Main Category */}
-              <FormField
+              <PaymentMethodField
                 control={form.control}
-                name="main_category_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setSelectedMainCategory(Number.parseInt(value));
-                      }}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {mainCategories.map((category) => (
-                          <SelectItem key={category.id} value={category.id.toString()}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                paymentMethods={paymentMethods}
+                disabled={isSubmitting}
               />
 
-              {/* Subcategory */}
-              <FormField
-                control={form.control}
-                name="category_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subcategory</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={!selectedMainCategory || loadingSubCategories}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={
-                              loadingSubCategories
-                                ? "Loading..."
-                                : !selectedMainCategory
-                                ? "Select category first"
-                                : "Select subcategory"
-                            }
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {subCategories.map((category) => (
-                          <SelectItem key={category.id} value={category.id.toString()}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <DateField control={form.control} disabled={isSubmitting} />
 
-              {/* Payment Method */}
-              <FormField
-                control={form.control}
-                name="payment_method_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Payment Method</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select payment method" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {paymentMethods.map((method) => (
-                          <SelectItem key={method.id} value={method.id.toString()}>
-                            {method.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <DescriptionField control={form.control} disabled={isSubmitting} />
 
-              {/* Date */}
-              <FormField
-                control={form.control}
-                name="expense_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Description */}
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="What was this expense for?"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+              {/* Error Message */}
               {error && (
-                <p className="text-sm text-destructive text-center">{error}</p>
+                <div
+                  className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 animate-in fade-in slide-in-from-top-2"
+                  role="alert"
+                  aria-live="assertive"
+                >
+                  <AlertCircle
+                    className="h-4 w-4 text-destructive shrink-0"
+                    aria-hidden="true"
+                  />
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
               )}
 
-              <div className="flex gap-3 pt-4">
+              {/* Form Actions */}
+              <div className="flex gap-3 pt-2">
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1"
-                  onClick={() => onOpenChange(false)}
+                  className="flex-1 transition-all"
+                  onClick={handleClose}
                   disabled={isSubmitting}
+                  aria-label="Cancel and close dialog"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="flex-1 transition-all"
+                  disabled={isSubmitting}
+                  aria-label={isSubmitting ? "Saving expense" : "Save expense"}
+                >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2
+                        className="mr-2 h-4 w-4 animate-spin"
+                        aria-hidden="true"
+                      />
                       Saving...
                     </>
                   ) : (
@@ -351,4 +292,4 @@ export function CreateExpenseDialog({ open, onOpenChange }: Readonly<CreateExpen
       </DialogContent>
     </Dialog>
   );
-}
+});
