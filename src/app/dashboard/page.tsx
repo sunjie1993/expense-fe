@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboardOverview } from "@/hooks/use-dashboard";
-import { DollarSign, TrendingUp, User, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { DollarSign, User, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { PeriodToggle } from "@/components/dashboard/period-toggle";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { SpendingTrendChart } from "@/components/dashboard/spending-trend-chart";
 import { CategoryRankingBoard } from "@/components/dashboard/category-ranking-board";
 import { Button } from "@/components/ui/button";
+import { getCategoryIcon } from "@/lib/category-icons";
 
 function getCurrentMonth() {
   const now = new Date();
@@ -118,7 +119,7 @@ export default function DashboardPage() {
           <ChevronLeft className="h-4 w-4 mr-2" />
           Previous
         </Button>
-        <div className="text-sm font-medium min-w-[150px] text-center">
+        <div className="text-sm font-medium min-w-37.5 text-center">
           {formatPeriodDisplay(period, date)}
         </div>
         <Button
@@ -156,12 +157,16 @@ export default function DashboardPage() {
             {dashboard.cards.top_category ? (
               <StatCard
                 title="Top Category"
-                value={`${dashboard.cards.top_category.icon} ${dashboard.cards.top_category.category_name}`}
+                value={dashboard.cards.top_category.category_name}
                 change={dashboard.cards.top_category.change_percentage}
                 previousValue={formatCurrency(dashboard.cards.top_category.previous_total)}
-                icon={<TrendingUp className="h-4 w-4" />}
-                iconColor="text-orange-500"
-                iconBgColor="bg-orange-500/10"
+                icon={
+                  React.createElement(getCategoryIcon(dashboard.cards.top_category.icon), {
+                    className: "h-4 w-4",
+                  })
+                }
+                iconColor={dashboard.cards.top_category.color}
+                iconBgColor={`${dashboard.cards.top_category.color}20`}
               />
             ) : (
               <Card>

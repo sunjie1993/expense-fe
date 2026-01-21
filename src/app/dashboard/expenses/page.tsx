@@ -11,29 +11,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { useExpenses } from "@/hooks/use-expenses";
-import { Loader2, Utensils, Car, ShoppingBag, Gamepad2, Receipt, Heart, GraduationCap, Plane } from "lucide-react";
-
-const categoryIcons: Record<string, React.ElementType> = {
-  "Food & Dining": Utensils,
-  Transport: Car,
-  Shopping: ShoppingBag,
-  Entertainment: Gamepad2,
-  "Bills & Utilities": Receipt,
-  Healthcare: Heart,
-  Education: GraduationCap,
-  Travel: Plane,
-};
-
-const categoryColors: Record<string, string> = {
-  "Food & Dining": "text-red-500 bg-red-50 dark:bg-red-950",
-  Transport: "text-teal-500 bg-teal-50 dark:bg-teal-950",
-  Shopping: "text-pink-500 bg-pink-50 dark:bg-pink-950",
-  Entertainment: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950",
-  "Bills & Utilities": "text-orange-500 bg-orange-50 dark:bg-orange-950",
-  Healthcare: "text-rose-500 bg-rose-50 dark:bg-rose-950",
-  Education: "text-violet-500 bg-violet-50 dark:bg-violet-950",
-  Travel: "text-sky-500 bg-sky-50 dark:bg-sky-950",
-};
+import { Loader2 } from "lucide-react";
+import { CategoryIcon } from "@/lib/category-icons";
 
 function SpenderBadge({ spender }: { spender: string }) {
   const styles: Record<string, string> = {
@@ -54,14 +33,24 @@ function SpenderBadge({ spender }: { spender: string }) {
   );
 }
 
-function CategoryCell({ category, parentCategory }: { category: string; parentCategory: string }) {
-  const Icon = categoryIcons[parentCategory] || Receipt;
-  const colorClass = categoryColors[parentCategory] || "text-gray-500 bg-gray-50 dark:bg-gray-900";
-
+function CategoryCell({
+  category,
+  parentCategory,
+  icon,
+  color
+}: {
+  category: string;
+  parentCategory: string;
+  icon?: string;
+  color?: string;
+}) {
   return (
     <div className="flex items-center gap-3">
-      <div className={cn("p-2 rounded-lg", colorClass)}>
-        <Icon className="h-4 w-4" />
+      <div
+        className="p-2 rounded-lg"
+        style={color ? { backgroundColor: `${color}20` } : undefined}
+      >
+        <CategoryIcon iconName={icon || "credit-card"} className="h-4 w-4" color={color} />
       </div>
       <div>
         <p className="font-medium text-sm">{category}</p>
@@ -152,6 +141,8 @@ export default function ExpensesPage() {
                         <CategoryCell
                           category={expense.category_name}
                           parentCategory={expense.parent_category_name}
+                          icon={expense.main_cat_icon}
+                          color={expense.main_cat_color}
                         />
                       </TableCell>
                       <TableCell>
