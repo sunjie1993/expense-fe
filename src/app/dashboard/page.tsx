@@ -97,13 +97,9 @@ export default function DashboardPage() {
           <ChevronLeft className="h-4 w-4 mr-2" aria-hidden="true" />
           Previous
         </Button>
-        <div
-          className="text-sm font-medium min-w-40 text-center"
-          role="status"
-          aria-live="polite"
-        >
+        <output className="text-sm font-medium min-w-40 text-center" aria-live="polite">
           {formatPeriodDisplay(period, date)}
-        </div>
+        </output>
         <Button
           variant="outline"
           size="sm"
@@ -118,14 +114,10 @@ export default function DashboardPage() {
 
       {/* Loading State */}
       {isLoading && (
-        <div
-          className="flex flex-col items-center justify-center py-20 space-y-4"
-          role="status"
-          aria-label="Loading dashboard data"
-        >
+        <output className="flex flex-col items-center justify-center py-20 space-y-4" aria-label="Loading dashboard data">
           <Loader2 className="h-10 w-10 animate-spin text-primary" aria-hidden="true" />
           <p className="text-sm text-muted-foreground">Loading your dashboard...</p>
-        </div>
+        </output>
       )}
 
       {/* Dashboard Content */}

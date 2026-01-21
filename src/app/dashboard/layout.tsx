@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { Sidebar } from "@/components/dashboard/sidebar";
@@ -10,9 +10,7 @@ import { Loader2 } from "lucide-react";
 
 export default function DashboardLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{ children: ReactNode }>) {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
 
