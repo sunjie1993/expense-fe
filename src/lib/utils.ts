@@ -93,3 +93,22 @@ export function navigatePeriod(
   const year = Number.parseInt(currentDate, 10);
   return (year + (direction === "next" ? 1 : -1)).toString();
 }
+
+/**
+ * Format a date string for display in expense list
+ * @param dateString - The ISO date string to format
+ * @returns Object with day and monthYear strings
+ */
+export function formatExpenseDate(dateString: string): {
+  day: string;
+  monthYear: string;
+} {
+  const date = new Date(dateString);
+  return {
+    day: date.toLocaleDateString("en-SG", { day: "numeric" }),
+    monthYear: date.toLocaleDateString("en-SG", {
+      month: "short",
+      year: "numeric",
+    }),
+  };
+}
