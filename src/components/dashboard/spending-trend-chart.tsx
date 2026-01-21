@@ -130,7 +130,7 @@ export function SpendingTrendChart({ data, period }: SpendingTrendChartProps) {
                   formatter={(value, name) => {
                     const categoryId = name.toString().replace("cat_", "");
                     const category = allCategories.find(
-                      (c) => c.id === parseInt(categoryId)
+                      (c) => c.id === Number.parseInt(categoryId)
                     );
                     return (
                       <div className="flex items-center justify-between gap-4">

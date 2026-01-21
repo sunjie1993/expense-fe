@@ -32,7 +32,7 @@ function formatCurrency(amount: number) {
 function formatPeriodDisplay(period: "monthly" | "yearly", date: string) {
   if (period === "monthly") {
     const [year, month] = date.split("-");
-    const monthDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const monthDate = new Date(Number.parseInt(year), Number.parseInt(month) - 1, 1);
     return monthDate.toLocaleDateString("en-SG", {
       month: "long",
       year: "numeric",
@@ -49,13 +49,13 @@ function navigatePeriod(
 ): string {
   if (period === "monthly") {
     const [year, month] = currentDate.split("-");
-    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const date = new Date(Number.parseInt(year), Number.parseInt(month) - 1, 1);
     date.setMonth(date.getMonth() + (direction === "next" ? 1 : -1));
     const newYear = date.getFullYear();
     const newMonth = String(date.getMonth() + 1).padStart(2, "0");
     return `${newYear}-${newMonth}`;
   } else {
-    const year = parseInt(currentDate);
+    const year = Number.parseInt(currentDate);
     return (year + (direction === "next" ? 1 : -1)).toString();
   }
 }
@@ -64,7 +64,6 @@ export default function DashboardPage() {
   const [period, setPeriod] = useState<"monthly" | "yearly">("monthly");
   const [date, setDate] = useState(getCurrentMonth());
 
-  // Update date when period changes
   const handlePeriodChange = (newPeriod: "monthly" | "yearly") => {
     setPeriod(newPeriod);
     setDate(newPeriod === "monthly" ? getCurrentMonth() : getCurrentYear());
