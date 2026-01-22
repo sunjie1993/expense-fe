@@ -114,16 +114,12 @@ export default function ExpensesPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {expenses.map((expense, index) => {
+                                    {expenses.map((expense) => {
                                         const {day, monthYear} = formatExpenseDate(expense.expense_date);
                                         return (
                                             <TableRow
                                                 key={expense.id}
-                                                className="animate-in fade-in slide-in-from-bottom-2"
-                                                style={{
-                                                    animationDelay: `${index * 30}ms`,
-                                                    animationFillMode: "backwards",
-                                                }}
+                                                className="animate-in fade-in slide-in-from-bottom-2 expense-row-animation"
                                             >
                                                 <TableCell>
                                                     <div className="text-center">
