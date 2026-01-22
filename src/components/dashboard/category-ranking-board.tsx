@@ -47,80 +47,93 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
     const hasCategories = categories && categories.length > 0;
 
     return (
-        <Card className="overflow-hidden">
+        <Card className="elevation-2 hover:elevation-4 transition-all duration-300">
             <CardHeader>
-                <CardTitle>Category Rankings</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-primary" />
+                    Category Rankings
+                </CardTitle>
                 <CardDescription>
                     {hasCategories
                         ? "Your top spending categories ranked by total amount"
                         : "No spending data to display"}
                 </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
                 {hasCategories ? (
                     <ul className="space-y-3 list-none" aria-label="Category rankings">
-                        {categories.map((category, index) => (
-                            <li
-                                key={category.main_category_id}
-                                className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 hover:bg-muted/70 transition-all duration-200 hover:shadow-sm animate-in fade-in slide-in-from-left"
-                                style={{
-                                    animationDelay: `${index * 50}ms`,
-                                    animationFillMode: "backwards",
-                                }}
-                            >
-                                <div className="shrink-0" aria-hidden="true">
-                                    {getRankIcon(category.rank)}
-                                </div>
-
-                                <div
-                                    className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center transition-transform hover:scale-110"
-                                    style={{backgroundColor: `${category.color}20`}}
-                                    aria-hidden="true"
+                        {categories.map((category) => {
+                            const isTopThree = category.rank <= 3;
+                            return (
+                                <li
+                                    key={category.main_category_id}
+                                    className={`relative flex items-center gap-3 p-4 rounded-lg transition-all duration-200 animate-in fade-in slide-in-from-left category-rank-animation group
+                                        ${isTopThree
+                                            ? 'bg-primary/5 hover:bg-primary/10 elevation-1 hover:elevation-2'
+                                            : 'bg-muted/30 hover:bg-muted/50'
+                                        }`}
                                 >
-                                    <CategoryIcon
-                                        iconName={category.icon}
-                                        className="h-5 w-5"
-                                        color={category.color}
-                                    />
-                                </div>
+                                    {/* Rank badge with special styling for top 3 */}
+                                    <div className={`shrink-0 ${isTopThree ? 'scale-110' : ''}`} aria-hidden="true">
+                                        {getRankIcon(category.rank)}
+                                    </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm truncate">
-                                        {category.main_category_name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {category.transaction_count} transaction
-                                        {category.transaction_count === 1 ? "" : "s"}
-                                    </p>
-                                </div>
+                                    {/* Category icon with subtle hover effect */}
+                                    <div
+                                        className="shrink-0 h-12 w-12 rounded-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                                        style={{backgroundColor: `${category.color}20`}}
+                                        aria-hidden="true"
+                                    >
+                                        <CategoryIcon
+                                            iconName={category.icon}
+                                            className="h-6 w-6"
+                                            color={category.color}
+                                        />
+                                    </div>
 
-                                <div className="text-right shrink-0">
-                                    <p className="font-bold text-sm tabular-nums">
-                                        {formatCurrency(category.total)}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground tabular-nums">
-                                        {category.percentage.toFixed(1)}%
-                                    </p>
-                                </div>
+                                    {/* Category details */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-medium text-sm truncate">
+                                            {category.main_category_name}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                            {category.transaction_count} transaction
+                                            {category.transaction_count === 1 ? "" : "s"}
+                                        </p>
+                                        {/* Progress bar under category name */}
+                                        <div className="mt-2 w-full">
+                                            <progress
+                                                className="progress-bar"
+                                                value={category.percentage}
+                                                max={100}
+                                                aria-label={`${category.percentage.toFixed(1)}% of total spending`}
+                                                style={{"--progress-color": category.color} as CSSProperties}
+                                            />
+                                        </div>
+                                    </div>
 
-                                <div className="w-16 shrink-0" aria-hidden="true">
-                                    <progress
-                                        className="h-2 w-full rounded-full overflow-hidden [&::-webkit-progress-bar]:bg-background [&::-webkit-progress-value]:rounded-full [&::-moz-progress-bar]:rounded-full"
-                                        value={category.percentage}
-                                        max={100}
-                                        aria-label={`${category.percentage.toFixed(1)}% of total spending`}
-                                        style={{"--progress-color": category.color} as CSSProperties}
-                                    />
-                                </div>
-                            </li>
-                        ))}
+                                    {/* Amount and percentage */}
+                                    <div className="text-right shrink-0">
+                                        <p className="font-bold text-sm tabular-nums">
+                                            {formatCurrency(category.total)}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground tabular-nums mt-0.5">
+                                            {category.percentage.toFixed(1)}%
+                                        </p>
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-12 space-y-2">
-                        <p className="text-sm text-muted-foreground text-center">
+                    <div className="flex flex-col items-center justify-center py-16 space-y-3">
+                        <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+                            <Trophy className="h-8 w-8 text-muted-foreground/50" />
+                        </div>
+                        <p className="text-sm font-medium text-muted-foreground text-center">
                             No category data available for this period
                         </p>
-                        <p className="text-xs text-muted-foreground text-center">
+                        <p className="text-xs text-muted-foreground text-center max-w-xs">
                             Add some expenses to see your spending breakdown
                         </p>
                     </div>
