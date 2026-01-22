@@ -44,19 +44,20 @@ export const StatCard = memo(function StatCard({
         ? {backgroundColor: iconBgColor}
         : undefined;
 
-    const trendColor = isIncrease ? "text-red-500" : "text-green-500";
     const trendIcon = isIncrease ? (
-        <TrendingUp className="h-3 w-3 mr-1" aria-label="Increased"/>
+        <TrendingUp className="h-3.5 w-3.5 mr-1.5" aria-label="Increased"/>
     ) : (
-        <TrendingDown className="h-3 w-3 mr-1" aria-label="Decreased"/>
+        <TrendingDown className="h-3.5 w-3.5 mr-1.5" aria-label="Decreased"/>
     );
 
     return (
-        <Card className="transition-all duration-200 hover:shadow-md">
+        <Card className="elevation-2 hover:elevation-8 transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {title}
+                </CardTitle>
                 <div
-                    className={`h-10 w-10 rounded-full flex items-center justify-center transition-transform duration-200 hover:scale-110 ${isHexColor(iconBgColor) ? "" : iconBgColor}`}
+                    className={`h-12 w-12 rounded-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 ${isHexColor(iconBgColor) ? "" : iconBgColor}`}
                     style={iconBgStyle}
                     aria-hidden="true"
                 >
@@ -69,26 +70,32 @@ export const StatCard = memo(function StatCard({
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="text-3xl font-bold tracking-tight">{value}</div>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="text-3xl font-bold tracking-tight text-foreground">
+                    {value}
+                </div>
+                <div className="flex items-center gap-2 mt-3">
                     {isNoChange ? (
-                        <div className="flex items-center text-muted-foreground">
-                            <Minus className="h-3 w-3 mr-1" aria-label="No change"/>
-                            <span className="text-xs">No change</span>
+                        <div className="flex items-center text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md">
+                            <Minus className="h-3.5 w-3.5 mr-1.5" aria-label="No change"/>
+                            <span className="text-xs font-medium">No change</span>
                         </div>
                     ) : (
-                        <div className={`flex items-center ${trendColor}`}>
+                        <div className={`flex items-center bg-muted/50 px-2.5 py-1 rounded-md ${
+                            isIncrease
+                                ? 'text-red-600 dark:text-red-400'
+                                : 'text-green-600 dark:text-green-400'
+                        }`}>
                             {trendIcon}
-                            <output className="text-xs font-medium"
+                            <output className="text-xs font-semibold"
                                     aria-label={`${Math.abs(change).toFixed(1)}% ${isIncrease ? 'increase' : 'decrease'}`}>
                                 {Math.abs(change).toFixed(1)}%
                             </output>
                         </div>
                     )}
                     {previousValue && (
-                        <span className="text-xs text-muted-foreground">
-              from {previousValue}
-            </span>
+                        <span className="text-xs text-muted-foreground font-medium">
+                            from {previousValue}
+                        </span>
                     )}
                 </div>
             </CardContent>

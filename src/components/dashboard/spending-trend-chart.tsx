@@ -63,33 +63,56 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
     const description = hasData ? `${periodLabel} spending breakdown by category` : "No spending data to display";
 
     return (
-        <Card className="overflow-hidden">
+        <Card className="elevation-2 hover:elevation-4 transition-all duration-300">
             <CardHeader>
                 <CardTitle>{isMonthly ? "Spending Trends" : "Yearly Overview"}</CardTitle>
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
                 {hasData ? (
                     <ChartContainer config={chartConfig} className="h-87.5 w-full">
-                        <BarChart data={chartData} accessibilityLayer>
+                        <BarChart data={chartData} accessibilityLayer barGap={4}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-muted"/>
-                            <XAxis dataKey="period" tickLine={false} axisLine={false} tick={{fontSize: 12}}
-                                   className="text-muted-foreground"/>
-                            <YAxis tickLine={false} axisLine={false} tick={{fontSize: 12}}
-                                   tickFormatter={formatChartCurrency} className="text-muted-foreground"/>
+                            <XAxis
+                                dataKey="period"
+                                tickLine={false}
+                                axisLine={false}
+                                tick={{fontSize: 12}}
+                                className="text-muted-foreground"
+                            />
+                            <YAxis
+                                tickLine={false}
+                                axisLine={false}
+                                tick={{fontSize: 12}}
+                                tickFormatter={formatChartCurrency}
+                                className="text-muted-foreground"
+                            />
                             <ChartTooltip content={<ChartTooltipContent formatter={tooltipFormatter}/>}/>
                             {allCategories.map((cat) => (
-                                <Bar key={cat.id} dataKey={`cat_${cat.id}`} stackId="a" fill={cat.color}
-                                     radius={[0, 0, 0, 0]} className="transition-opacity hover:opacity-80"/>
+                                <Bar
+                                    key={cat.id}
+                                    dataKey={`cat_${cat.id}`}
+                                    stackId="a"
+                                    fill={cat.color}
+                                    radius={[4, 4, 0, 0]}
+                                    className="transition-opacity hover:opacity-80"
+                                />
                             ))}
                         </BarChart>
                     </ChartContainer>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-16 space-y-2">
-                        <p className="text-sm text-muted-foreground text-center">No spending data available for this
-                            period</p>
-                        <p className="text-xs text-muted-foreground text-center">Your spending trends will appear here
-                            once you add expenses</p>
+                    <div className="flex flex-col items-center justify-center py-20 space-y-3">
+                        <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+                            <svg className="h-8 w-8 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <p className="text-sm font-medium text-muted-foreground text-center">
+                            No spending data available for this period
+                        </p>
+                        <p className="text-xs text-muted-foreground text-center max-w-xs">
+                            Your spending trends will appear here once you add expenses
+                        </p>
                     </div>
                 )}
             </CardContent>
