@@ -1,6 +1,6 @@
 "use client";
 
-import {useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import {useDashboardOverview} from "@/hooks/use-dashboard";
 import {AlertCircle, ChevronLeft, ChevronRight, DollarSign, Loader2, User} from "lucide-react";
@@ -12,10 +12,6 @@ import {Button} from "@/components/ui/button";
 import {CategoryIcon} from "@/lib/category-icons";
 import {formatCurrency, formatPeriodDisplay, getCurrentMonth, getCurrentYear, navigatePeriod,} from "@/lib/utils";
 
-/**
- * Dashboard Page Component
- * Displays expense overview with stats, charts, and category rankings
- */
 export default function DashboardPage() {
     const [period, setPeriod] = useState<"monthly" | "yearly">("monthly");
     const [date, setDate] = useState(getCurrentMonth());
@@ -24,21 +20,20 @@ export default function DashboardPage() {
 
     const dashboard = dashboardData?.data;
 
-    // Memoize top category icon
     const topCategoryIcon = useMemo(() => {
         if (!dashboard?.cards.top_category) return null;
         const {icon} = dashboard.cards.top_category;
         return <CategoryIcon iconName={icon} className="h-5 w-5"/>;
     }, [dashboard?.cards.top_category]);
 
-    const handlePeriodChange = (newPeriod: "monthly" | "yearly") => {
+    const handlePeriodChange = useCallback((newPeriod: "monthly" | "yearly") => {
         setPeriod(newPeriod);
         setDate(newPeriod === "monthly" ? getCurrentMonth() : getCurrentYear());
-    };
+    }, []);
 
-    const handleNavigate = (direction: "prev" | "next") => {
-        setDate(navigatePeriod(period, date, direction));
-    };
+    const handleNavigate = useCallback((direction: "prev" | "next") => {
+        setDate((prevDate) => navigatePeriod(period, prevDate, direction));
+    }, [period]);
 
     // Error State
     if (error) {
