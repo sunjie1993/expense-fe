@@ -35,10 +35,9 @@ export default function DashboardPage() {
         setDate((prevDate) => navigatePeriod(period, prevDate, direction));
     }, [period]);
 
-    // Error State
     if (error) {
         return (
-            <div className="container mx-auto p-6 max-w-7xl">
+            <div className="w-full p-6">
                 <Card className="bg-destructive/5 border-destructive/20">
                     <CardContent className="flex items-center justify-center gap-3 py-12">
                         <AlertCircle className="h-5 w-5 text-destructive" aria-hidden="true"/>
@@ -57,7 +56,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-8 max-w-7xl animate-in fade-in duration-500">
+        <div className="w-full p-6 space-y-8 animate-in fade-in duration-500">
             {/* Header Section */}
             <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">

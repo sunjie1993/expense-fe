@@ -2,9 +2,9 @@
 
 import {memo} from "react";
 import {Button} from "@/components/ui/button";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
 import {Form} from "@/components/ui/form";
-import {AlertCircle, DollarSign, Loader2} from "lucide-react";
+import {AlertCircle, Loader2} from "lucide-react";
 import {useExpenseForm} from "@/hooks/use-expense-form";
 import {
     AmountField,
@@ -54,13 +54,8 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
             <DialogContent className="sm:max-w-106.25 max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <DollarSign className="h-5 w-5" aria-hidden="true"/>
                         Add New Expense
                     </DialogTitle>
-                    <DialogDescription>
-                        Record a new expense transaction. All fields marked with * are
-                        required.
-                    </DialogDescription>
                 </DialogHeader>
 
                 {isLoadingData ? (

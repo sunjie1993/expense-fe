@@ -46,7 +46,7 @@ export default function ExpensesPage() {
     // Error State
     if (error) {
         return (
-            <div className="container mx-auto p-6 max-w-7xl">
+            <div className="w-full p-6">
                 <Card className="bg-destructive/5 border-destructive/20">
                     <CardContent className="flex items-center justify-center gap-3 py-12">
                         <AlertCircle className="h-5 w-5 text-destructive" aria-hidden="true"/>
@@ -65,7 +65,7 @@ export default function ExpensesPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-6 max-w-7xl animate-in fade-in duration-500">
+        <div className="w-full p-6 space-y-6 animate-in fade-in duration-500">
             {/* Header */}
             <header className="space-y-1">
                 <h1 className="text-3xl font-bold tracking-tight">Expenses</h1>
