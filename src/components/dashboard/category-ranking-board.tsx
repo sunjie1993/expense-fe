@@ -50,7 +50,7 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
         <Card className="elevation-2 hover:elevation-4 transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-primary" />
+                    <Trophy className="h-5 w-5 text-primary"/>
                     Category Rankings
                 </CardTitle>
                 <CardDescription>
@@ -69,9 +69,9 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
                                     key={category.main_category_id}
                                     className={`relative flex items-center gap-3 p-4 rounded-lg transition-all duration-200 animate-in fade-in slide-in-from-left category-rank-animation group
                                         ${isTopThree
-                                            ? 'bg-primary/5 hover:bg-primary/10 elevation-1 hover:elevation-2'
-                                            : 'bg-muted/30 hover:bg-muted/50'
-                                        }`}
+                                        ? 'bg-primary/5 hover:bg-primary/10 elevation-1 hover:elevation-2'
+                                        : 'bg-muted/30 hover:bg-muted/50'
+                                    }`}
                                 >
                                     {/* Rank badge with special styling for top 3 */}
                                     <div className={`shrink-0 ${isTopThree ? 'scale-110' : ''}`} aria-hidden="true">
@@ -128,7 +128,7 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 space-y-3">
                         <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-                            <Trophy className="h-8 w-8 text-muted-foreground/50" />
+                            <Trophy className="h-8 w-8 text-muted-foreground/50"/>
                         </div>
                         <p className="text-sm font-medium text-muted-foreground text-center">
                             No category data available for this period
