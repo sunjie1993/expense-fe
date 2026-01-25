@@ -18,7 +18,8 @@ export function ExpenseEmptyState() {
             <Receipt className="h-12 w-12 text-muted-foreground/40" aria-hidden="true"/>
             <div className="text-center space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">No expenses found</p>
-                <p className="text-xs text-muted-foreground">Start tracking your expenses by adding your first transaction</p>
+                <p className="text-xs text-muted-foreground">Start tracking your expenses by adding your first
+                    transaction</p>
             </div>
         </div>
     );
@@ -32,7 +33,8 @@ export function ExpenseErrorState() {
                     <AlertCircle className="h-5 w-5 text-destructive" aria-hidden="true"/>
                     <div className="text-center">
                         <p className="text-sm font-medium text-destructive">Failed to load expenses</p>
-                        <p className="text-xs text-muted-foreground mt-1">Please try again later or contact support if the problem persists.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Please try again later or contact support if
+                            the problem persists.</p>
                     </div>
                 </CardContent>
             </Card>

@@ -8,7 +8,7 @@ import {Receipt} from "lucide-react";
 import {PaginationControls} from "@/components/expenses/pagination-controls";
 import {ExpenseFilter, type ExpenseFilters} from "@/components/expenses/expense-filter";
 import {ExpenseTableRow} from "@/components/expenses/expense-table-row";
-import {ExpenseLoadingState, ExpenseEmptyState, ExpenseErrorState} from "@/components/expenses/expense-states";
+import {ExpenseEmptyState, ExpenseErrorState, ExpenseLoadingState} from "@/components/expenses/expense-states";
 
 const PAGE_SIZE = 10;
 
