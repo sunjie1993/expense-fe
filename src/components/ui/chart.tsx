@@ -70,24 +70,25 @@ function ChartStyle({id, config}: Readonly<{ id: string; config: ChartConfig }>)
     const colorConfig = Object.entries(config).filter(([, c]) => c.theme || c.color)
     if (!colorConfig.length) return null
 
-    return (
-        <style
-            dangerouslySetInnerHTML={{
-                __html: Object.entries(THEMES)
-                    .map(
-                        ([theme, prefix]) =>
-                            `${prefix} [data-chart=${id}] {\n${colorConfig
-                                .map(([key, c]) => {
-                                    const color = c.theme?.[theme as keyof typeof c.theme] || c.color
-                                    return color ? `  --color-${key}: ${color};` : null
-                                })
-                                .filter(Boolean)
-                                .join("\n")}\n}`
-                    )
-                    .join("\n"),
-            }}
-        />
-    )
+    // Generate CSS variables safely using React style object instead of dangerouslySetInnerHTML
+    const cssContent = Object.entries(THEMES)
+        .map(([theme, prefix]) => {
+            const selector = prefix ? `${prefix} [data-chart="${id}"]` : `[data-chart="${id}"]`;
+            const variables = colorConfig
+                .map(([key, c]) => {
+                    const color = c.theme?.[theme as keyof typeof c.theme] || c.color
+                    return color ? `  --color-${key}: ${color};` : null
+                })
+                .filter(Boolean)
+                .join("\n");
+
+            return variables ? `${selector} {\n${variables}\n}` : null;
+        })
+        .filter(Boolean)
+        .join("\n");
+
+    // Use a style element with text content instead of dangerouslySetInnerHTML
+    return <style>{cssContent}</style>
 }
 
 const ChartTooltip = RechartsPrimitive.Tooltip
