@@ -78,13 +78,14 @@ function validateAndParseToken(token: string): { valid: boolean; expiresAt?: num
  * Securely store authentication token with encryption
  */
 export function setSecureToken(token: string): void {
+  const validation = validateAndParseToken(token);
+
+  if (!validation.valid) {
+    localStorage.removeItem(STORAGE_KEY);
+    throw new Error("Invalid token format or expired token");
+  }
+
   try {
-    const validation = validateAndParseToken(token);
-
-    if (!validation.valid) {
-      throw new Error("Invalid token format or expired token");
-    }
-
     const tokenData: TokenData = {
       token,
       expiresAt: validation.expiresAt,

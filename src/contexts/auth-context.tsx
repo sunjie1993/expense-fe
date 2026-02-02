@@ -32,24 +32,27 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
     }, []);
 
     const login = useCallback(async (passcode: string) => {
+        let response;
         try {
-            const response = await api.post<ApiResponse<LoginResponse>>(
+            response = await api.post<ApiResponse<LoginResponse>>(
                 "/api/auth/login",
                 {passcode}
             );
-
-            if (response.data.success) {
-                // Store token securely with encryption and validation
-                setSecureToken(response.data.data.token);
-                setIsAuthenticated(true);
-            } else {
-                throw new Error("Login failed");
-            }
         } catch (error) {
-            // Ensure no partial data is stored on error
+            // Network or API errors - ensure cleanup
             removeSecureToken();
             throw error;
         }
+
+        // Validate response outside try-catch to avoid "throw caught locally" warning
+        if (!response.data.success) {
+            removeSecureToken();
+            throw new Error("Login failed");
+        }
+
+        // Store token securely with encryption and validation
+        setSecureToken(response.data.data.token);
+        setIsAuthenticated(true);
     }, []);
 
     const logout = useCallback(() => {
