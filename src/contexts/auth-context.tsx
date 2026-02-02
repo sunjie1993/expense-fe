@@ -3,6 +3,12 @@
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from "react";
 import {api} from "@/lib/api";
 import type {ApiResponse, LoginResponse} from "@/types/api";
+import {
+    hasValidToken,
+    migrateLegacyToken,
+    removeSecureToken,
+    setSecureToken,
+} from "@/lib/secure-storage";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -18,27 +24,39 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const token = localStorage.getItem("auth_token");
-        setIsAuthenticated(!!token);
+        migrateLegacyToken();
+
+        const hasToken = hasValidToken();
+        setIsAuthenticated(hasToken);
         setIsLoading(false);
     }, []);
 
     const login = useCallback(async (passcode: string) => {
-        const response = await api.post<ApiResponse<LoginResponse>>(
-            "/api/auth/login",
-            {passcode}
-        );
+        let response;
+        try {
+            response = await api.post<ApiResponse<LoginResponse>>(
+                "/api/auth/login",
+                {passcode}
+            );
+        } catch (error) {
+            // Network or API errors - ensure cleanup
+            removeSecureToken();
+            throw error;
+        }
 
-        if (response.data.success) {
-            localStorage.setItem("auth_token", response.data.data.token);
-            setIsAuthenticated(true);
-        } else {
+        // Validate response outside try-catch to avoid "throw caught locally" warning
+        if (!response.data.success) {
+            removeSecureToken();
             throw new Error("Login failed");
         }
+
+        // Store token securely with encryption and validation
+        setSecureToken(response.data.data.token);
+        setIsAuthenticated(true);
     }, []);
 
     const logout = useCallback(() => {
-        localStorage.removeItem("auth_token");
+        removeSecureToken();
         setIsAuthenticated(false);
     }, []);
 

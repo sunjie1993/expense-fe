@@ -1,4 +1,7 @@
+"use client";
+
 import axios from "axios";
+import { getSecureToken, removeSecureToken } from "@/lib/secure-storage";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
 
@@ -10,11 +13,9 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    if (globalThis.window !== undefined) {
-        const token = localStorage.getItem("auth_token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+    const token = getSecureToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
 });
@@ -22,15 +23,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401 && globalThis.window !== undefined) {
-            localStorage.removeItem("auth_token");
+        if (error.response?.status === 401) {
+            removeSecureToken();
             globalThis.location.href = "/login";
         }
         return Promise.reject(error);
     }
 );
 
-// SWR fetcher for authenticated requests
 export const fetcher = async (url: string) => {
     const response = await api.get(url);
     return response.data;
