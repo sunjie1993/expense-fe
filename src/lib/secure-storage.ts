@@ -1,5 +1,5 @@
 const STORAGE_KEY = "secure_auth_data";
-const ENCRYPTION_KEY = "expense-tracker-encryption-key-v1"; // In production, use env variable
+const ENCRYPTION_KEY = "expense-tracker-encryption-key-v1";
 
 interface TokenData {
   token: string;
@@ -17,7 +17,7 @@ function encrypt(text: string): string {
       )
       .join("");
 
-    return btoa(encrypted); // Base64 encode
+    return btoa(encrypted);
   } catch (error) {
     console.error("Encryption failed:", error);
     throw new Error("Failed to encrypt token");
@@ -26,7 +26,7 @@ function encrypt(text: string): string {
 
 function decrypt(encrypted: string): string {
   try {
-    const decoded = atob(encrypted); // Base64 decode
+    const decoded = atob(encrypted);
     return Array.from(decoded)
       .map((char, i) =>
         String.fromCodePoint(
@@ -40,23 +40,22 @@ function decrypt(encrypted: string): string {
   }
 }
 
-/**
- * Validates JWT token format and extracts expiration
- */
 function validateAndParseToken(token: string): { valid: boolean; expiresAt?: number } {
   try {
-    // Basic JWT format validation (header.payload.signature)
+
+    if (!token) {
+      return { valid: false };
+    }
+
     const parts = token.split(".");
     if (parts.length !== 3) {
       return { valid: false };
     }
 
-    // Try to parse the payload
     const payload = JSON.parse(atob(parts[1]));
 
-    // Check expiration if present
     if (payload.exp) {
-      const expiresAt = payload.exp * 1000; // Convert to milliseconds
+      const expiresAt = payload.exp * 1000;
       const now = Date.now();
 
       if (expiresAt <= now) {
@@ -74,9 +73,6 @@ function validateAndParseToken(token: string): { valid: boolean; expiresAt?: num
   }
 }
 
-/**
- * Securely store authentication token with encryption
- */
 export function setSecureToken(token: string): void {
   const validation = validateAndParseToken(token);
 
@@ -102,10 +98,6 @@ export function setSecureToken(token: string): void {
   }
 }
 
-/**
- * Retrieve and validate stored token
- * Returns null if token is missing, invalid, or expired
- */
 export function getSecureToken(): string | null {
   try {
     const encrypted = localStorage.getItem(STORAGE_KEY);
@@ -117,14 +109,12 @@ export function getSecureToken(): string | null {
     const decrypted = decrypt(encrypted);
     const tokenData: TokenData = JSON.parse(decrypted);
 
-    // Validate token hasn't expired
     if (tokenData.expiresAt && tokenData.expiresAt <= Date.now()) {
       console.warn("Stored token has expired");
       removeSecureToken();
       return null;
     }
 
-    // Re-validate token format
     const validation = validateAndParseToken(tokenData.token);
     if (!validation.valid) {
       console.warn("Stored token is invalid");
@@ -135,22 +125,15 @@ export function getSecureToken(): string | null {
     return tokenData.token;
   } catch (error) {
     console.error("Failed to retrieve token:", error);
-    // Clean up corrupted data
     removeSecureToken();
     return null;
   }
 }
 
-/**
- * Check if valid token exists without retrieving it
- */
 export function hasValidToken(): boolean {
   return getSecureToken() !== null;
 }
 
-/**
- * Remove stored token and clean up all related data
- */
 export function removeSecureToken(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
@@ -161,9 +144,6 @@ export function removeSecureToken(): void {
   }
 }
 
-/**
- * Get token expiration time (if available)
- */
 export function getTokenExpiration(): number | null {
   try {
     const encrypted = localStorage.getItem(STORAGE_KEY);
@@ -178,9 +158,6 @@ export function getTokenExpiration(): number | null {
   }
 }
 
-/**
- * Migrate from legacy plain text storage to encrypted storage
- */
 export function migrateLegacyToken(): boolean {
   try {
     const legacyToken = localStorage.getItem("auth_token");
