@@ -24,9 +24,8 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Token is invalid or expired, clean up and redirect
             removeSecureToken();
-            window.location.href = "/login";
+            globalThis.location.href = "/login";
         }
         return Promise.reject(error);
     }

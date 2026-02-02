@@ -11,8 +11,8 @@ function encrypt(text: string): string {
   try {
     const encrypted = Array.from(text)
       .map((char, i) =>
-        String.fromCharCode(
-          char.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length)
+        String.fromCodePoint(
+          (char.codePointAt(0) ?? 0) ^ (ENCRYPTION_KEY.codePointAt(i % ENCRYPTION_KEY.length) ?? 0)
         )
       )
       .join("");
@@ -29,8 +29,8 @@ function decrypt(encrypted: string): string {
     const decoded = atob(encrypted); // Base64 decode
     return Array.from(decoded)
       .map((char, i) =>
-        String.fromCharCode(
-          char.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length)
+        String.fromCodePoint(
+          (char.codePointAt(0) ?? 0) ^ (ENCRYPTION_KEY.codePointAt(i % ENCRYPTION_KEY.length) ?? 0)
         )
       )
       .join("");
