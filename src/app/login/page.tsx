@@ -62,7 +62,8 @@ export default function LoginPage() {
                 const retrySeconds = err.response.data.retry_after_seconds || 900;
                 setRetryAfter(retrySeconds);
                 const minutes = Math.ceil(retrySeconds / 60);
-                setError(`Too many login attempts. Please try again in ${minutes} minute${minutes !== 1 ? "s" : ""}.`);
+                const pluralSuffix = minutes === 1 ? "" : "s";
+                setError(`Too many login attempts. Please try again in ${minutes} minute${pluralSuffix}.`);
             } else if (err instanceof Error) {
                 setError(err.message);
             } else {
@@ -71,6 +72,23 @@ export default function LoginPage() {
         } finally {
             setIsLoading(false);
         }
+    }
+
+    function getButtonContent() {
+        if (isLoading) {
+            return (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                    Signing in...
+                </>
+            );
+        }
+
+        if (retryAfter > 0) {
+            return "Please wait...";
+        }
+
+        return "Sign In";
     }
 
     return (
@@ -116,16 +134,7 @@ export default function LoginPage() {
                                 </div>
                             )}
                             <Button type="submit" className="w-full" disabled={isLoading || retryAfter > 0}>
-                                {isLoading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                        Signing in...
-                                    </>
-                                ) : retryAfter > 0 ? (
-                                    "Please wait..."
-                                ) : (
-                                    "Sign In"
-                                )}
+                                {getButtonContent()}
                             </Button>
                         </form>
                     </Form>
