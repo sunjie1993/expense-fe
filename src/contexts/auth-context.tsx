@@ -23,7 +23,9 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
 
         const checkAuth = async () => {
             try {
-                await api.get("/api/categories/main");
+                // Use a protected endpoint to verify authentication
+                // Using limit=1 for efficiency - we only need to know if auth is valid
+                await api.get("/api/expenses?limit=1");
                 setIsAuthenticated(true);
             } catch {
                 setIsAuthenticated(false);
