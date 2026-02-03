@@ -158,20 +158,16 @@ export function getTokenExpiration(): number | null {
   }
 }
 
-export function migrateLegacyToken(): boolean {
+export function migrateLegacyToken(): void {
   try {
     const legacyToken = localStorage.getItem("auth_token");
+    const secureToken = localStorage.getItem(STORAGE_KEY);
 
-    if (legacyToken && !localStorage.getItem(STORAGE_KEY)) {
-      console.log("Migrating legacy token to secure storage");
-      setSecureToken(legacyToken);
+    if (legacyToken || secureToken) {
       localStorage.removeItem("auth_token");
-      return true;
+      localStorage.removeItem(STORAGE_KEY);
     }
-
-    return false;
   } catch (error) {
-    console.error("Failed to migrate legacy token:", error);
-    return false;
+    console.error("Failed to clean up legacy tokens:", error);
   }
 }
