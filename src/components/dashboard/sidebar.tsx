@@ -24,6 +24,12 @@ export function Sidebar() {
     const pathname = usePathname();
     const {logout} = useAuth();
 
+    const handleLogout = () => {
+        logout().catch((error) => {
+            console.error("Logout failed:", error);
+        });
+    };
+
     return (
         <aside className="hidden md:flex flex-col w-64 border-r bg-card">
             <div className="p-6 border-b">
@@ -53,7 +59,7 @@ export function Sidebar() {
                 <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 text-muted-foreground"
-                    onClick={() => void logout()}
+                    onClick={handleLogout}
                 >
                     <LogOut className="h-4 w-4"/>
                     Logout

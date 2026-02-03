@@ -31,6 +31,12 @@ export function MobileNav() {
     const pathname = usePathname();
     const {logout} = useAuth();
 
+    const handleLogout = () => {
+        logout().catch((error) => {
+            console.error("Logout failed:", error);
+        });
+    };
+
     return (
         <header className="md:hidden flex items-center justify-between p-4 border-b bg-card">
             <h1 className="text-lg font-bold">Expense Tracker</h1>
@@ -60,7 +66,7 @@ export function MobileNav() {
                         );
                     })}
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem onClick={() => void logout()} className="text-destructive">
+                    <DropdownMenuItem onClick={handleLogout} className="text-destructive">
                         <LogOut className="h-4 w-4 mr-2"/>
                         Logout
                     </DropdownMenuItem>
