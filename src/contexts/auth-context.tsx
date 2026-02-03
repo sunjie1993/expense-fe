@@ -3,18 +3,13 @@
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from "react";
 import {api} from "@/lib/api";
 import type {ApiResponse, LoginResponse} from "@/types/api";
-import {
-    hasValidToken,
-    migrateLegacyToken,
-    removeSecureToken,
-    setSecureToken,
-} from "@/lib/secure-storage";
+import {migrateLegacyToken, removeSecureToken} from "@/lib/secure-storage";
 
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (passcode: string) => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,38 +21,43 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
     useEffect(() => {
         migrateLegacyToken();
 
-        const hasToken = hasValidToken();
-        setIsAuthenticated(hasToken);
-        setIsLoading(false);
+        const checkAuth = async () => {
+            try {
+                await api.get("/api/categories/main");
+                setIsAuthenticated(true);
+            } catch {
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        void checkAuth();
     }, []);
 
     const login = useCallback(async (passcode: string) => {
-        let response;
-        try {
-            response = await api.post<ApiResponse<LoginResponse>>(
-                "/api/auth/login",
-                {passcode}
-            );
-        } catch (error) {
-            // Network or API errors - ensure cleanup
-            removeSecureToken();
-            throw error;
-        }
+        const response = await api.post<ApiResponse<LoginResponse>>(
+            "/api/auth/login",
+            {passcode}
+        );
 
-        // Validate response outside try-catch to avoid "throw caught locally" warning
         if (!response.data.success) {
-            removeSecureToken();
+            setIsAuthenticated(false);
             throw new Error("Login failed");
         }
 
-        // Store token securely with encryption and validation
-        setSecureToken(response.data.data.token);
         setIsAuthenticated(true);
     }, []);
 
-    const logout = useCallback(() => {
-        removeSecureToken();
-        setIsAuthenticated(false);
+    const logout = useCallback(async () => {
+        try {
+            await api.post("/api/auth/logout");
+        } catch (error) {
+            console.error("Logout error:", error);
+        } finally {
+            removeSecureToken();
+            setIsAuthenticated(false);
+        }
     }, []);
 
     const value = useMemo(

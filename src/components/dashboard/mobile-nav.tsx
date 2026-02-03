@@ -60,7 +60,7 @@ export function MobileNav() {
                         );
                     })}
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem onClick={logout} className="text-destructive">
+                    <DropdownMenuItem onClick={() => void logout()} className="text-destructive">
                         <LogOut className="h-4 w-4 mr-2"/>
                         Logout
                     </DropdownMenuItem>

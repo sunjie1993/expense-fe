@@ -53,7 +53,7 @@ export function Sidebar() {
                 <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 text-muted-foreground"
-                    onClick={logout}
+                    onClick={() => void logout()}
                 >
                     <LogOut className="h-4 w-4"/>
                     Logout

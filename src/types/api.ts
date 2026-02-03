@@ -11,11 +11,26 @@ export interface ApiError {
     details?: Record<string, string>;
 }
 
-// Auth types
 export interface LoginResponse {
-    token: string;
     expires_in: number;
+    refresh_expires_in: number;
     message: string;
+}
+
+export interface RateLimitError extends ApiError {
+    retry_after_seconds?: number;
+}
+
+export interface HealthCheck {
+    status: "healthy" | "unhealthy";
+    version: string;
+    timestamp: string;
+    checks: {
+        database: {
+            status: "healthy" | "unhealthy";
+            error?: string;
+        };
+    };
 }
 
 // Expense types
