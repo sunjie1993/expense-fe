@@ -41,7 +41,9 @@ api.interceptors.response.use(
                     failedQueue.push({ resolve, reject });
                 })
                     .then(() => api.request(originalRequest))
-                    .catch((err) => Promise.reject(err));
+                    .catch((err) => {
+                        throw err;
+                    });
             }
 
             originalRequest._retry = true;
@@ -55,13 +57,13 @@ api.interceptors.response.use(
                 processQueue(refreshError);
                 removeSecureToken();
                 globalThis.location.href = "/login";
-                return Promise.reject(refreshError);
+                throw refreshError;
             } finally {
                 isRefreshing = false;
             }
         }
 
-        return Promise.reject(error);
+        throw error;
     }
 );
 
