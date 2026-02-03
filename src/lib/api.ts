@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-import { removeSecureToken } from "@/lib/secure-storage";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
 
@@ -55,7 +54,6 @@ api.interceptors.response.use(
                 return api.request(originalRequest);
             } catch (refreshError) {
                 processQueue(refreshError);
-                removeSecureToken();
                 globalThis.location.href = "/login";
                 throw refreshError;
             } finally {

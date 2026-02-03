@@ -3,7 +3,7 @@
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from "react";
 import {api} from "@/lib/api";
 import type {ApiResponse, LoginResponse} from "@/types/api";
-import {migrateLegacyToken, removeSecureToken} from "@/lib/secure-storage";
+import {migrateLegacyToken} from "@/lib/secure-storage";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -55,7 +55,6 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
         } catch (error) {
             console.error("Logout error:", error);
         } finally {
-            removeSecureToken();
             setIsAuthenticated(false);
         }
     }, []);

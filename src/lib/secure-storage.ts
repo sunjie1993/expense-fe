@@ -160,13 +160,10 @@ export function getTokenExpiration(): number | null {
 
 export function migrateLegacyToken(): void {
   try {
-    const legacyToken = localStorage.getItem("auth_token");
-    const secureToken = localStorage.getItem(STORAGE_KEY);
-
-    if (legacyToken || secureToken) {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem(STORAGE_KEY);
-    }
+    // Unconditionally remove all old localStorage tokens
+    // This ensures cleanup happens even if tokens were set before this migration
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
     console.error("Failed to clean up legacy tokens:", error);
   }
