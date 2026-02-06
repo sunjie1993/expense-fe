@@ -1,7 +1,6 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
@@ -20,7 +19,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-    const router = useRouter();
     const {login} = useAuth();
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +57,7 @@ export default function LoginPage() {
             console.log("[LoginPage] Calling login function...");
             await login(data.passcode);
             console.log("[LoginPage] Login successful, redirecting to dashboard");
-            router.push("/dashboard");
+            globalThis.location.replace("/dashboard");
         } catch (err) {
             console.error("[LoginPage] Login failed:", err);
             if (axios.isAxiosError(err) && err.response?.status === 429) {
