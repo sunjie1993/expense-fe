@@ -57,7 +57,10 @@ api.interceptors.response.use(
                 return api.request(originalRequest);
             } catch (refreshError) {
                 processQueue(refreshError);
-                globalThis.location.href = "/login";
+                // Only redirect if not already on login page to prevent infinite loop
+                if (typeof globalThis !== 'undefined' && !globalThis.location?.pathname?.includes('/login')) {
+                    globalThis.location.href = "/login";
+                }
                 throw refreshError;
             } finally {
                 isRefreshing = false;
