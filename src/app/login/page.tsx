@@ -49,17 +49,13 @@ export default function LoginPage() {
     }, [retryAfter]);
 
     async function onSubmit(data: LoginFormValues) {
-        console.log("[LoginPage] Form submitted, passcode length:", data.passcode.length);
         setError(null);
         setIsLoading(true);
 
         try {
-            console.log("[LoginPage] Calling login function...");
             await login(data.passcode);
-            console.log("[LoginPage] Login successful, redirecting to dashboard");
             globalThis.location.replace("/dashboard");
         } catch (err) {
-            console.error("[LoginPage] Login failed:", err);
             if (axios.isAxiosError(err) && err.response?.status === 429) {
                 const retrySeconds = err.response.data.retry_after_seconds || 900;
                 setRetryAfter(retrySeconds);
@@ -67,7 +63,6 @@ export default function LoginPage() {
                 const pluralSuffix = minutes === 1 ? "" : "s";
                 setError(`Too many login attempts. Please try again in ${minutes} minute${pluralSuffix}.`);
             } else if (err instanceof Error) {
-                console.error("[LoginPage] Error message:", err.message);
                 setError(err.message);
             } else {
                 setError("Invalid passcode. Please try again.");

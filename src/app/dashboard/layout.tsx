@@ -1,7 +1,6 @@
 "use client";
 
 import {type ReactNode, useEffect} from "react";
-import {useRouter} from "next/navigation";
 import {useAuth} from "@/contexts/auth-context";
 import {Sidebar} from "@/components/dashboard/sidebar";
 import {MobileNav} from "@/components/dashboard/mobile-nav";
@@ -11,14 +10,13 @@ import {Loader2} from "lucide-react";
 export default function DashboardLayout({
                                             children,
                                         }: Readonly<{ children: ReactNode }>) {
-    const router = useRouter();
     const {isAuthenticated, isLoading} = useAuth();
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
-            router.push("/login");
+            globalThis.location.replace("/login");
         }
-    }, [isAuthenticated, isLoading, router]);
+    }, [isAuthenticated, isLoading]);
 
     if (isLoading) {
         return (
