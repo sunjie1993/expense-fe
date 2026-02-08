@@ -1,7 +1,7 @@
 "use client";
 
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {API_BASE_URL} from "@/lib/api";
+import {API_BASE_URL, clearTokens, setAccessToken, setRefreshToken} from "@/lib/api";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -16,84 +16,68 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    console.log("[AuthProvider] Rendering - isAuthenticated:", isAuthenticated, "isLoading:", isLoading);
-
     useEffect(() => {
-        const pathname = typeof window !== 'undefined' ? window.location.pathname : 'SSR';
-        console.log("[Auth] useEffect running, pathname:", pathname);
-        console.log("[Auth] Current state - isAuthenticated:", isAuthenticated, "isLoading:", isLoading);
+        if (globalThis.sessionStorage === undefined) return;
 
-        // Skip auth check if on login page
-        if (pathname.includes('/login')) {
-            console.log("[Auth] On login page, skipping auth check");
+        const pathname = globalThis.location.pathname;
+        if (pathname.includes("/login")) {
             setIsLoading(false);
             return;
         }
 
-        const checkAuth = async () => {
-            try {
-                console.log("[Auth] Checking authentication via refresh endpoint...");
-                console.log("[Auth] API_BASE_URL:", API_BASE_URL);
+        const initAuth = async () => {
+            const refreshToken = sessionStorage.getItem("refreshToken");
+            if (!refreshToken) {
+                setIsLoading(false);
+                return;
+            }
 
-                // Use refresh endpoint directly - if we have valid refresh token, we're authenticated
-                const refreshResponse = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
-                    method: 'POST',
-                    credentials: 'include',
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${refreshToken}`,
+                    },
                 });
 
-                console.log("[Auth] Refresh response status:", refreshResponse.status);
-
-                if (refreshResponse.ok) {
-                    console.log("[Auth] Refresh successful - user is authenticated");
+                if (response.ok) {
+                    const data = await response.json();
+                    setAccessToken(data.data.accessToken);
                     setIsAuthenticated(true);
                 } else {
-                    console.log("[Auth] Refresh failed - user is not authenticated");
-                    setIsAuthenticated(false);
+                    clearTokens();
                 }
-            } catch (err) {
-                console.error("[Auth] Check failed with error:", err);
-                setIsAuthenticated(false);
+            } catch {
+                clearTokens();
             } finally {
                 setIsLoading(false);
             }
         };
 
-        void checkAuth();
+        void initAuth();
     }, []);
 
     const login = useCallback(async (passcode: string) => {
-        console.log("[Auth] Logging in...");
-        console.log("[Auth] API_BASE_URL:", API_BASE_URL);
-
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {'Content-Type': 'application/json'},
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({passcode}),
         });
 
-        console.log("[Auth] Login response status:", response.status);
-
         const data = await response.json();
-        console.log("[Auth] Login response data:", data);
 
         if (!response.ok || !data.success) {
             throw new Error(data.error || "Login failed");
         }
 
-        console.log("[Auth] Login successful, setting isAuthenticated=true");
+        setAccessToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
         setIsAuthenticated(true);
     }, []);
 
     const logout = useCallback(async () => {
-        try {
-            await fetch(`${API_BASE_URL}/api/auth/logout`, {
-                method: 'POST',
-                credentials: 'include',
-            });
-        } finally {
-            setIsAuthenticated(false);
-        }
+        clearTokens();
+        setIsAuthenticated(false);
     }, []);
 
     const value = useMemo(

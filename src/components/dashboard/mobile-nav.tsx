@@ -32,9 +32,7 @@ export function MobileNav() {
     const {logout} = useAuth();
 
     const handleLogout = () => {
-        logout().catch((error) => {
-            console.error("Logout failed:", error);
-        });
+        logout();
     };
 
     return (
