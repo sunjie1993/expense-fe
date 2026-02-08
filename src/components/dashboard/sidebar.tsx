@@ -25,7 +25,7 @@ export function Sidebar() {
     const {logout} = useAuth();
 
     const handleLogout = () => {
-        void logout();
+        logout();
     };
 
     return (

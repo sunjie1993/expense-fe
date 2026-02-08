@@ -32,7 +32,7 @@ export function MobileNav() {
     const {logout} = useAuth();
 
     const handleLogout = () => {
-        void logout();
+        logout();
     };
 
     return (
