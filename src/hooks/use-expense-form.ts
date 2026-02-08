@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSWRConfig} from "swr";
 import {toast} from "sonner";
-import {api} from "@/lib/api";
+import {apiPost} from "@/lib/api";
 import {useMainCategories, useSubCategories} from "@/hooks/use-categories";
 import {usePaymentMethods} from "@/hooks/use-payment-methods";
 import {type ExpenseFormValues, expenseSchema, getTodayDate,} from "@/lib/validations/expense";
@@ -97,7 +97,7 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
             setIsSubmitting(true);
 
             try {
-                await api.post("/api/expenses", {
+                await apiPost("/api/expenses", {
                     spent_by: data.spent_by,
                     category_id: Number.parseInt(data.category_id, 10),
                     payment_method_id: Number.parseInt(data.payment_method_id, 10),

@@ -10,9 +10,9 @@ export default function Home() {
     useEffect(() => {
         if (!isLoading) {
             if (isAuthenticated) {
-                globalThis.location.replace("/dashboard");
+                globalThis.location.replace("/dashboard/");
             } else {
-                globalThis.location.replace("/login");
+                globalThis.location.replace("/login/");
             }
         }
     }, [isAuthenticated, isLoading]);

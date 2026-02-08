@@ -7,14 +7,26 @@ import {MobileNav} from "@/components/dashboard/mobile-nav";
 import {AddExpenseFab} from "@/components/expenses/add-expense-fab";
 import {Loader2} from "lucide-react";
 
+console.log("=== DASHBOARD LAYOUT MODULE LOADED ===");
+
 export default function DashboardLayout({
                                             children,
                                         }: Readonly<{ children: ReactNode }>) {
     const {isAuthenticated, isLoading} = useAuth();
 
+    console.log("[DashboardLayout] Rendering - isAuthenticated:", isAuthenticated, "isLoading:", isLoading);
+
     useEffect(() => {
+        const pathname = typeof window !== 'undefined' ? window.location.pathname : 'SSR';
+        console.log("[DashboardLayout] useEffect triggered");
+        console.log("[DashboardLayout] pathname:", pathname);
+        console.log("[DashboardLayout] isAuthenticated:", isAuthenticated, "isLoading:", isLoading);
+
         if (!isLoading && !isAuthenticated) {
-            globalThis.location.replace("/login");
+            console.log("[DashboardLayout] NOT AUTHENTICATED! Redirecting to login...");
+            globalThis.location.replace("/login/");
+        } else {
+            console.log("[DashboardLayout] No redirect needed yet");
         }
     }, [isAuthenticated, isLoading]);
 
