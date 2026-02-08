@@ -17,9 +17,9 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (typeof window === "undefined") return;
+        if (typeof globalThis.sessionStorage === "undefined") return;
 
-        const pathname = window.location.pathname;
+        const pathname = globalThis.location.pathname;
         if (pathname.includes("/login")) {
             setIsLoading(false);
             return;

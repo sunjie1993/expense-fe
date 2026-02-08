@@ -13,12 +13,12 @@ export function getAccessToken(): string | null {
 }
 
 function getRefreshToken(): string | null {
-    if (typeof window === "undefined") return null;
+    if (typeof globalThis.sessionStorage === "undefined") return null;
     return sessionStorage.getItem("refreshToken");
 }
 
 export function setRefreshToken(token: string | null) {
-    if (typeof window === "undefined") return;
+    if (typeof globalThis.sessionStorage === "undefined") return;
     if (token) {
         sessionStorage.setItem("refreshToken", token);
     } else {
@@ -28,7 +28,7 @@ export function setRefreshToken(token: string | null) {
 
 export function clearTokens() {
     accessToken = null;
-    if (typeof window !== "undefined") {
+    if (typeof globalThis.sessionStorage !== "undefined") {
         sessionStorage.removeItem("refreshToken");
     }
 }
@@ -82,8 +82,8 @@ async function api(endpoint: string, options: RequestInit = {}): Promise<Respons
         if (refreshed) {
             headers["Authorization"] = `Bearer ${accessToken}`;
             response = await fetch(url, { ...fetchOptions, headers });
-        } else if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
-            window.location.href = "/login/";
+        } else if (typeof globalThis !== "undefined" && !globalThis.location?.pathname.includes("/login")) {
+            globalThis.location.href = "/login/";
         }
     }
 
