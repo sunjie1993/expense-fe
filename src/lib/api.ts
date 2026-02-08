@@ -80,7 +80,7 @@ async function api(endpoint: string, options: RequestInit = {}): Promise<Respons
         const refreshed = await refreshAccessToken();
         if (refreshed) {
             headers["Authorization"] = `Bearer ${accessToken}`;
-            response = await fetch(url, { ...fetchOptions, headers });
+            response = await fetch(url, {...fetchOptions, headers});
         } else if (globalThis.location && !globalThis.location.pathname.includes("/login")) {
             globalThis.location.href = "/login/";
         }
@@ -90,7 +90,7 @@ async function api(endpoint: string, options: RequestInit = {}): Promise<Respons
 }
 
 export async function apiGet<T>(endpoint: string): Promise<T> {
-    const response = await api(endpoint, { method: "GET" });
+    const response = await api(endpoint, {method: "GET"});
     return response.json();
 }
 
@@ -111,16 +111,16 @@ export async function apiPut<T>(endpoint: string, body?: unknown): Promise<T> {
 }
 
 export async function apiDelete<T>(endpoint: string): Promise<T> {
-    const response = await api(endpoint, { method: "DELETE" });
+    const response = await api(endpoint, {method: "DELETE"});
     return response.json();
 }
 
 export const fetcher = async (url: string) => {
-    const response = await api(url, { method: "GET" });
+    const response = await api(url, {method: "GET"});
     if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
     }
     return response.json();
 };
 
-export { api, API_BASE_URL };
+export {api, API_BASE_URL};

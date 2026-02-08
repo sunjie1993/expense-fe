@@ -1,7 +1,7 @@
 "use client";
 
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {API_BASE_URL, setAccessToken, setRefreshToken, clearTokens} from "@/lib/api";
+import {API_BASE_URL, clearTokens, setAccessToken, setRefreshToken} from "@/lib/api";
 
 interface AuthContextType {
     isAuthenticated: boolean;
