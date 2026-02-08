@@ -51,7 +51,6 @@ async function refreshAccessToken(): Promise<boolean> {
             return true;
         }
     } catch {
-        // Refresh failed
     }
 
     clearTokens();

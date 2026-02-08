@@ -25,9 +25,7 @@ export function Sidebar() {
     const {logout} = useAuth();
 
     const handleLogout = () => {
-        logout().catch((error) => {
-            console.error("Logout failed:", error);
-        });
+        void logout();
     };
 
     return (
