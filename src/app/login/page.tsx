@@ -23,12 +23,9 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            console.log("[LoginPage] Calling login...");
             await login(passcode);
-            console.log("[LoginPage] Login successful, navigating to dashboard...");
             window.location.href = "/dashboard/";
         } catch (err) {
-            console.error("[LoginPage] Login failed:", err);
             setError(err instanceof Error ? err.message : "Login failed");
         } finally {
             setIsLoading(false);
