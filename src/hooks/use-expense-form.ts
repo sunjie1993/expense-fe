@@ -124,11 +124,14 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     /**
      * Get subcategory placeholder text based on state
      */
-    const subcategoryPlaceholder = loadingSubCategories
-        ? "Loading..."
-        : !selectedMainCategory
-            ? "Select category first"
-            : "Select subcategory";
+    let subcategoryPlaceholder: string;
+    if (loadingSubCategories) {
+        subcategoryPlaceholder = "Loading...";
+    } else if (selectedMainCategory) {
+        subcategoryPlaceholder = "Select subcategory";
+    } else {
+        subcategoryPlaceholder = "Select category first";
+    }
 
     const isLoadingData = loadingMainCategories || loadingPaymentMethods;
 
