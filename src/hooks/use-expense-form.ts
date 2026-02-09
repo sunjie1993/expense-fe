@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSWRConfig} from "swr";
@@ -32,20 +32,9 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     const {data: paymentMethodsData, isLoading: loadingPaymentMethods} =
         usePaymentMethods();
 
-    const mainCategories = useMemo(() =>
-            mainCategoriesData?.data || [],
-        [mainCategoriesData?.data]
-    );
-
-    const subCategories = useMemo(() =>
-            subCategoriesData?.data || [],
-        [subCategoriesData?.data]
-    );
-
-    const paymentMethods = useMemo(() =>
-            paymentMethodsData?.data || [],
-        [paymentMethodsData?.data]
-    );
+    const mainCategories = mainCategoriesData?.data || [];
+    const subCategories = subCategoriesData?.data || [];
+    const paymentMethods = paymentMethodsData?.data || [];
 
     // Form setup
     const form = useForm<ExpenseFormValues>({
@@ -135,14 +124,13 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     /**
      * Get subcategory placeholder text based on state
      */
-    const getSubcategoryPlaceholder = useCallback(() => {
-        if (loadingSubCategories) return "Loading...";
-        if (!selectedMainCategory) return "Select category first";
-        return "Select subcategory";
-    }, [loadingSubCategories, selectedMainCategory]);
+    const subcategoryPlaceholder = loadingSubCategories
+        ? "Loading..."
+        : !selectedMainCategory
+            ? "Select category first"
+            : "Select subcategory";
 
     const isLoadingData = loadingMainCategories || loadingPaymentMethods;
-    const subcategoryPlaceholder = getSubcategoryPlaceholder();
 
     return {
         form,
