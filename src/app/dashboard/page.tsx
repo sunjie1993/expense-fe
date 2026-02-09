@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useState} from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import {useDashboardOverview} from "@/hooks/use-dashboard";
 import {AlertCircle, ChevronLeft, ChevronRight, DollarSign, Loader2, User} from "lucide-react";
@@ -20,11 +20,9 @@ export default function DashboardPage() {
 
     const dashboard = dashboardData?.data;
 
-    const topCategoryIcon = useMemo(() => {
-        if (!dashboard?.cards.top_category) return null;
-        const {icon} = dashboard.cards.top_category;
-        return <CategoryIcon iconName={icon} className="h-5 w-5"/>;
-    }, [dashboard?.cards.top_category]);
+    const topCategoryIcon = dashboard?.cards.top_category
+        ? <CategoryIcon iconName={dashboard.cards.top_category.icon} className="h-5 w-5"/>
+        : null;
 
     const handlePeriodChange = useCallback((newPeriod: "monthly" | "yearly") => {
         setPeriod(newPeriod);
