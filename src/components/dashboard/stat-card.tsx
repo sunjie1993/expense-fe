@@ -1,7 +1,6 @@
 "use client";
 
-import type {ReactNode} from "react";
-import {memo} from "react";
+import {type CSSProperties, memo, type ReactNode} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Minus, TrendingDown, TrendingUp} from "lucide-react";
 
@@ -15,18 +14,10 @@ interface StatCardProps {
     readonly iconBgColor?: string;
 }
 
-/**
- * Check if a color string is a hex color
- * @param color - The color string to check
- * @returns True if the color is a hex color
- */
 function isHexColor(color: string): boolean {
     return color.startsWith("#");
 }
 
-/**
- * StatCard component displays a stat with an icon, value, and trend indicator
- */
 export const StatCard = memo(function StatCard({
                                                    title,
                                                    value,
@@ -44,6 +35,10 @@ export const StatCard = memo(function StatCard({
         ? {backgroundColor: iconBgColor}
         : undefined;
 
+    const shadowColorStyle = isHexColor(iconColor)
+        ? {'--shadow-color': `${iconColor}40`} as CSSProperties
+        : undefined;
+
     const trendIcon = isIncrease ? (
         <TrendingUp className="h-3.5 w-3.5 mr-1.5" aria-label="Increased"/>
     ) : (
@@ -51,13 +46,17 @@ export const StatCard = memo(function StatCard({
     );
 
     return (
-        <Card className="elevation-2 hover:elevation-8 transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card
+            className="glass-card glass-hover elevation-2 hover:elevation-8 glow-border shadow-colored overflow-hidden relative"
+            style={shadowColorStyle}
+        >
+            <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/80">
                     {title}
                 </CardTitle>
                 <div
-                    className={`h-12 w-12 rounded-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 ${isHexColor(iconBgColor) ? "" : iconBgColor}`}
+                    className={`h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-6 shadow-lg ${isHexColor(iconBgColor) ? "" : iconBgColor}`}
                     style={iconBgStyle}
                     aria-hidden="true"
                 >
@@ -69,21 +68,21 @@ export const StatCard = memo(function StatCard({
                     </div>
                 </div>
             </CardHeader>
-            <CardContent>
-                <div className="text-3xl font-bold tracking-tight text-foreground">
+            <CardContent className="relative z-10">
+                <div className="text-3xl font-bold tracking-tight text-foreground animate-counter mb-1">
                     {value}
                 </div>
                 <div className="flex items-center gap-2 mt-3">
                     {isNoChange ? (
-                        <div className="flex items-center text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md">
+                        <div className="flex items-center text-muted-foreground bg-muted/50 px-2.5 py-1.5 rounded-lg backdrop-blur-sm">
                             <Minus className="h-3.5 w-3.5 mr-1.5" aria-label="No change"/>
                             <span className="text-xs font-medium">No change</span>
                         </div>
                     ) : (
-                        <div className={`flex items-center bg-muted/50 px-2.5 py-1 rounded-md ${
+                        <div className={`flex items-center px-2.5 py-1.5 rounded-lg backdrop-blur-sm shadow-sm ${
                             isIncrease
-                                ? 'text-red-600 dark:text-red-400'
-                                : 'text-green-600 dark:text-green-400'
+                                ? 'bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400 border border-red-500/20'
+                                : 'bg-green-500/10 text-green-600 dark:bg-green-500/20 dark:text-green-400 border border-green-500/20'
                         }`}>
                             {trendIcon}
                             <output className="text-xs font-semibold"

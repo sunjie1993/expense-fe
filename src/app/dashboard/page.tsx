@@ -54,11 +54,11 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="w-full p-6 space-y-8 animate-in fade-in duration-500">
-            {/* Header Section */}
-            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <div className="w-full p-6 space-y-8 animate-in fade-in duration-500 relative">
+            <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-chart-3/5 pointer-events-none -z-10" />
+            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative">
+                <div className="space-y-2">
+                    <h1 className="text-4xl font-bold tracking-tight gradient-text">Dashboard</h1>
                     <p className="text-sm text-muted-foreground">
                         {isLoading
                             ? "Loading your expense overview..."
@@ -68,9 +68,8 @@ export default function DashboardPage() {
                 <PeriodToggle period={period} onPeriodChange={handlePeriodChange}/>
             </header>
 
-            {/* Period Navigation */}
             <nav
-                className="flex items-center justify-center gap-4"
+                className="flex items-center justify-center gap-4 relative"
                 aria-label="Period navigation"
             >
                 <Button
@@ -79,11 +78,12 @@ export default function DashboardPage() {
                     onClick={() => handleNavigate("prev")}
                     disabled={isLoading}
                     aria-label="Previous period"
+                    className="glass-card shadow-sm hover:shadow-md transition-all"
                 >
                     <ChevronLeft className="h-4 w-4 mr-2" aria-hidden="true"/>
                     Previous
                 </Button>
-                <output className="text-sm font-medium min-w-40 text-center" aria-live="polite">
+                <output className="text-sm font-semibold min-w-40 text-center px-4 py-2 glass-card rounded-lg shadow-sm" aria-live="polite">
                     {formatPeriodDisplay(period, date)}
                 </output>
                 <Button
@@ -92,6 +92,7 @@ export default function DashboardPage() {
                     onClick={() => handleNavigate("next")}
                     disabled={isLoading}
                     aria-label="Next period"
+                    className="glass-card shadow-sm hover:shadow-md transition-all"
                 >
                     Next
                     <ChevronRight className="h-4 w-4 ml-2" aria-hidden="true"/>
@@ -107,12 +108,10 @@ export default function DashboardPage() {
                 </output>
             )}
 
-            {/* Dashboard Content */}
             {!isLoading && dashboard && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    {/* Stats Cards */}
+                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <section aria-label="Expense statistics">
-                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                             <StatCard
                                 title="Total Expenses"
                                 value={formatCurrency(dashboard.cards.total_expenses.current)}

@@ -2,8 +2,9 @@
 
 import {memo, useMemo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {Bar, BarChart, XAxis} from "recharts";
+import {type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
+import {Bar, BarChart, CartesianGrid, XAxis} from "recharts";
+import {TrendingUp} from "lucide-react";
 import type {ChartPeriod} from "@/types/api";
 
 interface SpendingTrendChartProps {
@@ -19,6 +20,21 @@ const getBarRadius = (index: number, total: number): [number, number, number, nu
     if (index === total - 1) return [4, 4, 0, 0];
     return [0, 0, 0, 0];
 };
+
+function adjustColorVibrancy(color: string): string {
+    if (!color.startsWith('#')) return color;
+
+    const hex = color.replace('#', '');
+    const r = Number.parseInt(hex.slice(0, 2), 16);
+    const g = Number.parseInt(hex.slice(2, 4), 16);
+    const b = Number.parseInt(hex.slice(4, 6), 16);
+
+    const enhancedR = Math.min(255, Math.round(r * 1.2));
+    const enhancedG = Math.min(255, Math.round(g * 1.2));
+    const enhancedB = Math.min(255, Math.round(b * 1.2));
+
+    return `#${enhancedR.toString(16).padStart(2, '0')}${enhancedG.toString(16).padStart(2, '0')}${enhancedB.toString(16).padStart(2, '0')}`;
+}
 
 export const SpendingTrendChart = memo(function SpendingTrendChart({data, period}: SpendingTrendChartProps) {
     const {allCategories, chartData, chartConfig} = useMemo(() => {
@@ -41,9 +57,16 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
         });
 
         const config: ChartConfig = {};
-        categories.forEach((cat) => (config[`cat_${cat.id}`] = {label: cat.name, color: cat.color}));
+        categories.forEach((cat) => {
+            const enhancedColor = adjustColorVibrancy(cat.color);
+            config[`cat_${cat.id}`] = {label: cat.name, color: enhancedColor};
+        });
 
-        return {allCategories: categories, chartData: transformedData, chartConfig: config};
+        return {
+            allCategories: categories,
+            chartData: transformedData,
+            chartConfig: config
+        };
     }, [data]);
 
     const hasData = data.length > 0;
@@ -52,21 +75,50 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
     const description = hasData ? `${periodLabel} spending breakdown by category` : "No spending data to display";
 
     return (
-        <Card className="elevation-2 hover:elevation-4 transition-all duration-300">
-            <CardHeader>
-                <CardTitle>{isMonthly ? "Spending Trends" : "Yearly Overview"}</CardTitle>
-                <CardDescription>{description}</CardDescription>
+        <Card className="glass-card glass-hover elevation-2 hover:elevation-4 overflow-hidden relative">
+            <div className="absolute inset-0 bg-linear-to-br from-chart-1/5 via-transparent to-chart-3/5 pointer-events-none" />
+            <CardHeader className="relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-linear-to-br from-chart-1 to-chart-3 flex items-center justify-center shadow-lg">
+                        <TrendingUp className="h-5 w-5 text-white"/>
+                    </div>
+                    <div className="flex-1">
+                        <CardTitle className="text-2xl font-bold tracking-tight">
+                            {isMonthly ? "Spending Trends" : "Yearly Overview"}
+                        </CardTitle>
+                        <CardDescription className="mt-1">{description}</CardDescription>
+                    </div>
+                </div>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 relative z-10">
                 {hasData ? (
                     <ChartContainer config={chartConfig} className="h-87.5 w-full">
                         <BarChart data={chartData} accessibilityLayer>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.3}/>
                             <XAxis
                                 dataKey="period"
                                 tickLine={false}
                                 tickMargin={10}
                                 axisLine={false}
+                                tickFormatter={(value) => {
+                                    if (isMonthly) {
+                                        const [, month] = String(value).split("-");
+                                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                        return monthNames[Number(month) - 1];
+                                    }
+                                    return String(value);
+                                }}
                             />
+                            <ChartTooltip
+                                content={
+                                    <ChartTooltipContent
+                                        className="glass-card backdrop-blur-xl border-white/20 shadow-xl"
+                                        hideLabel
+                                    />
+                                }
+                                cursor={false}
+                            />
+                            <ChartLegend content={<ChartLegendContent />} />
                             {allCategories.map((cat, index) => (
                                 <Bar
                                     key={cat.id}
@@ -76,27 +128,6 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
                                     radius={getBarRadius(index, allCategories.length)}
                                 />
                             ))}
-                            <ChartTooltip
-                                content={
-                                    <ChartTooltipContent
-                                        labelFormatter={(value) => {
-                                            if (typeof value !== "string" && typeof value !== "number") {
-                                                return value;
-                                            }
-                                            const label = String(value);
-                                            if (isMonthly) {
-                                                const [year, month] = label.split("-");
-                                                return new Date(Number(year), Number(month) - 1).toLocaleDateString("en-US", {
-                                                    month: "long",
-                                                    year: "numeric",
-                                                });
-                                            }
-                                            return `Year ${label}`;
-                                        }}
-                                    />
-                                }
-                                cursor={false}
-                            />
                         </BarChart>
                     </ChartContainer>
                 ) : (
