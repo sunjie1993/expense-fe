@@ -3,7 +3,7 @@
 import {memo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import type {CategoryRanking} from "@/types/api";
-import {CategoryIcon} from "@/lib/category-icons";
+import {CategoryIconBadge} from "@/lib/category-icons";
 import {formatCurrency} from "@/lib/utils";
 
 interface CategoryRankingBoardProps {
@@ -28,17 +28,7 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({categori
                     <ul className="space-y-4 list-none" aria-label="Category rankings">
                         {categories.map((category) => (
                             <li key={category.main_category_id} className="flex items-center gap-3">
-                                <div
-                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                                    style={{backgroundColor: `${category.color}20`}}
-                                    aria-hidden="true"
-                                >
-                                    <CategoryIcon
-                                        iconName={category.icon}
-                                        className="h-4 w-4"
-                                        color={category.color}
-                                    />
-                                </div>
+                                <CategoryIconBadge iconName={category.icon} color={category.color}/>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium leading-none truncate">
                                         {category.main_category_name}

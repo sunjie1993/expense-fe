@@ -1,7 +1,7 @@
 "use client";
 
-import {AlertCircle, Receipt} from "lucide-react";
-import {Card, CardContent} from "@/components/ui/card";
+import {Receipt} from "lucide-react";
+import {ErrorCard} from "@/components/ui/error-card";
 import {Skeleton} from "@/components/ui/skeleton";
 
 export function ExpenseLoadingState() {
@@ -36,15 +36,7 @@ export function ExpenseEmptyState() {
 export function ExpenseErrorState() {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
-            <Card>
-                <CardContent className="flex items-center justify-center gap-3 py-12">
-                    <AlertCircle className="h-4 w-4 text-destructive" aria-hidden="true"/>
-                    <div>
-                        <p className="text-sm font-medium text-destructive">Failed to load expenses</p>
-                        <p className="text-xs text-muted-foreground mt-1">Please try again later.</p>
-                    </div>
-                </CardContent>
-            </Card>
+            <ErrorCard title="Failed to load expenses"/>
         </div>
     );
 }

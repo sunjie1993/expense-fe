@@ -2,9 +2,11 @@
 
 import {useCallback, useState} from "react";
 import {Card, CardContent} from "@/components/ui/card";
+import {ErrorCard} from "@/components/ui/error-card";
 import {useDashboardOverview} from "@/hooks/use-dashboard";
-import {AlertCircle, ChevronLeft, ChevronRight, DollarSign, User} from "lucide-react";
+import {ChevronLeft, ChevronRight, DollarSign, User} from "lucide-react";
 import {PeriodToggle} from "@/components/dashboard/period-toggle";
+import {PageHeader} from "@/components/dashboard/page-header";
 import {StatCard} from "@/components/dashboard/stat-card";
 import {SpendingTrendChart} from "@/components/dashboard/spending-trend-chart";
 import {CategoryRankingBoard} from "@/components/dashboard/category-ranking-board";
@@ -36,18 +38,13 @@ export default function DashboardPage() {
 
     return (
         <div className="flex flex-1 flex-col">
-            {/* Sticky header */}
-            <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-                    <div>
-                        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-                        <p className="text-sm text-muted-foreground hidden sm:block">
-                            {isLoading
-                                ? "Loading your expense overview..."
-                                : `Overview for ${formatPeriodDisplay(period, date)}`}
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-2">
+            <PageHeader
+                title="Dashboard"
+                description={isLoading
+                    ? "Loading your expense overview..."
+                    : `Overview for ${formatPeriodDisplay(period, date)}`}
+                actions={
+                    <>
                         <Button
                             variant="outline"
                             size="icon"
@@ -75,29 +72,17 @@ export default function DashboardPage() {
                             <ChevronRight className="h-4 w-4"/>
                         </Button>
                         <PeriodToggle period={period} onPeriodChange={handlePeriodChange}/>
-                    </div>
-                </div>
-            </div>
+                    </>
+                }
+            />
 
-            {/* Content */}
             <div className="flex flex-col gap-4 p-4">
-                {error && (
-                    <Card>
-                        <CardContent className="flex items-center justify-center gap-3 py-12">
-                            <AlertCircle className="h-4 w-4 text-destructive" aria-hidden="true"/>
-                            <div>
-                                <p className="text-sm font-medium text-destructive">Failed to load dashboard data</p>
-                                <p className="text-xs text-muted-foreground mt-1">Please try again later.</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
+                {error && <ErrorCard title="Failed to load dashboard data"/>}
 
                 {isLoading && <DashboardSkeleton/>}
 
                 {!isLoading && dashboard && (
                     <>
-                        {/* Stat cards */}
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             <StatCard
                                 title="Total Expenses"
@@ -140,7 +125,6 @@ export default function DashboardPage() {
                             )}
                         </div>
 
-                        {/* Chart + Rankings */}
                         <div className="grid gap-4 lg:grid-cols-7">
                             <div className="lg:col-span-4">
                                 <SpendingTrendChart data={dashboard.spending_chart} period={period}/>
@@ -150,7 +134,6 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        {/* Recent transactions */}
                         <RecentExpenses/>
                     </>
                 )}

@@ -5,6 +5,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useExpenses} from "@/hooks/use-expenses";
 import {Receipt} from "lucide-react";
+import {PageHeader} from "@/components/dashboard/page-header";
 import {PaginationControls} from "@/components/expenses/pagination-controls";
 import {ExpenseFilter, type ExpenseFilters} from "@/components/expenses/expense-filter";
 import {ExpenseTableRow} from "@/components/expenses/expense-table-row";
@@ -41,26 +42,17 @@ export default function ExpensesPage() {
 
     return (
         <div className="flex flex-1 flex-col">
-            {/* Sticky header */}
-            <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="flex items-center justify-between px-4 py-3">
-                    <div>
-                        <h1 className="text-2xl font-semibold tracking-tight">Expenses</h1>
-                        <p className="text-sm text-muted-foreground hidden sm:block">
-                            {isLoading
-                                ? "Loading your expenses..."
-                                : pagination
-                                    ? `${pagination.total} total expenses`
-                                    : "View and manage all your expenses"}
-                        </p>
-                    </div>
-                </div>
-                <div className="px-4 pb-3">
-                    <ExpenseFilter filters={filters} onFiltersChange={handleFiltersChange}/>
-                </div>
-            </div>
+            <PageHeader
+                title="Expenses"
+                description={isLoading
+                    ? "Loading your expenses..."
+                    : pagination
+                        ? `${pagination.total} total expenses`
+                        : "View and manage all your expenses"}
+            >
+                <ExpenseFilter filters={filters} onFiltersChange={handleFiltersChange}/>
+            </PageHeader>
 
-            {/* Content */}
             <div className="flex flex-col gap-4 p-4">
                 <Card>
                     <CardHeader>

@@ -4,12 +4,17 @@ import {useState} from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
-import {LayoutDashboard, Plus, Receipt} from "lucide-react";
+import {Plus} from "lucide-react";
+import {NAV_ITEMS} from "@/components/dashboard/nav-items";
 import {CreateExpenseDialog} from "@/components/expenses/create-expense-dialog";
 
 export function MobileNav() {
     const pathname = usePathname();
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    const [dashItem, expensesItem] = NAV_ITEMS;
+    const DashIcon = dashItem.icon;
+    const ExpensesIcon = expensesItem.icon;
 
     return (
         <>
@@ -18,21 +23,19 @@ export function MobileNav() {
                 aria-label="Mobile navigation"
             >
                 <div className="flex h-16 items-stretch">
-                    {/* Dashboard link */}
                     <Link
-                        href="/dashboard"
+                        href={dashItem.href}
                         className={cn(
                             "flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
-                            pathname === "/dashboard"
+                            pathname === dashItem.href
                                 ? "text-foreground"
                                 : "text-muted-foreground hover:text-foreground"
                         )}
                     >
-                        <LayoutDashboard className="h-5 w-5"/>
-                        <span>Dashboard</span>
+                        <DashIcon className="h-5 w-5"/>
+                        <span>{dashItem.title}</span>
                     </Link>
 
-                    {/* Add button (center) */}
                     <div className="flex flex-1 items-center justify-center">
                         <button
                             type="button"
@@ -44,18 +47,17 @@ export function MobileNav() {
                         </button>
                     </div>
 
-                    {/* Expenses link */}
                     <Link
-                        href="/dashboard/expenses"
+                        href={expensesItem.href}
                         className={cn(
                             "flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
-                            pathname === "/dashboard/expenses"
+                            pathname === expensesItem.href
                                 ? "text-foreground"
                                 : "text-muted-foreground hover:text-foreground"
                         )}
                     >
-                        <Receipt className="h-5 w-5"/>
-                        <span>Expenses</span>
+                        <ExpensesIcon className="h-5 w-5"/>
+                        <span>{expensesItem.title}</span>
                     </Link>
                 </div>
             </nav>
