@@ -6,7 +6,7 @@ interface ErrorCardProps {
     description?: string;
 }
 
-export function ErrorCard({title, description = "Please try again later."}: ErrorCardProps) {
+export function ErrorCard({title, description = "Please try again later."}: Readonly<ErrorCardProps>) {
     return (
         <Card>
             <CardContent className="flex items-center justify-center gap-3 py-12">

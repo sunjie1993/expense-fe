@@ -50,16 +50,15 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
 
     const hasData = data.length > 0;
     const isMonthly = period === "monthly";
+    const description = hasData
+        ? `${isMonthly ? "Monthly" : "Yearly"} spending breakdown by category`
+        : "No spending data to display";
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>{isMonthly ? "Spending Trends" : "Yearly Overview"}</CardTitle>
-                <CardDescription>
-                    {hasData
-                        ? `${isMonthly ? "Monthly" : "Yearly"} spending breakdown by category`
-                        : "No spending data to display"}
-                </CardDescription>
+                <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
                 {hasData ? (

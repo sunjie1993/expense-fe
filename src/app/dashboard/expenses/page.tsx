@@ -40,11 +40,14 @@ export default function ExpensesPage() {
 
     if (error) return <ExpenseErrorState/>;
 
-    const headerDescription = isLoading
-        ? "Loading your expenses..."
-        : pagination
-            ? `${pagination.total} total expenses`
-            : "View and manage all your expenses";
+    let headerDescription: string;
+    if (isLoading) {
+        headerDescription = "Loading your expenses...";
+    } else if (pagination) {
+        headerDescription = `${pagination.total} total expenses`;
+    } else {
+        headerDescription = "View and manage all your expenses";
+    }
 
     return (
         <div className="flex flex-1 flex-col">

@@ -7,8 +7,8 @@ import {Skeleton} from "@/components/ui/skeleton";
 export function ExpenseLoadingState() {
     return (
         <div className="space-y-3" aria-label="Loading expenses">
-            {Array.from({length: 6}).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 py-2">
+            {["r1", "r2", "r3", "r4", "r5", "r6"].map((row) => (
+                <div key={row} className="flex items-center gap-4 py-2">
                     <Skeleton className="h-4 w-12 shrink-0"/>
                     <Skeleton className="h-4 w-32"/>
                     <Skeleton className="h-4 flex-1"/>

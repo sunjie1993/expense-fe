@@ -16,7 +16,7 @@ export const RecentExpenses = memo(function RecentExpenses() {
     if (isLoading) {
         content = (
             <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map((i) => <SkeletonListItem key={i}/>)}
+                {["a", "b", "c", "d", "e"].map((k) => <SkeletonListItem key={k}/>)}
             </div>
         );
     } else if (expenses.length === 0) {
