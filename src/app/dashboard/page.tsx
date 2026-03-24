@@ -90,6 +90,7 @@ export default function DashboardPage() {
                                 change={dashboard.cards.total_expenses.change_percentage}
                                 previousValue={formatCurrency(dashboard.cards.total_expenses.previous)}
                                 icon={<DollarSign className="h-4 w-4 text-muted-foreground"/>}
+                                period={period}
                             />
 
                             {dashboard.cards.top_category ? (
@@ -99,6 +100,7 @@ export default function DashboardPage() {
                                     change={dashboard.cards.top_category.change_percentage}
                                     previousValue={formatCurrency(dashboard.cards.top_category.previous_total)}
                                     icon={topCategoryIcon}
+                                    period={period}
                                 />
                             ) : (
                                 <Card className="opacity-60">
@@ -120,6 +122,7 @@ export default function DashboardPage() {
                                     change={dashboard.cards.top_spender.change_percentage}
                                     previousValue={formatCurrency(dashboard.cards.top_spender.previous_total)}
                                     icon={<User className="h-4 w-4 text-muted-foreground"/>}
+                                    period={period}
                                 />
                             ) : (
                                 <Card className="opacity-60">

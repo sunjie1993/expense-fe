@@ -3,7 +3,8 @@
 import {memo, useMemo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {Bar, BarChart, CartesianGrid, XAxis} from "recharts";
+import {Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis} from "recharts";
+
 import type {ChartPeriod} from "@/types/api";
 
 interface SpendingTrendChartProps {
@@ -18,6 +19,11 @@ const getBarRadius = (index: number, total: number): [number, number, number, nu
     if (index === 0) return [0, 0, 4, 4];
     if (index === total - 1) return [4, 4, 0, 0];
     return [0, 0, 0, 0];
+};
+
+const formatCompact = (value: number): string => {
+    if (value >= 1000) return `$${(value / 1000).toFixed(1)}k`;
+    return `$${value.toFixed(0)}`;
 };
 
 export const SpendingTrendChart = memo(function SpendingTrendChart({data, period}: SpendingTrendChartProps) {
@@ -80,17 +86,36 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
                                     return String(value);
                                 }}
                             />
-                            <ChartTooltip content={<ChartTooltipContent hideLabel/>} cursor={false}/>
+                            <YAxis
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={8}
+                                width={48}
+                                tickFormatter={formatCompact}
+                            />
+                            <ChartTooltip content={<ChartTooltipContent/>} cursor={false}/>
                             <ChartLegend content={<ChartLegendContent/>}/>
-                            {allCategories.map((cat, index) => (
-                                <Bar
-                                    key={cat.id}
-                                    dataKey={`cat_${cat.id}`}
-                                    stackId="a"
-                                    fill={`var(--color-cat_${cat.id})`}
-                                    radius={getBarRadius(index, allCategories.length)}
-                                />
-                            ))}
+                            {allCategories.map((cat, index) => {
+                                const isTop = index === allCategories.length - 1;
+                                return (
+                                    <Bar
+                                        key={cat.id}
+                                        dataKey={`cat_${cat.id}`}
+                                        stackId="a"
+                                        fill={`var(--color-cat_${cat.id})`}
+                                        radius={getBarRadius(index, allCategories.length)}
+                                    >
+                                        {isTop && (
+                                            <LabelList
+                                                dataKey="total"
+                                                position="top"
+                                                formatter={(value: unknown) => formatCompact(Number(value))}
+                                                style={{fontSize: 11, fill: "var(--muted-foreground)"}}
+                                            />
+                                        )}
+                                    </Bar>
+                                );
+                            })}
                         </BarChart>
                     </ChartContainer>
                 ) : (

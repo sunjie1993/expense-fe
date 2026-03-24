@@ -28,6 +28,9 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({categori
                     <ul className="space-y-4 list-none" aria-label="Category rankings">
                         {categories.map((category) => (
                             <li key={category.main_category_id} className="flex items-center gap-3">
+                                <span className="w-5 shrink-0 text-xs font-medium text-muted-foreground text-right">
+                                    #{category.rank}
+                                </span>
                                 <CategoryIconBadge iconName={category.icon} color={category.color}/>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium leading-none truncate">
@@ -36,6 +39,15 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({categori
                                     <p className="text-xs text-muted-foreground mt-1">
                                         {category.transaction_count} transaction{category.transaction_count === 1 ? "" : "s"}
                                     </p>
+                                    <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                                        <div
+                                            className="h-full rounded-full"
+                                            style={{
+                                                width: `${category.percentage}%`,
+                                                backgroundColor: category.color,
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="text-right shrink-0">
                                     <p className="text-sm font-medium tabular-nums">
