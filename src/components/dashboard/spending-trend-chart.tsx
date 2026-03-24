@@ -50,8 +50,9 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
 
     const hasData = data.length > 0;
     const isMonthly = period === "monthly";
+    const periodLabel = isMonthly ? "Monthly" : "Yearly";
     const description = hasData
-        ? `${isMonthly ? "Monthly" : "Yearly"} spending breakdown by category`
+        ? `${periodLabel} spending breakdown by category`
         : "No spending data to display";
 
     return (
