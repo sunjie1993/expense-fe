@@ -9,7 +9,8 @@ interface PageHeaderProps {
 
 export function PageHeader({title, description, actions, children}: Readonly<PageHeaderProps>) {
     return (
-        <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div
+            className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>

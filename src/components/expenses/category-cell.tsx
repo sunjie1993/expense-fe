@@ -11,11 +11,11 @@ interface CategoryCellProps {
 }
 
 export const CategoryCell = memo(function CategoryCell({
-    category,
-    parentCategory,
-    icon,
-    color,
-}: CategoryCellProps) {
+                                                           category,
+                                                           parentCategory,
+                                                           icon,
+                                                           color,
+                                                       }: CategoryCellProps) {
     return (
         <div className="flex items-center gap-3">
             <div
