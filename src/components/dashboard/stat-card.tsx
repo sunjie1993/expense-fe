@@ -10,6 +10,7 @@ interface StatCardProps {
     readonly change: number;
     readonly previousValue?: string;
     readonly icon: ReactNode;
+    readonly period?: "monthly" | "yearly";
 }
 
 export const StatCard = memo(function StatCard({
@@ -18,9 +19,11 @@ export const StatCard = memo(function StatCard({
     change,
     previousValue,
     icon,
+    period,
 }: StatCardProps) {
     const isIncrease = change > 0;
     const isNoChange = change === 0;
+    const periodLabel = period === "yearly" ? "year" : "month";
 
     return (
         <Card>
@@ -29,10 +32,10 @@ export const StatCard = memo(function StatCard({
                 {icon}
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
+                <div className="text-2xl font-bold truncate" title={value}>{value}</div>
                 <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     {isNoChange ? (
-                        <span>No change from {previousValue}</span>
+                        <span>No change vs last {periodLabel}</span>
                     ) : (
                         <>
                             {isIncrease
@@ -42,7 +45,10 @@ export const StatCard = memo(function StatCard({
                             <span className={isIncrease ? "text-red-500" : "text-green-500"}>
                                 {Math.abs(change).toFixed(1)}%
                             </span>
-                            {previousValue && <span>from {previousValue}</span>}
+                            <span>vs last {periodLabel}</span>
+                            {previousValue && (
+                                <span className="text-muted-foreground/60">({previousValue})</span>
+                            )}
                         </>
                     )}
                 </p>
