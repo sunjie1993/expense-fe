@@ -1,75 +1,66 @@
 "use client";
 
+import {useState} from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
-import {useAuth} from "@/contexts/auth-context";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {LayoutDashboard, LogOut, Menu, Receipt} from "lucide-react";
-
-const navItems = [
-    {
-        title: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "Expenses",
-        href: "/dashboard/expenses",
-        icon: Receipt,
-    },
-];
+import {LayoutDashboard, Plus, Receipt} from "lucide-react";
+import {CreateExpenseDialog} from "@/components/expenses/create-expense-dialog";
 
 export function MobileNav() {
     const pathname = usePathname();
-    const {logout} = useAuth();
-
-    const handleLogout = () => {
-        logout();
-    };
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     return (
-        <header className="md:hidden flex items-center justify-between p-4 border-b bg-card">
-            <h1 className="text-lg font-bold">Expense Tracker</h1>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Menu className="h-5 w-5"/>
-                        <span className="sr-only">Toggle menu</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                    {navItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
-                            <DropdownMenuItem key={item.href} asChild>
-                                <Link
-                                    href={item.href}
-                                    className={cn(
-                                        "flex items-center gap-2",
-                                        isActive && "font-medium"
-                                    )}
-                                >
-                                    <item.icon className="h-4 w-4"/>
-                                    {item.title}
-                                </Link>
-                            </DropdownMenuItem>
-                        );
-                    })}
-                    <DropdownMenuSeparator/>
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                        <LogOut className="h-4 w-4 mr-2"/>
-                        Logout
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </header>
+        <>
+            <nav
+                className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t bg-background"
+                aria-label="Mobile navigation"
+            >
+                <div className="flex h-16 items-stretch">
+                    {/* Dashboard link */}
+                    <Link
+                        href="/dashboard"
+                        className={cn(
+                            "flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
+                            pathname === "/dashboard"
+                                ? "text-foreground"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <LayoutDashboard className="h-5 w-5"/>
+                        <span>Dashboard</span>
+                    </Link>
+
+                    {/* Add button (center) */}
+                    <div className="flex flex-1 items-center justify-center">
+                        <button
+                            type="button"
+                            onClick={() => setDialogOpen(true)}
+                            className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-opacity hover:opacity-90 active:opacity-80"
+                            aria-label="Add expense"
+                        >
+                            <Plus className="h-5 w-5"/>
+                        </button>
+                    </div>
+
+                    {/* Expenses link */}
+                    <Link
+                        href="/dashboard/expenses"
+                        className={cn(
+                            "flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
+                            pathname === "/dashboard/expenses"
+                                ? "text-foreground"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <Receipt className="h-5 w-5"/>
+                        <span>Expenses</span>
+                    </Link>
+                </div>
+            </nav>
+
+            <CreateExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen}/>
+        </>
     );
 }
