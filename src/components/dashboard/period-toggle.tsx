@@ -31,7 +31,7 @@ export const PeriodToggle = memo(function PeriodToggle({
 
     return (
         <fieldset
-            className="inline-flex items-center gap-1 rounded-xl bg-muted/50 p-1 backdrop-blur-sm border border-border/50 shadow-sm">
+            className="inline-flex items-center gap-1 rounded-lg bg-muted p-1 border">
             <legend className="sr-only">Select period view</legend>
             {PERIODS.map(({value, label, icon: Icon}) => {
                 const isSelected = period === value;
