@@ -68,9 +68,9 @@ function FormSkeleton() {
 }
 
 export const CreateExpenseDialog = memo(function CreateExpenseDialog({
-    open,
-    onOpenChange,
-}: CreateExpenseDialogProps) {
+                                                                         open,
+                                                                         onOpenChange,
+                                                                     }: CreateExpenseDialogProps) {
     const {
         form,
         onSubmit,

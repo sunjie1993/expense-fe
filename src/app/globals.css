@@ -83,8 +83,12 @@
     }
 
     @keyframes shine {
-        0% { left: -100%; }
-        50%, 100% { left: 100%; }
+        0% {
+            left: -100%;
+        }
+        50%, 100% {
+            left: 100%;
+        }
     }
 
     .glow-border {
@@ -116,8 +120,14 @@
     }
 
     @keyframes counter {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .animate-counter {
@@ -145,8 +155,12 @@
     }
 
     @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
     }
 
     .gradient-text {
@@ -258,9 +272,15 @@
     }
 
     @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 50%, 90% { transform: translateX(-4px); }
-        30%, 70% { transform: translateX(4px); }
+        0%, 100% {
+            transform: translateX(0);
+        }
+        10%, 50%, 90% {
+            transform: translateX(-4px);
+        }
+        30%, 70% {
+            transform: translateX(4px);
+        }
     }
 
     @keyframes fade-in-down {

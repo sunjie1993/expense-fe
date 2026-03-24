@@ -14,13 +14,13 @@ interface StatCardProps {
 }
 
 export const StatCard = memo(function StatCard({
-    title,
-    value,
-    change,
-    previousValue,
-    icon,
-    period,
-}: StatCardProps) {
+                                                   title,
+                                                   value,
+                                                   change,
+                                                   previousValue,
+                                                   icon,
+                                                   period,
+                                               }: StatCardProps) {
     const isIncrease = change > 0;
     const isNoChange = change === 0;
     const periodLabel = period === "yearly" ? "year" : "month";
