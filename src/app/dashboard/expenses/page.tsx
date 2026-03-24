@@ -40,15 +40,17 @@ export default function ExpensesPage() {
 
     if (error) return <ExpenseErrorState/>;
 
+    const headerDescription = isLoading
+        ? "Loading your expenses..."
+        : pagination
+            ? `${pagination.total} total expenses`
+            : "View and manage all your expenses";
+
     return (
         <div className="flex flex-1 flex-col">
             <PageHeader
                 title="Expenses"
-                description={isLoading
-                    ? "Loading your expenses..."
-                    : pagination
-                        ? `${pagination.total} total expenses`
-                        : "View and manage all your expenses"}
+                description={headerDescription}
             >
                 <ExpenseFilter filters={filters} onFiltersChange={handleFiltersChange}/>
             </PageHeader>
