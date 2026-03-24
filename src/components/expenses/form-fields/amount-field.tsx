@@ -19,18 +19,24 @@ export const AmountField = memo(function AmountField({control, disabled = false}
             render={({field}) => (
                 <FormItem>
                     <FormLabel>
-                        Amount (SGD) <span className="text-destructive">*</span>
+                        Amount <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                        <Input
-                            type="number"
-                            step="0.01"
-                            min="0.01"
-                            placeholder="0.00"
-                            autoComplete="off"
-                            disabled={disabled}
-                            {...field}
-                        />
+                        <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none select-none">
+                                SGD
+                            </span>
+                            <Input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                placeholder="0.00"
+                                autoComplete="off"
+                                disabled={disabled}
+                                className="pl-12"
+                                {...field}
+                            />
+                        </div>
                     </FormControl>
                     <FormMessage/>
                 </FormItem>

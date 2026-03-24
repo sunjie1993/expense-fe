@@ -1,10 +1,10 @@
 "use client";
 
 import {useCallback, useState} from "react";
-import {Card, CardContent} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {ErrorCard} from "@/components/ui/error-card";
 import {useDashboardOverview} from "@/hooks/use-dashboard";
-import {ChevronLeft, ChevronRight, DollarSign, User} from "lucide-react";
+import {ChevronLeft, ChevronRight, DollarSign, Tag, User} from "lucide-react";
 import {PeriodToggle} from "@/components/dashboard/period-toggle";
 import {PageHeader} from "@/components/dashboard/page-header";
 import {StatCard} from "@/components/dashboard/stat-card";
@@ -101,9 +101,14 @@ export default function DashboardPage() {
                                     icon={topCategoryIcon}
                                 />
                             ) : (
-                                <Card>
-                                    <CardContent className="flex items-center justify-center py-8">
-                                        <p className="text-sm text-muted-foreground">No category data</p>
+                                <Card className="opacity-60">
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">Top Category</CardTitle>
+                                        <Tag className="h-4 w-4 text-muted-foreground/40"/>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold text-muted-foreground">—</div>
+                                        <p className="text-xs text-muted-foreground mt-1">No data this period</p>
                                     </CardContent>
                                 </Card>
                             )}
@@ -117,9 +122,14 @@ export default function DashboardPage() {
                                     icon={<User className="h-4 w-4 text-muted-foreground"/>}
                                 />
                             ) : (
-                                <Card>
-                                    <CardContent className="flex items-center justify-center py-8">
-                                        <p className="text-sm text-muted-foreground">No spender data</p>
+                                <Card className="opacity-60">
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">Top Spender</CardTitle>
+                                        <User className="h-4 w-4 text-muted-foreground/40"/>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold text-muted-foreground">—</div>
+                                        <p className="text-xs text-muted-foreground mt-1">No data this period</p>
                                     </CardContent>
                                 </Card>
                             )}

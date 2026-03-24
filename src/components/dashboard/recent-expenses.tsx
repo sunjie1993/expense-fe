@@ -2,6 +2,7 @@
 
 import {memo} from "react";
 import {format} from "date-fns";
+import Link from "next/link";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {CategoryIconBadge} from "@/lib/category-icons";
 import {SkeletonListItem} from "@/components/dashboard/dashboard-skeleton";
@@ -25,24 +26,29 @@ export const RecentExpenses = memo(function RecentExpenses() {
         );
     } else {
         content = (
-            <ul className="space-y-4">
+            <ul className="space-y-1">
                 {expenses.map((expense) => (
-                    <li key={expense.id} className="flex items-center gap-3">
-                        <CategoryIconBadge
-                            iconName={expense.main_cat_icon ?? ""}
-                            color={expense.main_cat_color}
-                        />
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium leading-none truncate">
-                                {expense.description || expense.category_name}
+                    <li key={expense.id}>
+                        <Link
+                            href="/dashboard/expenses"
+                            className="flex items-center gap-3 rounded-md -mx-2 px-2 py-2 transition-colors hover:bg-muted/50"
+                        >
+                            <CategoryIconBadge
+                                iconName={expense.main_cat_icon ?? ""}
+                                color={expense.main_cat_color}
+                            />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium leading-none truncate">
+                                    {expense.description || expense.category_name}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {format(new Date(expense.expense_date), "MMM d, yyyy")}
+                                </p>
+                            </div>
+                            <p className="text-sm font-medium tabular-nums shrink-0">
+                                {formatCurrency(expense.amount)}
                             </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {format(new Date(expense.expense_date), "MMM d, yyyy")}
-                            </p>
-                        </div>
-                        <p className="text-sm font-medium tabular-nums shrink-0">
-                            {formatCurrency(expense.amount)}
-                        </p>
+                        </Link>
                     </li>
                 ))}
             </ul>

@@ -8,20 +8,18 @@ interface SpenderBadgeProps {
 }
 
 const SPENDER_STYLES: Record<string, string> = {
-    SJ: "bg-lime-200 text-green-800",
-    YS: "bg-fuchsia-300 text-fuchsia-900",
-    Shared: "bg-blue-200 text-blue-800",
-} as const;
+    SJ: "bg-blue-50 text-blue-700 border-blue-200",
+    YS: "bg-violet-50 text-violet-700 border-violet-200",
+    Shared: "bg-muted text-muted-foreground border-border",
+};
 
-export const SpenderBadge = memo(function SpenderBadge({
-                                                           spender,
-                                                       }: SpenderBadgeProps) {
-    const styleClass = SPENDER_STYLES[spender] || "bg-gray-100 text-gray-700";
+export const SpenderBadge = memo(function SpenderBadge({spender}: SpenderBadgeProps) {
+    const styleClass = SPENDER_STYLES[spender] ?? "bg-muted text-muted-foreground border-border";
 
     return (
         <output
             className={cn(
-                "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-all hover:shadow-sm",
+                "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
                 styleClass
             )}
             aria-label={`Spent by ${spender}`}

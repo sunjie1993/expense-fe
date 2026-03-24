@@ -10,27 +10,20 @@ interface CategoryCellProps {
     readonly color?: string;
 }
 
-/**
- * CategoryCell displays expense category information with an icon
- */
 export const CategoryCell = memo(function CategoryCell({
-                                                           category,
-                                                           parentCategory,
-                                                           icon,
-                                                           color,
-                                                       }: CategoryCellProps) {
+    category,
+    parentCategory,
+    icon,
+    color,
+}: CategoryCellProps) {
     return (
         <div className="flex items-center gap-3">
             <div
-                className="p-2 rounded-lg transition-transform hover:scale-110"
+                className="p-2 rounded-lg"
                 style={color ? {backgroundColor: `${color}20`} : undefined}
                 aria-hidden="true"
             >
-                <CategoryIcon
-                    iconName={icon || "credit-card"}
-                    className="h-4 w-4"
-                    color={color}
-                />
+                <CategoryIcon iconName={icon || "credit-card"} className="h-4 w-4" color={color}/>
             </div>
             <div className="min-w-0">
                 <p className="font-medium text-sm truncate">{category}</p>
