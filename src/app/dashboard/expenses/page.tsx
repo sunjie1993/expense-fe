@@ -83,7 +83,7 @@ export default function ExpensesPage() {
                                             <TableHead>Category</TableHead>
                                             <TableHead>Description</TableHead>
                                             <TableHead>Spent By</TableHead>
-                                            <TableHead>Payment</TableHead>
+                                            <TableHead className="hidden md:table-cell">Payment</TableHead>
                                             <TableHead className="text-right">Amount</TableHead>
                                         </TableRow>
                                     </TableHeader>

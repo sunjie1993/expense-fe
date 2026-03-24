@@ -1,10 +1,11 @@
 "use client";
 
 import {memo} from "react";
+import {format} from "date-fns";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {SpenderBadge} from "./spender-badge";
 import {CategoryCell} from "./category-cell";
-import {formatCurrency, formatExpenseDate} from "@/lib/utils";
+import {formatCurrency} from "@/lib/utils";
 import type {Expense} from "@/types/api";
 
 interface ExpenseTableRowProps {
@@ -12,15 +13,12 @@ interface ExpenseTableRowProps {
 }
 
 export const ExpenseTableRow = memo(function ExpenseTableRow({expense}: ExpenseTableRowProps) {
-    const {day, monthYear} = formatExpenseDate(expense.expense_date);
-
     return (
-        <TableRow className="animate-in fade-in slide-in-from-bottom-2 expense-row-animation">
+        <TableRow>
             <TableCell>
-                <div className="text-center">
-                    <p className="text-lg font-semibold leading-none tabular-nums">{day}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{monthYear}</p>
-                </div>
+                <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap">
+                    {format(new Date(expense.expense_date), "d MMM yyyy")}
+                </span>
             </TableCell>
             <TableCell>
                 <CategoryCell
@@ -31,16 +29,16 @@ export const ExpenseTableRow = memo(function ExpenseTableRow({expense}: ExpenseT
                 />
             </TableCell>
             <TableCell>
-                <span className="text-sm text-muted-foreground">{expense.description || "-"}</span>
+                <span className="text-sm text-muted-foreground">{expense.description || "—"}</span>
             </TableCell>
             <TableCell>
                 <SpenderBadge spender={expense.spent_by}/>
             </TableCell>
-            <TableCell>
+            <TableCell className="hidden md:table-cell">
                 <span className="text-sm text-muted-foreground">{expense.payment_method}</span>
             </TableCell>
             <TableCell className="text-right">
-                <span className="font-semibold tabular-nums">{formatCurrency(expense.amount)}</span>
+                <span className="font-medium tabular-nums">{formatCurrency(expense.amount)}</span>
             </TableCell>
         </TableRow>
     );
