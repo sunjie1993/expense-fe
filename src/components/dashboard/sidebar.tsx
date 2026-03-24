@@ -5,28 +5,12 @@ import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {useAuth} from "@/contexts/auth-context";
-import {LayoutDashboard, LogOut, Receipt,} from "lucide-react";
-
-const navItems = [
-    {
-        title: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "Expenses",
-        href: "/dashboard/expenses",
-        icon: Receipt,
-    },
-];
+import {LogOut} from "lucide-react";
+import {NAV_ITEMS} from "@/components/dashboard/nav-items";
 
 export function Sidebar() {
     const pathname = usePathname();
     const {logout} = useAuth();
-
-    const handleLogout = () => {
-        logout();
-    };
 
     return (
         <aside className="hidden md:flex flex-col w-64 border-r bg-card">
@@ -34,7 +18,7 @@ export function Sidebar() {
                 <h1 className="text-xl font-bold">Expense Tracker</h1>
             </div>
             <nav className="flex-1 p-4 space-y-1">
-                {navItems.map((item) => {
+                {NAV_ITEMS.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <Link
@@ -57,7 +41,7 @@ export function Sidebar() {
                 <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 text-muted-foreground"
-                    onClick={handleLogout}
+                    onClick={logout}
                 >
                     <LogOut className="h-4 w-4"/>
                     Logout

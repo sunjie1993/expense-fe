@@ -1,75 +1,68 @@
 "use client";
 
+import {useState} from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
-import {useAuth} from "@/contexts/auth-context";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {LayoutDashboard, LogOut, Menu, Receipt} from "lucide-react";
-
-const navItems = [
-    {
-        title: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "Expenses",
-        href: "/dashboard/expenses",
-        icon: Receipt,
-    },
-];
+import {Plus} from "lucide-react";
+import {NAV_ITEMS} from "@/components/dashboard/nav-items";
+import {CreateExpenseDialog} from "@/components/expenses/create-expense-dialog";
 
 export function MobileNav() {
     const pathname = usePathname();
-    const {logout} = useAuth();
+    const [dialogOpen, setDialogOpen] = useState(false);
 
-    const handleLogout = () => {
-        logout();
-    };
+    const [dashItem, expensesItem] = NAV_ITEMS;
+    const DashIcon = dashItem.icon;
+    const ExpensesIcon = expensesItem.icon;
 
     return (
-        <header className="md:hidden flex items-center justify-between p-4 border-b bg-card">
-            <h1 className="text-lg font-bold">Expense Tracker</h1>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Menu className="h-5 w-5"/>
-                        <span className="sr-only">Toggle menu</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                    {navItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
-                            <DropdownMenuItem key={item.href} asChild>
-                                <Link
-                                    href={item.href}
-                                    className={cn(
-                                        "flex items-center gap-2",
-                                        isActive && "font-medium"
-                                    )}
-                                >
-                                    <item.icon className="h-4 w-4"/>
-                                    {item.title}
-                                </Link>
-                            </DropdownMenuItem>
-                        );
-                    })}
-                    <DropdownMenuSeparator/>
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                        <LogOut className="h-4 w-4 mr-2"/>
-                        Logout
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </header>
+        <>
+            <nav
+                className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t bg-background"
+                aria-label="Mobile navigation"
+            >
+                <div className="flex h-16 items-stretch">
+                    <Link
+                        href={dashItem.href}
+                        className={cn(
+                            "flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
+                            pathname === dashItem.href
+                                ? "text-foreground"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <DashIcon className="h-5 w-5"/>
+                        <span>{dashItem.title}</span>
+                    </Link>
+
+                    <div className="flex flex-1 items-center justify-center">
+                        <button
+                            type="button"
+                            onClick={() => setDialogOpen(true)}
+                            className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-opacity hover:opacity-90 active:opacity-80"
+                            aria-label="Add expense"
+                        >
+                            <Plus className="h-5 w-5"/>
+                        </button>
+                    </div>
+
+                    <Link
+                        href={expensesItem.href}
+                        className={cn(
+                            "flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
+                            pathname === expensesItem.href
+                                ? "text-foreground"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <ExpensesIcon className="h-5 w-5"/>
+                        <span>{expensesItem.title}</span>
+                    </Link>
+                </div>
+            </nav>
+
+            <CreateExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen}/>
+        </>
     );
 }

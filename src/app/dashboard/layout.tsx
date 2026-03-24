@@ -7,9 +7,7 @@ import {MobileNav} from "@/components/dashboard/mobile-nav";
 import {AddExpenseFab} from "@/components/expenses/add-expense-fab";
 import {Loader2} from "lucide-react";
 
-export default function DashboardLayout({
-                                            children,
-                                        }: Readonly<{ children: ReactNode }>) {
+export default function DashboardLayout({children}: Readonly<{ children: ReactNode }>) {
     const {isAuthenticated, isLoading} = useAuth();
 
     useEffect(() => {
@@ -33,9 +31,14 @@ export default function DashboardLayout({
     return (
         <div className="min-h-screen flex flex-col md:flex-row">
             <Sidebar/>
+            <main className="flex-1 overflow-auto pb-16 md:pb-0">
+                {children}
+            </main>
+            {/* FAB: desktop only — mobile uses the tab bar's add button */}
+            <div className="hidden md:block">
+                <AddExpenseFab/>
+            </div>
             <MobileNav/>
-            <main className="flex-1 overflow-auto">{children}</main>
-            <AddExpenseFab/>
         </div>
     );
 }

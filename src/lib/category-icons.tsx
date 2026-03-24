@@ -10,7 +10,7 @@ import {
     GraduationCap,
     Heart,
     Home,
-    LucideIcon,
+    type LucideIcon,
     Plane,
     Shirt,
     ShoppingCart,
@@ -18,7 +18,6 @@ import {
     Utensils,
 } from "lucide-react";
 
-// Map of icon names to lucide-react components
 const iconMap: Record<string, LucideIcon> = {
     "credit-card": CreditCard,
     home: Home,
@@ -46,15 +45,22 @@ interface CategoryIconProps {
 
 export function CategoryIcon({iconName, className = "h-5 w-5", color}: Readonly<CategoryIconProps>) {
     const IconComponent = iconMap[iconName] || CreditCard;
-
-    return (
-        <IconComponent
-            className={className}
-            style={color ? {color} : undefined}
-        />
-    );
+    return <IconComponent className={className} style={color ? {color} : undefined}/>;
 }
 
-export function getCategoryIcon(iconName: string): LucideIcon {
-    return iconMap[iconName] || CreditCard;
+interface CategoryIconBadgeProps {
+    iconName: string;
+    color?: string;
+}
+
+export function CategoryIconBadge({iconName, color}: Readonly<CategoryIconBadgeProps>) {
+    return (
+        <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+            style={color ? {backgroundColor: `${color}20`} : undefined}
+            aria-hidden="true"
+        >
+            <CategoryIcon iconName={iconName} className="h-4 w-4" color={color}/>
+        </div>
+    );
 }

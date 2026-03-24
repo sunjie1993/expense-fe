@@ -2,26 +2,29 @@
 
 import {useCallback, useState} from "react";
 import {Card, CardContent} from "@/components/ui/card";
+import {ErrorCard} from "@/components/ui/error-card";
 import {useDashboardOverview} from "@/hooks/use-dashboard";
-import {AlertCircle, ChevronLeft, ChevronRight, DollarSign, Loader2, User} from "lucide-react";
+import {ChevronLeft, ChevronRight, DollarSign, User} from "lucide-react";
 import {PeriodToggle} from "@/components/dashboard/period-toggle";
+import {PageHeader} from "@/components/dashboard/page-header";
 import {StatCard} from "@/components/dashboard/stat-card";
 import {SpendingTrendChart} from "@/components/dashboard/spending-trend-chart";
 import {CategoryRankingBoard} from "@/components/dashboard/category-ranking-board";
+import {DashboardSkeleton} from "@/components/dashboard/dashboard-skeleton";
+import {RecentExpenses} from "@/components/dashboard/recent-expenses";
 import {Button} from "@/components/ui/button";
 import {CategoryIcon} from "@/lib/category-icons";
-import {formatCurrency, formatPeriodDisplay, getCurrentMonth, getCurrentYear, navigatePeriod,} from "@/lib/utils";
+import {formatCurrency, formatPeriodDisplay, getCurrentMonth, getCurrentYear, navigatePeriod} from "@/lib/utils";
 
 export default function DashboardPage() {
     const [period, setPeriod] = useState<"monthly" | "yearly">("monthly");
     const [date, setDate] = useState(getCurrentMonth());
 
     const {data: dashboardData, error, isLoading} = useDashboardOverview(period, date);
-
     const dashboard = dashboardData?.data;
 
     const topCategoryIcon = dashboard?.cards.top_category
-        ? <CategoryIcon iconName={dashboard.cards.top_category.icon} className="h-5 w-5"/>
+        ? <CategoryIcon iconName={dashboard.cards.top_category.icon} className="h-4 w-4"/>
         : null;
 
     const handlePeriodChange = useCallback((newPeriod: "monthly" | "yearly") => {
@@ -30,96 +33,63 @@ export default function DashboardPage() {
     }, []);
 
     const handleNavigate = useCallback((direction: "prev" | "next") => {
-        setDate((prevDate) => navigatePeriod(period, prevDate, direction));
+        setDate((prev) => navigatePeriod(period, prev, direction));
     }, [period]);
 
-    if (error) {
-        return (
-            <div className="w-full p-6">
-                <Card className="bg-destructive/5 border-destructive/20">
-                    <CardContent className="flex items-center justify-center gap-3 py-12">
-                        <AlertCircle className="h-5 w-5 text-destructive" aria-hidden="true"/>
-                        <div className="text-center">
-                            <p className="text-sm font-medium text-destructive">
-                                Failed to load dashboard data
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                Please try again later or contact support if the problem persists.
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
-
     return (
-        <div className="w-full p-6 space-y-8 animate-in fade-in duration-500 relative">
-            <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-chart-3/5 pointer-events-none -z-10" />
-            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative">
-                <div className="space-y-2">
-                    <h1 className="text-4xl font-bold tracking-tight gradient-text">Dashboard</h1>
-                    <p className="text-sm text-muted-foreground">
-                        {isLoading
-                            ? "Loading your expense overview..."
-                            : `Overview of your expenses for ${formatPeriodDisplay(period, date)}`}
-                    </p>
-                </div>
-                <PeriodToggle period={period} onPeriodChange={handlePeriodChange}/>
-            </header>
+        <div className="flex flex-1 flex-col">
+            <PageHeader
+                title="Dashboard"
+                description={isLoading
+                    ? "Loading your expense overview..."
+                    : `Overview for ${formatPeriodDisplay(period, date)}`}
+                actions={
+                    <>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleNavigate("prev")}
+                            disabled={isLoading}
+                            aria-label="Previous period"
+                        >
+                            <ChevronLeft className="h-4 w-4"/>
+                        </Button>
+                        <output
+                            className="text-sm font-medium min-w-28 text-center px-2 py-1 border rounded-md bg-muted/40 hidden sm:block"
+                            aria-live="polite"
+                        >
+                            {formatPeriodDisplay(period, date)}
+                        </output>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleNavigate("next")}
+                            disabled={isLoading}
+                            aria-label="Next period"
+                        >
+                            <ChevronRight className="h-4 w-4"/>
+                        </Button>
+                        <PeriodToggle period={period} onPeriodChange={handlePeriodChange}/>
+                    </>
+                }
+            />
 
-            <nav
-                className="flex items-center justify-center gap-4 relative"
-                aria-label="Period navigation"
-            >
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleNavigate("prev")}
-                    disabled={isLoading}
-                    aria-label="Previous period"
-                    className="glass-card shadow-sm hover:shadow-md transition-all"
-                >
-                    <ChevronLeft className="h-4 w-4 mr-2" aria-hidden="true"/>
-                    Previous
-                </Button>
-                <output className="text-sm font-semibold min-w-40 text-center px-4 py-2 glass-card rounded-lg shadow-sm" aria-live="polite">
-                    {formatPeriodDisplay(period, date)}
-                </output>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleNavigate("next")}
-                    disabled={isLoading}
-                    aria-label="Next period"
-                    className="glass-card shadow-sm hover:shadow-md transition-all"
-                >
-                    Next
-                    <ChevronRight className="h-4 w-4 ml-2" aria-hidden="true"/>
-                </Button>
-            </nav>
+            <div className="flex flex-col gap-4 p-4">
+                {error && <ErrorCard title="Failed to load dashboard data"/>}
 
-            {/* Loading State */}
-            {isLoading && (
-                <output className="flex flex-col items-center justify-center py-20 space-y-4"
-                        aria-label="Loading dashboard data">
-                    <Loader2 className="h-10 w-10 animate-spin text-primary" aria-hidden="true"/>
-                    <p className="text-sm text-muted-foreground">Loading your dashboard...</p>
-                </output>
-            )}
+                {isLoading && <DashboardSkeleton/>}
 
-            {!isLoading && dashboard && (
-                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <section aria-label="Expense statistics">
-                        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {!isLoading && dashboard && (
+                    <>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             <StatCard
                                 title="Total Expenses"
                                 value={formatCurrency(dashboard.cards.total_expenses.current)}
                                 change={dashboard.cards.total_expenses.change_percentage}
                                 previousValue={formatCurrency(dashboard.cards.total_expenses.previous)}
-                                icon={<DollarSign className="h-5 w-5"/>}
-                                iconColor="text-primary"
-                                iconBgColor="bg-primary/10"
+                                icon={<DollarSign className="h-4 w-4 text-muted-foreground"/>}
                             />
 
                             {dashboard.cards.top_category ? (
@@ -127,19 +97,13 @@ export default function DashboardPage() {
                                     title="Top Category"
                                     value={dashboard.cards.top_category.category_name}
                                     change={dashboard.cards.top_category.change_percentage}
-                                    previousValue={formatCurrency(
-                                        dashboard.cards.top_category.previous_total
-                                    )}
+                                    previousValue={formatCurrency(dashboard.cards.top_category.previous_total)}
                                     icon={topCategoryIcon}
-                                    iconColor={dashboard.cards.top_category.color}
-                                    iconBgColor={`${dashboard.cards.top_category.color}20`}
                                 />
                             ) : (
-                                <Card className="flex items-center justify-center">
-                                    <CardContent className="py-8">
-                                        <p className="text-sm text-muted-foreground text-center">
-                                            No category data available
-                                        </p>
+                                <Card>
+                                    <CardContent className="flex items-center justify-center py-8">
+                                        <p className="text-sm text-muted-foreground">No category data</p>
                                     </CardContent>
                                 </Card>
                             )}
@@ -149,36 +113,31 @@ export default function DashboardPage() {
                                     title="Top Spender"
                                     value={dashboard.cards.top_spender.spent_by}
                                     change={dashboard.cards.top_spender.change_percentage}
-                                    previousValue={formatCurrency(
-                                        dashboard.cards.top_spender.previous_total
-                                    )}
-                                    icon={<User className="h-5 w-5"/>}
-                                    iconColor="text-blue-500"
-                                    iconBgColor="bg-blue-500/10"
+                                    previousValue={formatCurrency(dashboard.cards.top_spender.previous_total)}
+                                    icon={<User className="h-4 w-4 text-muted-foreground"/>}
                                 />
                             ) : (
-                                <Card className="flex items-center justify-center">
-                                    <CardContent className="py-8">
-                                        <p className="text-sm text-muted-foreground text-center">
-                                            No spender data available
-                                        </p>
+                                <Card>
+                                    <CardContent className="flex items-center justify-center py-8">
+                                        <p className="text-sm text-muted-foreground">No spender data</p>
                                     </CardContent>
                                 </Card>
                             )}
                         </div>
-                    </section>
 
-                    {/* Spending Trend Chart */}
-                    <section aria-label="Spending trends">
-                        <SpendingTrendChart data={dashboard.spending_chart} period={period}/>
-                    </section>
+                        <div className="grid gap-4 lg:grid-cols-7">
+                            <div className="lg:col-span-4">
+                                <SpendingTrendChart data={dashboard.spending_chart} period={period}/>
+                            </div>
+                            <div className="lg:col-span-3">
+                                <CategoryRankingBoard categories={dashboard.category_ranking}/>
+                            </div>
+                        </div>
 
-                    {/* Category Ranking */}
-                    <section aria-label="Category rankings">
-                        <CategoryRankingBoard categories={dashboard.category_ranking}/>
-                    </section>
-                </div>
-            )}
+                        <RecentExpenses/>
+                    </>
+                )}
+            </div>
         </div>
     );
 }

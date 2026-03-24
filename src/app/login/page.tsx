@@ -40,8 +40,8 @@ export default function LoginPage() {
     }, [passcode, login]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-muted via-background to-background">
-            <Card key={shakeKey} className={`w-full max-w-md animate-fade-in-up ${shakeKey > 0 ? "animate-shake" : ""}`}>
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+            <Card key={shakeKey} className={`w-full max-w-md ${shakeKey > 0 ? "animate-shake" : ""}`}>
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">
                         Expense Tracker
