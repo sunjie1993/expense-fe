@@ -25,7 +25,7 @@ interface CreateExpenseDialogProps {
 function FormSkeleton() {
     return (
         <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Skeleton className="h-4 w-20"/>
                     <Skeleton className="h-9 w-full"/>
@@ -35,7 +35,7 @@ function FormSkeleton() {
                     <Skeleton className="h-9 w-full"/>
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Skeleton className="h-4 w-16"/>
                     <Skeleton className="h-9 w-full"/>
@@ -45,7 +45,7 @@ function FormSkeleton() {
                     <Skeleton className="h-9 w-full"/>
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Skeleton className="h-4 w-20"/>
                     <Skeleton className="h-9 w-full"/>
@@ -113,13 +113,13 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                             noValidate
                         >
                             {/* Row 1: Amount + Date */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <AmountField control={form.control} disabled={isSubmitting}/>
                                 <DateField control={form.control} disabled={isSubmitting}/>
                             </div>
 
                             {/* Row 2: Spent By + Payment Method */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <SpentByField control={form.control} disabled={isSubmitting}/>
                                 <PaymentMethodField
                                     control={form.control}
@@ -129,7 +129,7 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                             </div>
 
                             {/* Row 3: Category + Subcategory */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <CategoryField
                                     control={form.control}
                                     categories={mainCategories}
