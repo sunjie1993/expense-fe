@@ -8,7 +8,7 @@ import {Receipt} from "lucide-react";
 import {PageHeader} from "@/components/dashboard/page-header";
 import {PaginationControls} from "@/components/expenses/pagination-controls";
 import {ExpenseFilter, type ExpenseFilters} from "@/components/expenses/expense-filter";
-import {ExpenseTableRow} from "@/components/expenses/expense-table-row";
+import {ExpenseCard, ExpenseTableRow} from "@/components/expenses/expense-table-row";
 import {ExpenseEmptyState, ExpenseErrorState, ExpenseLoadingState} from "@/components/expenses/expense-states";
 
 const PAGE_SIZE = 10;
@@ -75,25 +75,35 @@ export default function ExpensesPage() {
                         {isLoading && <ExpenseLoadingState/>}
 
                         {!isLoading && hasExpenses && (
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-25">Date</TableHead>
-                                            <TableHead>Category</TableHead>
-                                            <TableHead>Description</TableHead>
-                                            <TableHead>Spent By</TableHead>
-                                            <TableHead className="hidden md:table-cell">Payment</TableHead>
-                                            <TableHead className="text-right">Amount</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {expenses.map((expense) => (
-                                            <ExpenseTableRow key={expense.id} expense={expense}/>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                            <>
+                                {/* Mobile card list */}
+                                <div className="sm:hidden">
+                                    {expenses.map((expense) => (
+                                        <ExpenseCard key={expense.id} expense={expense}/>
+                                    ))}
+                                </div>
+
+                                {/* Desktop table */}
+                                <div className="hidden sm:block overflow-x-auto">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-25">Date</TableHead>
+                                                <TableHead>Category</TableHead>
+                                                <TableHead>Description</TableHead>
+                                                <TableHead>Spent By</TableHead>
+                                                <TableHead className="hidden md:table-cell">Payment</TableHead>
+                                                <TableHead className="text-right">Amount</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {expenses.map((expense) => (
+                                                <ExpenseTableRow key={expense.id} expense={expense}/>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </>
                         )}
 
                         {!isLoading && !hasExpenses && <ExpenseEmptyState/>}
