@@ -36,7 +36,7 @@ export const DateField = memo(function DateField({control, disabled = false}: Da
                                         variant="outline"
                                         disabled={disabled}
                                         className={cn(
-                                            "w-full pl-3 text-left font-normal",
+                                            "h-9 w-full pl-3 text-left font-normal",
                                             !field.value && "text-muted-foreground"
                                         )}
                                     >

@@ -30,7 +30,12 @@ export const DescriptionField = memo(function DescriptionField({control, disable
                             {...field}
                         />
                     </FormControl>
-                    <FormMessage/>
+                    <div className="flex items-center justify-between">
+                        <FormMessage/>
+                        <span className="text-xs text-muted-foreground ml-auto">
+                            {field.value?.length ?? 0}/500
+                        </span>
+                    </div>
                 </FormItem>
             )}
         />
