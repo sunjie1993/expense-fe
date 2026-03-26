@@ -23,7 +23,8 @@ export const AmountField = memo(function AmountField({control, disabled = false}
                     </FormLabel>
                     <FormControl>
                         <div className="relative">
-                            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-14 flex items-center justify-center border-r border-input rounded-l-md select-none">
+                            <div
+                                className="pointer-events-none absolute left-0 top-0 bottom-0 w-14 flex items-center justify-center border-r border-input rounded-l-md select-none">
                                 <span className="text-sm font-medium text-muted-foreground">SGD</span>
                             </div>
                             <Input

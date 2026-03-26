@@ -114,7 +114,8 @@ export const ExpenseFilter = memo(function ExpenseFilter({filters, onFiltersChan
             {hasActiveFilters && (
                 <div className="flex flex-wrap items-center gap-2">
                     {(filters.startDate || filters.endDate) && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-primary/20">
+                        <span
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-primary/20">
                             <CalendarIcon className="h-3 w-3"/>
                             {formatDateRange()}
                             <button
@@ -127,7 +128,8 @@ export const ExpenseFilter = memo(function ExpenseFilter({filters, onFiltersChan
                         </span>
                     )}
                     {filters.spentBy && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-primary/20">
+                        <span
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-primary/20">
                             {filters.spentBy}
                             <button
                                 onClick={handleClearSpentBy}
