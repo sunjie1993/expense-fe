@@ -19,8 +19,7 @@ export default function LoginPage() {
 
     const triggerShake = () => {
         cardRef.current?.classList.remove("animate-shake");
-        void cardRef.current?.offsetWidth; // force reflow to restart animation
-        cardRef.current?.classList.add("animate-shake");
+        setTimeout(() => cardRef.current?.classList.add("animate-shake"), 0);
     };
 
     const handleLogin = useCallback(async () => {
@@ -101,8 +100,8 @@ export default function LoginPage() {
                                     }}
                                     disabled={isLoading}
                                     autoFocus
-                                    aria-invalid={error !== null}
-                                    aria-describedby={error !== null ? "login-error" : undefined}
+                                    aria-invalid={Boolean(error)}
+                                    aria-describedby={error === null ? undefined : "login-error"}
                                     className="pr-10"
                                 />
                                 <button
