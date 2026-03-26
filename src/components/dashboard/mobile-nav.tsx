@@ -7,6 +7,7 @@ import {cn} from "@/lib/utils";
 import {Plus} from "lucide-react";
 import {NAV_ITEMS} from "@/components/dashboard/nav-items";
 import {CreateExpenseDialog} from "@/components/expenses/create-expense-dialog";
+import {Button} from "@/components/ui/button";
 
 export function MobileNav() {
     const pathname = usePathname();
@@ -37,14 +38,16 @@ export function MobileNav() {
                     </Link>
 
                     <div className="flex flex-1 items-center justify-center">
-                        <button
+                        <Button
                             type="button"
+                            size="icon"
+                            variant="secondary"
                             onClick={() => setDialogOpen(true)}
-                            className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-opacity hover:opacity-90 active:opacity-80"
-                            aria-label="Add expense"
+                            className="h-14 w-14 rounded-full shadow-lg active:scale-95 transition-all -translate-y-3"
+                            aria-label="Add Expense"
                         >
-                            <Plus className="h-5 w-5"/>
-                        </button>
+                            <Plus className="h-6 w-6"/>
+                        </Button>
                     </div>
 
                     <Link
