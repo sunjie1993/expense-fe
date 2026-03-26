@@ -5,7 +5,8 @@ import {useAuth} from "@/contexts/auth-context";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Eye, EyeOff, Loader2} from "lucide-react";
+import {AlertCircle, Eye, EyeOff, Loader2, Wallet} from "lucide-react";
+import {cn} from "@/lib/utils";
 
 export default function LoginPage() {
     const {login} = useAuth();
@@ -13,13 +14,20 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [shakeKey, setShakeKey] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    const triggerShake = () => {
+        cardRef.current?.classList.remove("animate-shake");
+        void cardRef.current?.offsetWidth; // force reflow to restart animation
+        cardRef.current?.classList.add("animate-shake");
+    };
 
     const handleLogin = useCallback(async () => {
-        if (!passcode) {
+        const trimmedPasscode = passcode.trim();
+        if (trimmedPasscode.length === 0) {
             setError("Passcode is required");
-            setShakeKey(k => k + 1);
+            triggerShake();
             inputRef.current?.focus();
             return;
         }
@@ -28,34 +36,52 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            await login(passcode);
+            await login(trimmedPasscode);
             globalThis.location.href = "/dashboard/";
         } catch (err) {
             setError(err instanceof Error ? err.message : "Login failed");
-            setShakeKey(k => k + 1);
+            triggerShake();
             inputRef.current?.focus();
         } finally {
             setIsLoading(false);
         }
     }, [passcode, login]);
 
+    const handleSubmit = useCallback((e: React.FormEvent) => {
+        e.preventDefault();
+        handleLogin();
+    }, [handleLogin]);
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background p-4">
-            <Card key={shakeKey} className={`w-full max-w-md ${shakeKey > 0 ? "animate-shake" : ""}`}>
-                <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center">
-                        Expense Tracker
-                    </CardTitle>
-                    <CardDescription className="text-center">
-                        Enter your passcode to access your dashboard
-                    </CardDescription>
+        <div
+            className="min-h-screen flex items-center justify-center p-4"
+            style={{background: "radial-gradient(ellipse at center, oklch(0.932 0.032 254.585 / 0.5) 0%, oklch(0.968 0.007 247.896) 70%)"}}
+        >
+            <Card
+                ref={cardRef}
+                className={cn("w-full max-w-md animate-fade-in-up elevation-2")}
+                onAnimationEnd={(e) => {
+                    if (e.animationName === "shake") {
+                        cardRef.current?.classList.remove("animate-shake");
+                    }
+                }}
+            >
+                <CardHeader className="space-y-3 items-center text-center">
+                    <div className="h-14 w-14 rounded-full bg-secondary flex items-center justify-center">
+                        <Wallet className="h-7 w-7 text-primary"/>
+                    </div>
+                    <div className="space-y-1">
+                        <CardTitle className="text-2xl font-bold">
+                            Expense Tracker
+                        </CardTitle>
+                        <CardDescription>
+                            Enter your passcode to access your dashboard
+                        </CardDescription>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            handleLogin();
-                        }}
+                        onSubmit={handleSubmit}
                         className="space-y-4"
                     >
                         <div className="space-y-2">
@@ -75,8 +101,8 @@ export default function LoginPage() {
                                     }}
                                     disabled={isLoading}
                                     autoFocus
-                                    aria-invalid={!!error}
-                                    aria-describedby={error ? "login-error" : undefined}
+                                    aria-invalid={error !== null}
+                                    aria-describedby={error !== null ? "login-error" : undefined}
                                     className="pr-10"
                                 />
                                 <button
@@ -91,14 +117,19 @@ export default function LoginPage() {
                             </div>
                         </div>
                         {error && (
-                            <div id="login-error" className="text-sm text-destructive text-center animate-fade-in-down">
-                                {error}
+                            <div
+                                id="login-error"
+                                className="flex items-center gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20 animate-fade-in-down"
+                                role="alert"
+                            >
+                                <AlertCircle className="h-4 w-4 text-destructive shrink-0"/>
+                                <p className="text-sm text-destructive">{error}</p>
                             </div>
                         )}
                         <Button
                             type="submit"
                             className="w-full active:scale-[0.98] transition-all"
-                            disabled={isLoading || !passcode}
+                            disabled={isLoading || passcode.trim().length === 0}
                         >
                             {isLoading ? (
                                 <>
