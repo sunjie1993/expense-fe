@@ -23,10 +23,10 @@ export const AmountField = memo(function AmountField({control, disabled = false}
                     </FormLabel>
                     <FormControl>
                         <div className="relative">
-                            <span
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none select-none">
-                                SGD
-                            </span>
+                            <div
+                                className="pointer-events-none absolute left-0 top-0 bottom-0 w-14 flex items-center justify-center border-r border-input rounded-l-md select-none">
+                                <span className="text-sm font-medium text-muted-foreground">SGD</span>
+                            </div>
                             <Input
                                 type="number"
                                 step="0.01"
@@ -34,7 +34,8 @@ export const AmountField = memo(function AmountField({control, disabled = false}
                                 placeholder="0.00"
                                 autoComplete="off"
                                 disabled={disabled}
-                                className="pl-12"
+                                autoFocus
+                                className="pl-16"
                                 {...field}
                             />
                         </div>

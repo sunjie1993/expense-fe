@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev        # Dev server with HTTPS
+npm run dev        # Dev server with HTTPS (experimental)
 npm run dev:http   # Dev server over HTTP
 npm run build      # Production build (static export to /out)
 npm run lint       # ESLint check
@@ -15,17 +15,20 @@ No test suite configured.
 
 ## Architecture
 
-**Static export Next.js 15 app** — `output: 'export'` in `next.config.ts`, deployed as JAMstack. No API routes, no SSR. All pages are `"use client"`.
+**Static export Next.js 15 app** — `output: 'export'` in `next.config.ts`, deployed as JAMstack. No API routes, no SSR. All pages are `"use client"`. React Compiler is enabled (`reactCompiler: true`).
 
-**Backend**: `https://expense-backend.sunjie1993.workers.dev` (Cloudflare Worker). Base URL from `NEXT_PUBLIC_API_URL` env var.
+**Backend**: `https://expense-backend.sunjie1993.workers.dev` (Cloudflare Worker). Base URL from `NEXT_PUBLIC_API_URL` env var (falls back to `http://localhost:8787`).
 
 ### Key patterns
 
-- **Auth**: React Context (`src/contexts/auth-context.tsx`) — access token in memory, refresh token in `sessionStorage`. Auto-refresh on 401; redirect to `/login/` on failure.
-- **Server state**: SWR via custom hooks in `src/hooks/` — each wraps `fetcher()` from `src/lib/api.ts`.
+- **Auth**: React Context (`src/contexts/auth-context.tsx`) — access token in module-level variable (memory only), refresh token in `sessionStorage`. On init, attempts token refresh; redirects to `/login/` on 401 failure. Login is passcode-based.
+- **API layer**: `src/lib/api.ts` — uses native `fetch` (not Axios despite it being installed). Exports `apiGet<T>`, `apiPost<T>`, `apiPut<T>`, `apiDelete<T>` and SWR-compatible `fetcher()`. Auto-retries on 401 by refreshing the access token.
+- **Server state**: SWR via custom hooks in `src/hooks/` — each hook builds a URL with query params and calls `useSWR` with the shared `fetcher`.
 - **Forms**: react-hook-form + Zod schemas (in `src/lib/validations/`). Form fields are modular components in `src/components/expenses/form-fields/`.
-- **API layer**: `src/lib/api.ts` exports `apiGet<T>`, `apiPost<T>`, `apiPut<T>`, `apiDelete<T>` plus the SWR-compatible `fetcher()`.
 - **Types**: All API interfaces in `src/types/api.ts`.
+- **Charts**: Recharts (via `src/components/dashboard/spending-trend-chart.tsx`).
+- **Toasts**: Sonner.
+- **Category icons**: Mapped in `src/lib/category-icons.tsx`.
 
 ### Routing
 
@@ -33,19 +36,18 @@ No test suite configured.
 |-------|---------|
 | `/` | Redirects to `/dashboard/` or `/login/` based on auth |
 | `/login/` | Passcode-based login |
-| `/dashboard/` | Main dashboard |
-| `/dashboard/expenses/` | Expense management |
+| `/dashboard/` | Main dashboard with stat cards, chart, category ranking |
+| `/dashboard/expenses/` | Expense management with filters and pagination |
 
-### Design system (MD3-inspired)
+`trailingSlash: true` is set in `next.config.ts` — always use trailing slashes in `href` values.
 
+### Design system
+
+- **Component library**: Shadcn UI (Radix primitives + Tailwind), components in `src/components/ui/`
+- **Styling**: Tailwind 4 with `@theme inline` in `globals.css`. All color tokens use oklch.
 - **Font**: Montserrat via `next/font/google`, CSS var `--font-montserrat`
-- **Colors**: oklch tokens — primary Blue-600, secondary Blue-100 (`bg-secondary`)
-- **Radius**: `--radius: 0.75rem` base → cards `rounded-2xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`
-- **Elevation**: `.md3-elevation-1/2/3/4` utility classes (defined in `globals.css`)
-- **Sidebar**: MD3 Navigation Drawer — `bg-sidebar` (blue-50), active item `bg-secondary rounded-full`
-- **Button variants**: `default` (filled), `tonal` (bg-secondary), `outline` (border-2 border-primary), `ghost`, `secondary` (elevated), `link`
-- All custom tokens and utilities live in `src/app/globals.css` via Tailwind 4 `@theme inline`.
-
-### Locale
-
-`en-SG` (Singapore) for currency formatting and dates.
+- **Radius**: `--radius: 0.625rem` base. Cards use `rounded-2xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`.
+- **Elevation**: `.elevation-0/1/2/4/8` utility classes (box-shadow based, defined in `globals.css`)
+- **Animations**: Custom keyframes and utility classes in `globals.css` (`animate-fade-in-up`, `animate-shake`, `animate-counter`, `expense-row-animation`, `category-rank-animation`). Also uses `tw-animate-css` package.
+- **Dark mode**: Full dark mode via `.dark` class; `next-themes` handles toggling.
+- **Locale**: `en-SG` (Singapore) for currency formatting and dates.
