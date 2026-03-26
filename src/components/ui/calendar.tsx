@@ -7,7 +7,9 @@ import {type DayButton, DayPicker, getDefaultClassNames,} from "react-day-picker
 import {cn} from "@/lib/utils"
 import {Button, buttonVariants} from "@/components/ui/button"
 
-function CalendarRoot({className, rootRef, ...props}: React.ComponentPropsWithoutRef<"div"> & { rootRef?: React.Ref<HTMLDivElement> }) {
+function CalendarRoot({className, rootRef, ...props}: React.ComponentPropsWithoutRef<"div"> & {
+    rootRef?: React.Ref<HTMLDivElement>
+}) {
     return (
         <div
             data-slot="calendar"
@@ -18,7 +20,9 @@ function CalendarRoot({className, rootRef, ...props}: React.ComponentPropsWithou
     )
 }
 
-function CalendarChevron({className, orientation, ...props}: React.ComponentPropsWithoutRef<"svg"> & { orientation?: string }) {
+function CalendarChevron({className, orientation, ...props}: React.ComponentPropsWithoutRef<"svg"> & {
+    orientation?: string
+}) {
     if (orientation === "left") {
         return <ChevronLeftIcon className={cn("size-4", className)} {...props} />
     }
