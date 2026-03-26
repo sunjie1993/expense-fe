@@ -6,6 +6,7 @@ import {FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/compo
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import type {ExpenseFormValues} from "@/lib/validations/expense";
 import type {MainCategory} from "@/types/api";
+import {CategoryIcon} from "@/lib/category-icons";
 
 interface CategoryFieldProps {
     readonly control: Control<ExpenseFormValues>;
@@ -42,7 +43,14 @@ export const CategoryField = memo(function CategoryField({
                         <SelectContent>
                             {categories.map((category) => (
                                 <SelectItem key={category.id} value={category.id.toString()}>
-                                    {category.name}
+                                    <span className="flex items-center gap-2">
+                                        <CategoryIcon
+                                            iconName={category.icon}
+                                            className="h-4 w-4 shrink-0"
+                                            color={category.color}
+                                        />
+                                        {category.name}
+                                    </span>
                                 </SelectItem>
                             ))}
                         </SelectContent>
