@@ -2,12 +2,7 @@
 
 import {memo, useMemo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {
-    type ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart";
+import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart";
 import {Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis} from "recharts";
 import {useDailyTrend} from "@/hooks/use-dashboard";
 import {formatCurrency} from "@/lib/utils";
@@ -36,7 +31,7 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
     const {data, isLoading} = useDailyTrend(yearMonth);
     const trend = data?.data;
 
-    const {chartData, peakDay} = useMemo((): {chartData: DailyChartPoint[]; peakDay: number | null} => {
+    const {chartData, peakDay} = useMemo((): { chartData: DailyChartPoint[]; peakDay: number | null } => {
         if (!trend?.days) return {chartData: [], peakDay: null};
 
         const items = trend.days.map((d) => ({
@@ -102,8 +97,10 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
                                         formatter={(value, _name, item) => {
                                             const {count} = item.payload as unknown as DailyChartPoint;
                                             return [
-                                                <span key="v" className="tabular-nums">{formatCurrency(Number(value))}</span>,
-                                                <span key="c" className="text-muted-foreground ml-1 text-xs">{count} txn{count !== 1 ? "s" : ""}</span>,
+                                                <span key="v"
+                                                      className="tabular-nums">{formatCurrency(Number(value))}</span>,
+                                                <span key="c"
+                                                      className="text-muted-foreground ml-1 text-xs">{count} txn{count !== 1 ? "s" : ""}</span>,
                                             ];
                                         }}
                                     />

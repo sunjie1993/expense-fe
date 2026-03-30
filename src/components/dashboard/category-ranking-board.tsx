@@ -61,22 +61,25 @@ function CategoryRow({category, onClick}: CategoryRowProps) {
 }
 
 export const CategoryRankingBoard = memo(function CategoryRankingBoard({
-    categories,
-    onCategoryClick,
-}: CategoryRankingBoardProps) {
+                                                                           categories,
+                                                                           onCategoryClick,
+                                                                       }: CategoryRankingBoardProps) {
     const hasCategories = categories && categories.length > 0;
+
+    let description: string;
+    if (!hasCategories) {
+        description = "No spending data to display";
+    } else if (onCategoryClick) {
+        description = "Tap a category to see the breakdown";
+    } else {
+        description = "Top spending categories this period";
+    }
 
     return (
         <Card className="h-full">
             <CardHeader>
                 <CardTitle>Category Rankings</CardTitle>
-                <CardDescription>
-                    {hasCategories
-                        ? onCategoryClick
-                            ? "Tap a category to see the breakdown"
-                            : "Top spending categories this period"
-                        : "No spending data to display"}
-                </CardDescription>
+                <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
                 {hasCategories ? (
