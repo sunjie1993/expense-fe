@@ -15,17 +15,17 @@ interface CategoryDrillDownDialogProps {
 }
 
 export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
-                                                                                 categoryId,
-                                                                                 period,
-                                                                                 date,
-                                                                                 onClose,
-                                                                             }: CategoryDrillDownDialogProps) {
+    categoryId,
+    period,
+    date,
+    onClose,
+}: CategoryDrillDownDialogProps) {
     const {data, isLoading} = useCategoryDrillDown(categoryId, period, date);
     const drillDown = data?.data;
 
     return (
         <Dialog open={categoryId !== null} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     {drillDown ? (
                         <div className="flex items-center gap-3">
@@ -79,8 +79,7 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
                                                 {item.name.slice(0, 2).toUpperCase()}
                                             </div>
                                         ) : (
-                                            <div
-                                                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
                                                 {item.name.slice(0, 2).toUpperCase()}
                                             </div>
                                         )}
@@ -93,7 +92,7 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
                                             </div>
                                             <div className="flex items-center justify-between mt-1">
                                                 <p className="text-xs text-muted-foreground">
-                                                    {item.transaction_count} transaction{item.transaction_count === 1 ? "" : "s"}
+                                                    {item.transaction_count} txn{item.transaction_count !== 1 ? "s" : ""}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground tabular-nums">
                                                     {item.percentage.toFixed(1)}%

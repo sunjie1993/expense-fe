@@ -2,7 +2,12 @@
 
 import {memo, useMemo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart";
+import {
+    type ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart";
 import {Pie, PieChart} from "recharts";
 import {useSpenderBreakdown} from "@/hooks/use-dashboard";
 import {formatCurrency} from "@/lib/utils";
@@ -21,9 +26,9 @@ interface SpenderBreakdownChartProps {
 }
 
 export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
-                                                                             period,
-                                                                             date,
-                                                                         }: SpenderBreakdownChartProps) {
+    period,
+    date,
+}: SpenderBreakdownChartProps) {
     const {data, isLoading} = useSpenderBreakdown(period, date);
     const breakdown = data?.data;
 
@@ -44,14 +49,18 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
     }, [breakdown]);
 
     const periodLabel = period === "yearly" ? "year" : "month";
-    const spendingDescription = chartData.length > 0 ? "Who spent what this " + periodLabel : "No spending data this period";
-    const description = isLoading ? "Loading..." : spendingDescription;
 
     return (
         <Card className="h-full">
             <CardHeader>
                 <CardTitle>Spender Breakdown</CardTitle>
-                <CardDescription>{description}</CardDescription>
+                <CardDescription>
+                    {isLoading
+                        ? "Loading..."
+                        : chartData.length > 0
+                            ? `Who spent what this ${periodLabel}`
+                            : "No spending data this period"}
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 {isLoading && <Skeleton className="h-60 w-full"/>}
@@ -100,11 +109,10 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                                             </div>
                                             <div className="flex items-center justify-between mt-0.5">
                                                 <span className="text-xs text-muted-foreground">
-                                                    {s.transaction_count} transaction{s.transaction_count !== 1 ? "s" : ""} · {s.percentage.toFixed(1)}%
+                                                    {s.transaction_count} txn{s.transaction_count !== 1 ? "s" : ""} · {s.percentage.toFixed(1)}%
                                                 </span>
                                                 {s.change_percentage !== 0 && (
-                                                    <span
-                                                        className={`flex items-center gap-0.5 text-xs ${isUp ? "text-red-500" : "text-green-500"}`}>
+                                                    <span className={`flex items-center gap-0.5 text-xs ${isUp ? "text-red-500" : "text-green-500"}`}>
                                                         {isUp
                                                             ? <TrendingUp className="h-3 w-3"/>
                                                             : <TrendingDown className="h-3 w-3"/>
