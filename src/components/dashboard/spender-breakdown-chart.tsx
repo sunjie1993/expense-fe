@@ -100,7 +100,7 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                                             </div>
                                             <div className="flex items-center justify-between mt-0.5">
                                                 <span className="text-xs text-muted-foreground">
-                                                    {s.transaction_count} txn{s.transaction_count !== 1 ? "s" : ""} · {s.percentage.toFixed(1)}%
+                                                    {s.transaction_count} transaction{s.transaction_count !== 1 ? "s" : ""} · {s.percentage.toFixed(1)}%
                                                 </span>
                                                 {s.change_percentage !== 0 && (
                                                     <span

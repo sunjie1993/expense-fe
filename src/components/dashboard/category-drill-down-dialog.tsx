@@ -93,7 +93,7 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
                                             </div>
                                             <div className="flex items-center justify-between mt-1">
                                                 <p className="text-xs text-muted-foreground">
-                                                    {item.transaction_count} txn{item.transaction_count === 1 ? "" : "s"}
+                                                    {item.transaction_count} transaction{item.transaction_count === 1 ? "" : "s"}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground tabular-nums">
                                                     {item.percentage.toFixed(1)}%

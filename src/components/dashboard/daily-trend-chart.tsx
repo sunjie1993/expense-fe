@@ -102,7 +102,7 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
                                                 <span key="v"
                                                       className="tabular-nums">{formatCurrency(Number(value))}</span>,
                                                 <span key="c"
-                                                      className="text-muted-foreground ml-1 text-xs">{count} txn{count !== 1 ? "s" : ""}</span>,
+                                                      className="text-muted-foreground ml-1 text-xs">{count} transaction{count !== 1 ? "s" : ""}</span>,
                                             ];
                                         }}
                                     />
