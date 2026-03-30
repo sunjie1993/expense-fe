@@ -11,9 +11,6 @@ interface SpentByFieldProps {
     readonly disabled?: boolean;
 }
 
-/**
- * SpentByField component for selecting who made the expense
- */
 export const SpentByField = memo(function SpentByField({
                                                            control,
                                                            disabled = false,

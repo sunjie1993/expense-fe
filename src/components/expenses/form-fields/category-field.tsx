@@ -14,9 +14,6 @@ interface CategoryFieldProps {
     readonly disabled?: boolean;
 }
 
-/**
- * CategoryField component for selecting main expense category
- */
 export const CategoryField = memo(function CategoryField({
                                                              control,
                                                              categories,

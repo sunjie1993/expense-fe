@@ -14,9 +14,6 @@ interface SubcategoryFieldProps {
     readonly disabled?: boolean;
 }
 
-/**
- * SubcategoryField component for selecting expense subcategory
- */
 export const SubcategoryField = memo(function SubcategoryField({
                                                                    control,
                                                                    subcategories,

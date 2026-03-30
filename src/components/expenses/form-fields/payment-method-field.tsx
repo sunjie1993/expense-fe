@@ -13,9 +13,6 @@ interface PaymentMethodFieldProps {
     readonly disabled?: boolean;
 }
 
-/**
- * PaymentMethodField component for selecting payment method
- */
 export const PaymentMethodField = memo(function PaymentMethodField({
                                                                        control,
                                                                        paymentMethods,

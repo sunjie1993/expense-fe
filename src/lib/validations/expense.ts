@@ -1,8 +1,5 @@
 import {z} from "zod";
 
-/**
- * Expense form validation schema
- */
 export const expenseSchema = z.object({
     spent_by: z.enum(["SJ", "YS", "Shared"], {
         message: "Please select who spent",
@@ -25,24 +22,14 @@ export const expenseSchema = z.object({
         .optional(),
 });
 
-/**
- * Expense form values type inferred from schema
- */
 export type ExpenseFormValues = z.infer<typeof expenseSchema>;
 
-/**
- * Spender options for the form
- */
 export const SPENDER_OPTIONS = [
     {value: "SJ", label: "SJ"},
     {value: "YS", label: "YS"},
     {value: "Shared", label: "Shared"},
 ] as const;
 
-/**
- * Get today's date in YYYY-MM-DD format
- * @returns Today's date string
- */
 export function getTodayDate(): string {
     return new Date().toISOString().split("T")[0];
 }
