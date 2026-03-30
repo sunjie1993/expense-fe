@@ -49,11 +49,13 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
 
     const hasSpending = trend && trend.total > 0;
 
-    const description = isLoading
-        ? "Loading..."
-        : trend && trend.total > 0
-            ? `Avg ${formatCurrency(trend.avg_per_day)}/active day${peakDay && trend.peak_day ? ` · Peak: day ${peakDay} (${formatCurrency(trend.peak_day.total)})` : ""}`
-            : "No spending this month";
+    const peakInfo = peakDay && trend?.peak_day
+        ? " · Peak: day " + peakDay + " (" + formatCurrency(trend.peak_day.total) + ")"
+        : "";
+    const spendingDescription = hasSpending
+        ? "Avg " + formatCurrency(trend.avg_per_day) + "/active day" + peakInfo
+        : "No spending this month";
+    const description = isLoading ? "Loading..." : spendingDescription;
 
     return (
         <Card>
