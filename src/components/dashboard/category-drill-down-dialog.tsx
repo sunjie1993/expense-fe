@@ -25,7 +25,7 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
 
     return (
         <Dialog open={categoryId !== null} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
                 <DialogHeader>
                     {drillDown ? (
                         <div className="flex items-center gap-3">

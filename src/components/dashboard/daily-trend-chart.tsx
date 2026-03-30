@@ -58,7 +58,7 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
     const description = isLoading ? "Loading..." : spendingDescription;
 
     return (
-        <Card>
+        <Card className="h-full">
             <CardHeader>
                 <CardTitle>Daily Spending</CardTitle>
                 <CardDescription>{description}</CardDescription>
