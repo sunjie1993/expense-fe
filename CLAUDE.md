@@ -15,20 +15,21 @@ No test suite configured.
 
 ## Architecture
 
-**Static export Next.js 15 app** — `output: 'export'` in `next.config.ts`, deployed as JAMstack. No API routes, no SSR. All pages are `"use client"`.
+**Static export Next.js 16 app** — `output: 'export'` + `trailingSlash: true` in `next.config.ts`, deployed as JAMstack. No API routes, no SSR. All pages are `"use client"`. React Compiler (`babel-plugin-react-compiler`) is enabled.
 
-**Backend**: `https://expense-backend.sunjie1993.workers.dev` (Cloudflare Worker). Base URL from `NEXT_PUBLIC_API_URL` env var.
+**Backend**: Cloudflare Worker at `NEXT_PUBLIC_API_URL`. The `fetcher` and `api*` functions in `src/lib/api.ts` prepend this base URL to every relative path — so SWR cache keys are relative paths (e.g. `/api/expenses?limit=50`) and the fetcher resolves them to the full URL.
 
 ### Key patterns
 
-- **Auth**: React Context (`src/contexts/auth-context.tsx`) — access token in memory, refresh token in `sessionStorage`. Auto-refresh on 401; redirect to `/login/` on failure.
-- **Server state**: SWR via custom hooks in `src/hooks/` — each wraps `fetcher()` from `src/lib/api.ts`. After mutations, invalidate both `/api/expenses` and `/api/dashboard` keys using `useSWRConfig().mutate` with a key-matching predicate.
-- **Forms**: react-hook-form + Zod schemas (in `src/lib/validations/`). Form fields are modular components in `src/components/expenses/form-fields/`. The expense form uses a two-tier category selection: main category → subcategory (lazy-loaded via `useSubCategories(mainCategoryId)`), managed by `useExpenseForm` hook.
+- **Auth**: React Context (`src/contexts/auth-context.tsx`) — access token in memory, refresh token in `sessionStorage`. On mount (non-login pages), attempts a token refresh from `sessionStorage` before marking auth ready. Auto-refresh on 401; redirect to `/login/` on failure.
+- **Server state**: SWR via custom hooks in `src/hooks/` — each wraps `fetcher()` from `src/lib/api.ts`. After mutations, invalidate both `/api/expenses` and `/api/dashboard` keys using `useSWRConfig().mutate` with a key-matching predicate: `(key) => typeof key === "string" && (key.includes("/api/expenses") || key.includes("/api/dashboard"))`.
+- **Forms**: react-hook-form + Zod schemas (in `src/lib/validations/`). Form fields are modular components in `src/components/expenses/form-fields/`. The expense form uses a two-tier category selection: main category → subcategory (lazy-loaded via `useSubCategories(mainCategoryId)`), managed by `useExpenseForm` hook. `main_category_id` is a form-only field used to drive subcategory loading — it is not sent to the API; only `category_id` (the subcategory) is submitted.
 - **Category icons**: `CategoryIcon` and `CategoryIconBadge` in `src/lib/category-icons.tsx` — map icon name strings from the API to Lucide icons.
 - **API layer**: `src/lib/api.ts` exports `apiGet<T>`, `apiPost<T>`, `apiPut<T>`, `apiDelete<T>` plus the SWR-compatible `fetcher()`.
 - **Types**: All API interfaces in `src/types/api.ts`.
+- **Charts**: `ChartContainer` in `src/components/ui/chart.tsx` uses its own `ResizeObserver` (via `ref`) to measure dimensions before rendering `ResponsiveContainer` with explicit pixel values — this prevents Recharts' `-1` dimension warning on initial render.
 
-### Routing
+### Routing & layout
 
 | Route | Purpose |
 |-------|---------|
@@ -36,6 +37,8 @@ No test suite configured.
 | `/login/` | Passcode-based login |
 | `/dashboard/` | Main dashboard |
 | `/dashboard/expenses/` | Expense management |
+
+Dashboard layout (`src/app/dashboard/layout.tsx`): `Sidebar` on desktop (md+), `MobileNav` bottom tab bar on mobile. Main content has `pb-16 md:pb-0` to clear the mobile tab bar. `AddExpenseFab` is desktop-only (`hidden md:block`); on mobile the tab bar's centre button opens the add dialog.
 
 ### Design system (MD3-inspired)
 
@@ -50,6 +53,7 @@ No test suite configured.
 ### Domain
 
 - `spent_by` values: `"SJ"` | `"YS"` | `"Shared"` (the two users sharing expenses)
+- Dashboard hooks take a `period` ("monthly"|"yearly") + `date` pair: monthly uses `"YYYY-MM"`, yearly uses `"YYYY"`.
 - Expenses page uses responsive layout: card list on mobile (`sm:hidden`), table on desktop (`hidden sm:block`)
 
 ### Locale
