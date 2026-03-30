@@ -2,12 +2,7 @@
 
 import {memo, useMemo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {
-    type ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart";
+import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart";
 import {Pie, PieChart} from "recharts";
 import {useSpenderBreakdown} from "@/hooks/use-dashboard";
 import {formatCurrency} from "@/lib/utils";
@@ -26,9 +21,9 @@ interface SpenderBreakdownChartProps {
 }
 
 export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
-    period,
-    date,
-}: SpenderBreakdownChartProps) {
+                                                                             period,
+                                                                             date,
+                                                                         }: SpenderBreakdownChartProps) {
     const {data, isLoading} = useSpenderBreakdown(period, date);
     const breakdown = data?.data;
 
@@ -112,7 +107,8 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                                                     {s.transaction_count} txn{s.transaction_count !== 1 ? "s" : ""} · {s.percentage.toFixed(1)}%
                                                 </span>
                                                 {s.change_percentage !== 0 && (
-                                                    <span className={`flex items-center gap-0.5 text-xs ${isUp ? "text-red-500" : "text-green-500"}`}>
+                                                    <span
+                                                        className={`flex items-center gap-0.5 text-xs ${isUp ? "text-red-500" : "text-green-500"}`}>
                                                         {isUp
                                                             ? <TrendingUp className="h-3 w-3"/>
                                                             : <TrendingDown className="h-3 w-3"/>
