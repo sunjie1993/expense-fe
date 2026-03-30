@@ -30,6 +30,7 @@ export const SubcategoryField = memo(function SubcategoryField({
                         Subcategory <span className="text-destructive">*</span>
                     </FormLabel>
                     <Select
+                        name={field.name}
                         onValueChange={field.onChange}
                         value={field.value}
                         disabled={disabled}

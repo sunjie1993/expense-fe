@@ -2,7 +2,7 @@
 
 import {memo} from "react";
 import {Control} from "react-hook-form";
-import {FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {cn} from "@/lib/utils";
 import {type ExpenseFormValues, SPENDER_OPTIONS} from "@/lib/validations/expense";
 
@@ -24,6 +24,7 @@ export const SpentByField = memo(function SpentByField({
                     <FormLabel className="text-sm font-medium">
                         Spent By <span className="text-destructive">*</span>
                     </FormLabel>
+                    <FormControl>
                     <div className="flex h-9 rounded-md border border-input overflow-hidden">
                         {SPENDER_OPTIONS.map((option) => (
                             <button
@@ -42,6 +43,7 @@ export const SpentByField = memo(function SpentByField({
                             </button>
                         ))}
                     </div>
+                    </FormControl>
                     <FormMessage/>
                 </FormItem>
             )}

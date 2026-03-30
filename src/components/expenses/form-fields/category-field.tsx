@@ -31,6 +31,7 @@ export const CategoryField = memo(function CategoryField({
                         Category <span className="text-destructive">*</span>
                     </FormLabel>
                     <Select
+                        name={field.name}
                         onValueChange={onCategoryChange}
                         value={field.value}
                         disabled={disabled}
