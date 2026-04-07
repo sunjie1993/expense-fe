@@ -44,18 +44,16 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
     }, [breakdown]);
 
     const periodLabel = period === "yearly" ? "year" : "month";
+    const hasData = chartData.length > 0;
+    const description = isLoading
+        ? "Loading..."
+        : hasData ? `Who spent what this ${periodLabel}` : "No spending data this period";
 
     return (
         <Card className="h-full">
             <CardHeader>
                 <CardTitle>Spender Breakdown</CardTitle>
-                <CardDescription>
-                    {isLoading
-                        ? "Loading..."
-                        : chartData.length > 0
-                            ? `Who spent what this ${periodLabel}`
-                            : "No spending data this period"}
-                </CardDescription>
+                <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
                 {isLoading && <Skeleton className="h-60 w-full"/>}
@@ -104,7 +102,7 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                                             </div>
                                             <div className="flex items-center justify-between mt-0.5">
                                                 <span className="text-xs text-muted-foreground">
-                                                    {s.transaction_count} txn{s.transaction_count !== 1 ? "s" : ""} · {s.percentage.toFixed(1)}%
+                                                    {s.transaction_count} txn{s.transaction_count === 1 ? "" : "s"} · {s.percentage.toFixed(1)}%
                                                 </span>
                                                 {s.change_percentage !== 0 && (
                                                     <span
