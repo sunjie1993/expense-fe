@@ -15,9 +15,6 @@ interface CategoryFieldProps {
     readonly disabled?: boolean;
 }
 
-/**
- * CategoryField component for selecting main expense category
- */
 export const CategoryField = memo(function CategoryField({
                                                              control,
                                                              categories,
@@ -34,6 +31,7 @@ export const CategoryField = memo(function CategoryField({
                         Category <span className="text-destructive">*</span>
                     </FormLabel>
                     <Select
+                        name={field.name}
                         onValueChange={onCategoryChange}
                         value={field.value}
                         disabled={disabled}

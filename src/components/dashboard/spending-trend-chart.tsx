@@ -69,7 +69,7 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
         : "No spending data to display";
 
     return (
-        <Card>
+        <Card className="h-full">
             <CardHeader>
                 <CardTitle>{isMonthly ? "Spending Trends" : "Yearly Overview"}</CardTitle>
                 <CardDescription>{description}</CardDescription>

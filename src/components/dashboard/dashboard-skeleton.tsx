@@ -55,6 +55,29 @@ export function DashboardSkeleton() {
                 </Card>
             </div>
 
+            {/* Daily Trend + Spender Breakdown */}
+            <div className="grid gap-4 lg:grid-cols-7">
+                <Card className="lg:col-span-4">
+                    <CardHeader>
+                        <Skeleton className="h-5 w-32 mb-1"/>
+                        <Skeleton className="h-4 w-56"/>
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-72 w-full"/>
+                    </CardContent>
+                </Card>
+                <Card className="lg:col-span-3">
+                    <CardHeader>
+                        <Skeleton className="h-5 w-40 mb-1"/>
+                        <Skeleton className="h-4 w-36"/>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <Skeleton className="h-44 w-full rounded-full mx-auto"/>
+                        {["a", "b", "c"].map((k) => <SkeletonListItem key={k}/>)}
+                    </CardContent>
+                </Card>
+            </div>
+
             {/* Recent Expenses */}
             <Card>
                 <CardHeader>

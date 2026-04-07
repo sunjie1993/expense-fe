@@ -1,4 +1,3 @@
-// API Response types
 export interface ApiResponse<T> {
     success: boolean;
     data: T;
@@ -33,7 +32,6 @@ export interface HealthCheck {
     };
 }
 
-// Expense types
 export interface Expense {
     id: number;
     spent_by: "SJ" | "YS" | "Shared";
@@ -62,7 +60,6 @@ export interface ExpensesResponse {
     };
 }
 
-// Category types
 export interface Category {
     id: number;
     name: string;
@@ -80,13 +77,11 @@ export interface MainCategory {
     has_subcategories: number;
 }
 
-// Payment Method types
 export interface PaymentMethod {
     id: number;
     name: string;
 }
 
-// Dashboard types
 export interface CategoryBreakdown {
     main_category_id: number;
     main_category_name: string;
@@ -104,7 +99,6 @@ export interface DashboardSummary {
     category_breakdown: CategoryBreakdown[];
 }
 
-// Dashboard Overview types (new API)
 export interface ExpenseCard {
     current: number;
     previous: number;
@@ -166,4 +160,55 @@ export interface DashboardOverview {
     };
     spending_chart: ChartPeriod[];
     category_ranking: CategoryRanking[];
+}
+
+export interface SpenderBreakdownItem {
+    spent_by: string;
+    total: number;
+    transaction_count: number;
+    percentage: number;
+    previous_total: number;
+    change_percentage: number;
+}
+
+export interface SpenderBreakdownData {
+    period: "monthly" | "yearly";
+    date: string;
+    date_range: { start: string; end: string };
+    total: number;
+    spenders: SpenderBreakdownItem[];
+}
+
+export interface CategoryDrillBreakdownItem {
+    id: number;
+    name: string;
+    icon: string | null;
+    color: string | null;
+    total: number;
+    transaction_count: number;
+    percentage: number;
+}
+
+export interface CategoryDrillDownData {
+    period: "monthly" | "yearly";
+    date: string;
+    date_range: { start: string; end: string };
+    main_category: { id: number; name: string; icon: string; color: string; total: number };
+    breakdown_type: "subcategories" | "spenders";
+    breakdown: CategoryDrillBreakdownItem[];
+}
+
+export interface DailyTrendDay {
+    date: string;
+    total: number;
+    transaction_count: number;
+}
+
+export interface DailyTrendData {
+    year_month: string;
+    date_range: { start: string; end: string };
+    total: number;
+    avg_per_day: number;
+    peak_day: { date: string; total: number; transaction_count: number } | null;
+    days: DailyTrendDay[];
 }

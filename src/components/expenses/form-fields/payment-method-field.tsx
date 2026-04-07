@@ -13,9 +13,6 @@ interface PaymentMethodFieldProps {
     readonly disabled?: boolean;
 }
 
-/**
- * PaymentMethodField component for selecting payment method
- */
 export const PaymentMethodField = memo(function PaymentMethodField({
                                                                        control,
                                                                        paymentMethods,
@@ -31,6 +28,7 @@ export const PaymentMethodField = memo(function PaymentMethodField({
                         Payment Method <span className="text-destructive">*</span>
                     </FormLabel>
                     <Select
+                        name={field.name}
                         onValueChange={field.onChange}
                         value={field.value}
                         disabled={disabled}

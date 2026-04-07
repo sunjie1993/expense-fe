@@ -13,18 +13,12 @@ interface UseExpenseFormProps {
     readonly onSuccess: () => void;
 }
 
-/**
- * Custom hook for managing expense form state and submission
- * @param open - Whether the dialog is open
- * @param onSuccess - Callback when form submission succeeds
- */
 export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     const {mutate} = useSWRConfig();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [selectedMainCategory, setSelectedMainCategory] = useState<number | null>(null);
 
-    // Fetch data
     const {data: mainCategoriesData, isLoading: loadingMainCategories} =
         useMainCategories();
     const {data: subCategoriesData, isLoading: loadingSubCategories} =
@@ -36,7 +30,6 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     const subCategories = subCategoriesData?.data || [];
     const paymentMethods = paymentMethodsData?.data || [];
 
-    // Form setup
     const form = useForm<ExpenseFormValues>({
         resolver: zodResolver(expenseSchema),
         defaultValues: {
@@ -50,14 +43,12 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
         },
     });
 
-    // Reset subcategory when main category changes
     useEffect(() => {
         if (selectedMainCategory) {
             form.setValue("category_id", "");
         }
     }, [selectedMainCategory, form]);
 
-    // Reset form when dialog closes
     useEffect(() => {
         if (!open) {
             form.reset();
@@ -66,9 +57,6 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
         }
     }, [open, form]);
 
-    /**
-     * Handle main category change
-     */
     const handleMainCategoryChange = useCallback(
         (value: string) => {
             form.setValue("main_category_id", value);
@@ -77,9 +65,6 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
         [form]
     );
 
-    /**
-     * Handle form submission
-     */
     const onSubmit = useCallback(
         async (data: ExpenseFormValues) => {
             setError(null);
@@ -95,7 +80,6 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
                     description: data.description || undefined,
                 });
 
-                // Revalidate expenses and dashboard data
                 await mutate(
                     (key) =>
                         typeof key === "string" &&
@@ -121,9 +105,6 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
         [mutate, onSuccess]
     );
 
-    /**
-     * Get subcategory placeholder text based on state
-     */
     let subcategoryPlaceholder: string;
     if (loadingSubCategories) {
         subcategoryPlaceholder = "Loading...";

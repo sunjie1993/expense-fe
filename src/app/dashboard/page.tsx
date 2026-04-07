@@ -12,6 +12,9 @@ import {SpendingTrendChart} from "@/components/dashboard/spending-trend-chart";
 import {CategoryRankingBoard} from "@/components/dashboard/category-ranking-board";
 import {DashboardSkeleton} from "@/components/dashboard/dashboard-skeleton";
 import {RecentExpenses} from "@/components/dashboard/recent-expenses";
+import {SpenderBreakdownChart} from "@/components/dashboard/spender-breakdown-chart";
+import {DailyTrendChart} from "@/components/dashboard/daily-trend-chart";
+import {CategoryDrillDownDialog} from "@/components/dashboard/category-drill-down-dialog";
 import {Button} from "@/components/ui/button";
 import {CategoryIcon} from "@/lib/category-icons";
 import {formatCurrency, formatPeriodDisplay, getCurrentMonth, getCurrentYear, navigatePeriod} from "@/lib/utils";
@@ -19,6 +22,7 @@ import {formatCurrency, formatPeriodDisplay, getCurrentMonth, getCurrentYear, na
 export default function DashboardPage() {
     const [period, setPeriod] = useState<"monthly" | "yearly">("monthly");
     const [date, setDate] = useState(getCurrentMonth());
+    const [drillDownCategoryId, setDrillDownCategoryId] = useState<number | null>(null);
 
     const {data: dashboardData, error, isLoading} = useDashboardOverview(period, date);
     const dashboard = dashboardData?.data;
@@ -143,11 +147,34 @@ export default function DashboardPage() {
                                 <SpendingTrendChart data={dashboard.spending_chart} period={period}/>
                             </div>
                             <div className="lg:col-span-3">
-                                <CategoryRankingBoard categories={dashboard.category_ranking}/>
+                                <CategoryRankingBoard
+                                    categories={dashboard.category_ranking}
+                                    onCategoryClick={setDrillDownCategoryId}
+                                />
                             </div>
                         </div>
 
+                        {period === "monthly" ? (
+                            <div className="grid gap-4 lg:grid-cols-7">
+                                <div className="lg:col-span-4">
+                                    <DailyTrendChart yearMonth={date}/>
+                                </div>
+                                <div className="lg:col-span-3">
+                                    <SpenderBreakdownChart period={period} date={date}/>
+                                </div>
+                            </div>
+                        ) : (
+                            <SpenderBreakdownChart period={period} date={date}/>
+                        )}
+
                         <RecentExpenses/>
+
+                        <CategoryDrillDownDialog
+                            categoryId={drillDownCategoryId}
+                            period={period}
+                            date={date}
+                            onClose={() => setDrillDownCategoryId(null)}
+                        />
                     </>
                 )}
             </div>
