@@ -6,38 +6,34 @@
     }
 
     .elevation-1 {
-        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
-        0 1px 1px 0 rgba(0, 0, 0, 0.14),
-        0 1px 3px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0 0 0 1px oklch(0.58 0.28 350 / 15%),
+        0 2px 8px oklch(0.58 0.28 350 / 10%);
     }
 
     .elevation-2 {
-        box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-        0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0 0 0 1px oklch(0.58 0.28 350 / 20%),
+        0 4px 16px oklch(0.58 0.28 350 / 15%);
     }
 
     .elevation-4 {
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
-        0 4px 5px 0 rgba(0, 0, 0, 0.14),
-        0 1px 10px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0 0 0 1px oklch(0.58 0.28 350 / 25%),
+        0 8px 24px oklch(0.58 0.28 350 / 20%);
     }
 
     .elevation-8 {
-        box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-        0 8px 10px 1px rgba(0, 0, 0, 0.14),
-        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 0 0 1px oklch(0.58 0.28 350 / 30%),
+        0 16px 40px oklch(0.58 0.28 350 / 25%);
     }
 
     .glass-card {
-        background: rgba(255, 255, 255, 0.7);
+        background: oklch(0.13 0.015 20 / 80%);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid oklch(1 0 0 / 8%);
     }
 
     .dark .glass-card {
-        background: rgba(30, 30, 40, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: oklch(0.13 0.015 20 / 80%);
+        border: 1px solid oklch(1 0 0 / 8%);
     }
 
     .glass-hover {
@@ -45,13 +41,13 @@
     }
 
     .glass-hover:hover {
-        background: rgba(255, 255, 255, 0.85);
+        background: oklch(0.16 0.015 20 / 90%);
         backdrop-filter: blur(16px);
         transform: translateY(-2px);
     }
 
     .dark .glass-hover:hover {
-        background: rgba(30, 30, 40, 0.75);
+        background: oklch(0.16 0.015 20 / 90%);
     }
 
     .gradient-primary {
@@ -306,6 +302,50 @@
         animation: fade-in-down 0.25s ease-out both;
     }
 
+    /* === Squid Game animations === */
+    @keyframes squid-overlay-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .animate-squid-overlay-in {
+        animation: squid-overlay-in 0.2s ease-out forwards;
+    }
+
+    @keyframes squid-shape-in {
+        from {
+            opacity: 0;
+            transform: scale(0.3) rotate(-15deg);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    .animate-squid-shape-in {
+        /* backwards: hold the from-keyframe values during the delay */
+        animation: squid-shape-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    @keyframes squid-glow {
+        0%, 100% { filter: drop-shadow(0 0 8px oklch(0.58 0.28 350 / 60%)); }
+        50%       { filter: drop-shadow(0 0 28px oklch(0.58 0.28 350 / 90%)); }
+    }
+
+    .animate-squid-glow {
+        animation: squid-glow 2s ease-in-out 1s infinite;
+    }
+
+    @keyframes squid-shape-pulse {
+        0%, 100% { opacity: 0.3; transform: scale(0.9); }
+        50%       { opacity: 1;   transform: scale(1);   }
+    }
+
+    .animate-squid-shape-pulse {
+        animation: squid-shape-pulse 1.2s ease-in-out infinite;
+    }
+
     /* Animated progress bar */
     .progress-bar {
         --progress-color: hsl(var(--primary));
@@ -383,74 +423,76 @@
 }
 
 :root {
-    --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.129 0.042 264.695);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.129 0.042 264.695);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.129 0.042 264.695);
-    --primary: oklch(0.208 0.042 265.755);
-    --primary-foreground: oklch(0.984 0.003 247.858);
-    --secondary: oklch(0.968 0.007 247.896);
-    --secondary-foreground: oklch(0.208 0.042 265.755);
-    --muted: oklch(0.968 0.007 247.896);
-    --muted-foreground: oklch(0.554 0.046 257.417);
-    --accent: oklch(0.968 0.007 247.896);
-    --accent-foreground: oklch(0.208 0.042 265.755);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.929 0.013 255.508);
-    --input: oklch(0.929 0.013 255.508);
-    --ring: oklch(0.704 0.04 256.788);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --sidebar: oklch(0.984 0.003 247.858);
-    --sidebar-foreground: oklch(0.129 0.042 264.695);
-    --sidebar-primary: oklch(0.208 0.042 265.755);
-    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-    --sidebar-accent: oklch(0.968 0.007 247.896);
-    --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-    --sidebar-border: oklch(0.929 0.013 255.508);
-    --sidebar-ring: oklch(0.704 0.04 256.788);
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --radius: 0.375rem;
+    --font-heading: sans-serif; /* runtime value injected by next/font via <body> className */
+    /* Squid Game — dark theme (used as default; .dark mirrors it) */
+    --background: oklch(0.09 0.015 20);
+    --foreground: oklch(0.94 0.008 60);
+    --card: oklch(0.13 0.015 20);
+    --card-foreground: oklch(0.94 0.008 60);
+    --popover: oklch(0.13 0.015 20);
+    --popover-foreground: oklch(0.94 0.008 60);
+    --primary: oklch(0.58 0.28 350);       /* hot magenta — guard uniform */
+    --primary-foreground: oklch(0.98 0 0);
+    --secondary: oklch(0.17 0.015 20);
+    --secondary-foreground: oklch(0.94 0.008 60);
+    --muted: oklch(0.17 0.015 20);
+    --muted-foreground: oklch(0.58 0.015 20);
+    --accent: oklch(0.55 0.18 192);        /* teal — shape symbols */
+    --accent-foreground: oklch(0.98 0 0);
+    --destructive: oklch(0.62 0.24 27);
+    --border: oklch(1 0 0 / 8%);
+    --input: oklch(1 0 0 / 10%);
+    --ring: oklch(0.58 0.28 350 / 60%);
+    --chart-1: oklch(0.58 0.28 350);       /* magenta */
+    --chart-2: oklch(0.65 0.16 192);       /* teal */
+    --chart-3: oklch(0.76 0.16 82);        /* dalgona gold */
+    --chart-4: oklch(0.72 0.18 340);       /* light pink */
+    --chart-5: oklch(0.85 0.01 60);        /* off-white */
+    --sidebar: oklch(0.11 0.015 20);
+    --sidebar-foreground: oklch(0.94 0.008 60);
+    --sidebar-primary: oklch(0.58 0.28 350);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent: oklch(0.17 0.015 20);
+    --sidebar-accent-foreground: oklch(0.94 0.008 60);
+    --sidebar-border: oklch(1 0 0 / 8%);
+    --sidebar-ring: oklch(0.58 0.28 350 / 60%);
+    --shadow-color: oklch(0.58 0.28 350 / 20%);
 }
 
 .dark {
-    --background: oklch(0.129 0.042 264.695);
-    --foreground: oklch(0.984 0.003 247.858);
-    --card: oklch(0.208 0.042 265.755);
-    --card-foreground: oklch(0.984 0.003 247.858);
-    --popover: oklch(0.208 0.042 265.755);
-    --popover-foreground: oklch(0.984 0.003 247.858);
-    --primary: oklch(0.929 0.013 255.508);
-    --primary-foreground: oklch(0.208 0.042 265.755);
-    --secondary: oklch(0.279 0.041 260.031);
-    --secondary-foreground: oklch(0.984 0.003 247.858);
-    --muted: oklch(0.279 0.041 260.031);
-    --muted-foreground: oklch(0.704 0.04 256.788);
-    --accent: oklch(0.279 0.041 260.031);
-    --accent-foreground: oklch(0.984 0.003 247.858);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.551 0.027 264.364);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.208 0.042 265.755);
-    --sidebar-foreground: oklch(0.984 0.003 247.858);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-    --sidebar-accent: oklch(0.279 0.041 260.031);
-    --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.551 0.027 264.364);
-    --shadow-color: rgba(0, 0, 0, 0.3);
+    --background: oklch(0.09 0.015 20);
+    --foreground: oklch(0.94 0.008 60);
+    --card: oklch(0.13 0.015 20);
+    --card-foreground: oklch(0.94 0.008 60);
+    --popover: oklch(0.13 0.015 20);
+    --popover-foreground: oklch(0.94 0.008 60);
+    --primary: oklch(0.58 0.28 350);
+    --primary-foreground: oklch(0.98 0 0);
+    --secondary: oklch(0.17 0.015 20);
+    --secondary-foreground: oklch(0.94 0.008 60);
+    --muted: oklch(0.17 0.015 20);
+    --muted-foreground: oklch(0.58 0.015 20);
+    --accent: oklch(0.55 0.18 192);
+    --accent-foreground: oklch(0.98 0 0);
+    --destructive: oklch(0.62 0.24 27);
+    --border: oklch(1 0 0 / 8%);
+    --input: oklch(1 0 0 / 10%);
+    --ring: oklch(0.58 0.28 350 / 60%);
+    --chart-1: oklch(0.58 0.28 350);
+    --chart-2: oklch(0.65 0.16 192);
+    --chart-3: oklch(0.76 0.16 82);
+    --chart-4: oklch(0.72 0.18 340);
+    --chart-5: oklch(0.85 0.01 60);
+    --sidebar: oklch(0.11 0.015 20);
+    --sidebar-foreground: oklch(0.94 0.008 60);
+    --sidebar-primary: oklch(0.58 0.28 350);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent: oklch(0.17 0.015 20);
+    --sidebar-accent-foreground: oklch(0.94 0.008 60);
+    --sidebar-border: oklch(1 0 0 / 8%);
+    --sidebar-ring: oklch(0.58 0.28 350 / 60%);
+    --shadow-color: oklch(0.58 0.28 350 / 20%);
 }
 
 @layer base {
@@ -460,5 +502,12 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* Apply Bebas Neue to all headings and card titles */
+    h1, h2, h3,
+    [data-slot="card-title"] {
+        font-family: var(--font-heading), sans-serif;
+        letter-spacing: 0.06em;
     }
 }

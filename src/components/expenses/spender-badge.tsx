@@ -8,9 +8,9 @@ interface SpenderBadgeProps {
 }
 
 const SPENDER_STYLES: Record<string, string> = {
-    SJ: "bg-blue-50 text-blue-700 border-blue-200",
-    YS: "bg-violet-50 text-violet-700 border-violet-200",
-    Shared: "bg-muted text-muted-foreground border-border",
+    SJ: "bg-pink-500/15 text-pink-300 border-pink-500/30",
+    YS: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+    Shared: "bg-amber-500/15 text-amber-300 border-amber-500/30",
 };
 
 export const SpenderBadge = memo(function SpenderBadge({spender}: SpenderBadgeProps) {
