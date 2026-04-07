@@ -68,7 +68,6 @@ export const ExpenseFilter = memo(function ExpenseFilter({filters, onFiltersChan
     return (
         <div className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center gap-3">
-                {/* Date Range */}
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
@@ -94,7 +93,6 @@ export const ExpenseFilter = memo(function ExpenseFilter({filters, onFiltersChan
                     </PopoverContent>
                 </Popover>
 
-                {/* Spent By */}
                 <Select value={filters.spentBy || "all"} onValueChange={handleSpentByChange}>
                     <SelectTrigger className="w-full sm:w-32">
                         <SelectValue placeholder="Spent by"/>
@@ -110,7 +108,6 @@ export const ExpenseFilter = memo(function ExpenseFilter({filters, onFiltersChan
                 </Select>
             </div>
 
-            {/* Active filter chips */}
             {hasActiveFilters && (
                 <div className="flex flex-wrap items-center gap-2">
                     {(filters.startDate || filters.endDate) && (

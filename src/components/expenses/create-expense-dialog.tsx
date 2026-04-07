@@ -112,13 +112,11 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                             className="space-y-4"
                             noValidate
                         >
-                            {/* Row 1: Amount + Date */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <AmountField control={form.control} disabled={isSubmitting}/>
                                 <DateField control={form.control} disabled={isSubmitting}/>
                             </div>
 
-                            {/* Row 2: Spent By + Payment Method */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <SpentByField control={form.control} disabled={isSubmitting}/>
                                 <PaymentMethodField
@@ -128,7 +126,6 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                                 />
                             </div>
 
-                            {/* Row 3: Category + Subcategory */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <CategoryField
                                     control={form.control}
@@ -144,7 +141,6 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                                 />
                             </div>
 
-                            {/* Row 4: Description */}
                             <DescriptionField control={form.control} disabled={isSubmitting}/>
 
                             {error && (

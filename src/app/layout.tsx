@@ -1,7 +1,13 @@
 import type {Metadata} from "next";
-import {Montserrat} from "next/font/google";
+import {Bebas_Neue, Montserrat} from "next/font/google";
 import {Providers} from "@/components/providers";
 import "./globals.css";
+
+const bebasNeue = Bebas_Neue({
+    variable: "--font-heading",
+    weight: "400",
+    subsets: ["latin"],
+});
 
 const montserrat = Montserrat({
     variable: "--font-montserrat",
@@ -20,7 +26,8 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-        <body className={`${montserrat.variable} font-[family-name:var(--font-montserrat)] antialiased`}>
+        <body
+            className={`${bebasNeue.variable} ${montserrat.variable} font-[family-name:var(--font-montserrat)] antialiased`}>
         <Providers>{children}</Providers>
         </body>
         </html>

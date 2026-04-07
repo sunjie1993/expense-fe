@@ -10,9 +10,9 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {TrendingDown, TrendingUp} from "lucide-react";
 
 const SPENDER_COLORS: Record<string, string> = {
-    SJ: "#3b82f6",
-    YS: "#10b981",
-    Shared: "#f59e0b",
+    SJ: "#e8185a",    /* hot magenta */
+    YS: "#0fb8c9",    /* teal */
+    Shared: "#d4a017", /* dalgona gold */
 };
 
 interface SpenderBreakdownChartProps {
@@ -31,7 +31,6 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
         if (!breakdown?.spenders?.length) return {chartData: [], chartConfig: {} as ChartConfig};
 
         const config: ChartConfig = {};
-        // Only chart spenders with actual spending; zero-spend entries appear in the list below
         const items = breakdown.spenders
             .filter((s) => s.total > 0)
             .map((s) => {

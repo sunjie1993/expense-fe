@@ -44,11 +44,37 @@ Dashboard layout (`src/app/dashboard/layout.tsx`): `Sidebar` on desktop (md+), `
 
 - **Component library**: Shadcn UI (Radix primitives + Tailwind), components in `src/components/ui/`
 - **Styling**: Tailwind 4 with `@theme inline` in `globals.css`. All color tokens use oklch.
-- **Font**: Montserrat via `next/font/google`, CSS var `--font-montserrat`
-- **Radius**: `--radius: 0.625rem` base — cards `rounded-2xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`
-- **Elevation**: `.elevation-0/1/2/4/8` utility classes (box-shadow based, defined in `globals.css`)
-- **Animations**: Custom keyframes in `globals.css` (`animate-fade-in-up`, `animate-shake`, `animate-counter`, `expense-row-animation`, `category-rank-animation`). Also uses `tw-animate-css` package.
-- **Dark mode**: Full dark mode via `.dark` class; `next-themes` handles toggling.
+- **Fonts**: Two-font system via `next/font/google`:
+  - `Bebas Neue` — display/heading font, CSS var `--font-heading`. Applied via base layer CSS to `h1`, `h2`, `h3`, and `[data-slot="card-title"]`. Letter-spacing 0.06em.
+  - `Montserrat` — body font, CSS var `--font-montserrat`. Applied to `<body>`.
+- **Theme**: Squid Game-inspired dark theme. `:root` and `.dark` share the same dark palette — the app is always dark regardless of theme toggle.
+  - Primary: hot magenta `oklch(0.58 0.28 350)` — the guard uniform pink
+  - Accent: teal `oklch(0.55 0.18 192)` — the game shape symbols
+  - Background: near-black `oklch(0.09 0.015 20)`
+  - Card: `oklch(0.13 0.015 20)`
+  - Chart colours: magenta, teal, dalgona gold, light pink, off-white
+- **Radius**: `--radius: 0.375rem` base (sharper/more geometric) — cards `rounded-xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`
+- **Elevation**: `.elevation-0/1/2/4/8` utility classes emit magenta glow box-shadows (defined in `globals.css`) instead of neutral grey shadows.
+- **Animations**: Custom keyframes in `globals.css`:
+  - Page/UI: `animate-fade-in-up`, `animate-fade-in-down`, `animate-shake`, `animate-counter`
+  - List stagger: `expense-row-animation`, `category-rank-animation`
+  - Squid Game: `animate-squid-overlay-in`, `animate-squid-shape-in`, `animate-squid-glow`, `animate-squid-shape-pulse`
+  - Also uses `tw-animate-css` package.
+- **Login transition**: After successful login, `src/app/login/page.tsx` renders a `SquidTransitionOverlay` — a full-screen overlay where ○ △ □ SVG shapes appear one-by-one with a spring entrance and magenta glow, before navigating to `/dashboard/` after 1.8s.
+- **Login background**: Faint large geometric SVG shapes (double-circle, double-triangle, double-square) positioned at screen corners as decorative elements.
+- **Dashboard loading**: The auth-check loading state shows the three pulsing ○ △ □ shapes instead of a plain spinner.
+
+### Spender colours
+
+Hardcoded in two places — keep them in sync:
+
+| Spender | Hex | Usage |
+|---------|-----|-------|
+| SJ | `#e8185a` (magenta) | `SPENDER_COLORS` in `spender-breakdown-chart.tsx`; Tailwind classes in `spender-badge.tsx` |
+| YS | `#0fb8c9` (teal) | same |
+| Shared | `#d4a017` (dalgona gold) | same |
+
+Tailwind badge classes (dark-friendly): `bg-pink-500/15 text-pink-300 border-pink-500/30` / `bg-cyan-500/15 text-cyan-300 border-cyan-500/30` / `bg-amber-500/15 text-amber-300 border-amber-500/30`.
 
 ### Domain
 
