@@ -31,7 +31,6 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
         if (!breakdown?.spenders?.length) return {chartData: [], chartConfig: {} as ChartConfig};
 
         const config: ChartConfig = {};
-        // Only chart spenders with actual spending; zero-spend entries appear in the list below
         const items = breakdown.spenders
             .filter((s) => s.total > 0)
             .map((s) => {

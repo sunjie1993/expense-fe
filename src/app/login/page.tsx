@@ -8,9 +8,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {AlertCircle, Eye, EyeOff, Loader2} from "lucide-react";
 import {cn} from "@/lib/utils";
 
-// ○ △ □  — each shape appears with a staggered entrance
-// Sizes are responsive: smaller on mobile (14/12), larger on md+ (20/[70px])
-function SquidShape({type, delay}: { type: "circle" | "triangle" | "square"; delay: string }) {
+function SquidShape({type, delay}: { readonly type: "circle" | "triangle" | "square"; readonly delay: string }) {
     const sharedClass = "animate-squid-shape-in";
     const sharedStyle = {animationDelay: delay};
 
@@ -24,7 +22,6 @@ function SquidShape({type, delay}: { type: "circle" | "triangle" | "square"; del
     }
 
     if (type === "triangle") {
-        // No fixed width/height attrs — let viewBox + Tailwind classes control size
         return (
             <svg
                 viewBox="0 0 80 70"
@@ -46,12 +43,12 @@ function SquidShape({type, delay}: { type: "circle" | "triangle" | "square"; del
 
 function SquidTransitionOverlay() {
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 md:gap-10 bg-background animate-squid-overlay-in">
-            {/* Shapes glow together once all have appeared */}
+        <div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 md:gap-10 bg-background animate-squid-overlay-in">
             <div className="flex items-center justify-center gap-6 md:gap-10 animate-squid-glow">
-                <SquidShape type="circle"   delay="0.3s"/>
+                <SquidShape type="circle" delay="0.3s"/>
                 <SquidShape type="triangle" delay="0.6s"/>
-                <SquidShape type="square"   delay="0.9s"/>
+                <SquidShape type="square" delay="0.9s"/>
             </div>
             <p
                 className="animate-squid-shape-in text-muted-foreground text-xs tracking-[0.3em] md:tracking-[0.5em] uppercase font-(family-name:--font-heading)"
@@ -121,25 +118,24 @@ export default function LoginPage() {
 
             <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
 
-                {/* Background geometric decorations — large, faint, corner-anchored */}
                 <div className="absolute inset-0 pointer-events-none select-none text-primary" aria-hidden="true">
-                    {/* top-left double circle */}
-                    <svg className="absolute -top-32 -left-32 opacity-[0.045]" width="420" height="420" viewBox="0 0 420 420">
+                    <svg className="absolute -top-32 -left-32 opacity-[0.045]" width="420" height="420"
+                         viewBox="0 0 420 420">
                         <circle cx="210" cy="210" r="200" fill="none" stroke="currentColor" strokeWidth="2"/>
                         <circle cx="210" cy="210" r="155" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    {/* bottom-right double triangle */}
-                    <svg className="absolute -bottom-24 -right-24 opacity-[0.045]" width="380" height="340" viewBox="0 0 380 340">
+                    <svg className="absolute -bottom-24 -right-24 opacity-[0.045]" width="380" height="340"
+                         viewBox="0 0 380 340">
                         <polygon points="190,8 372,332 8,332" fill="none" stroke="currentColor" strokeWidth="2"/>
                         <polygon points="190,48 334,308 46,308" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    {/* mid-right square */}
-                    <svg className="absolute top-1/4 -right-20 opacity-[0.035]" width="260" height="260" viewBox="0 0 260 260">
-                        <rect x="8"  y="8"  width="244" height="244" fill="none" stroke="currentColor" strokeWidth="2"/>
+                    <svg className="absolute top-1/4 -right-20 opacity-[0.035]" width="260" height="260"
+                         viewBox="0 0 260 260">
+                        <rect x="8" y="8" width="244" height="244" fill="none" stroke="currentColor" strokeWidth="2"/>
                         <rect x="36" y="36" width="188" height="188" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    {/* bottom-left small square */}
-                    <svg className="absolute bottom-1/4 -left-14 opacity-[0.03]" width="190" height="190" viewBox="0 0 190 190">
+                    <svg className="absolute bottom-1/4 -left-14 opacity-[0.03]" width="190" height="190"
+                         viewBox="0 0 190 190">
                         <rect x="8" y="8" width="174" height="174" fill="none" stroke="currentColor" strokeWidth="1.5"/>
                     </svg>
                 </div>
@@ -154,11 +150,11 @@ export default function LoginPage() {
                     }}
                 >
                     <CardHeader className="space-y-3 items-center text-center">
-                        {/* Small ○ △ □ icon row */}
                         <div className="flex items-center justify-center gap-3 text-primary">
                             <div className="h-6 w-6 rounded-full border border-primary/70"/>
                             <svg width="22" height="20" viewBox="0 0 22 20" className="shrink-0">
-                                <polygon points="11,1 21,19 1,19" fill="none" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.5"/>
+                                <polygon points="11,1 21,19 1,19" fill="none" stroke="currentColor" strokeOpacity="0.7"
+                                         strokeWidth="1.5"/>
                             </svg>
                             <div className="h-6 w-6 border border-primary/70"/>
                         </div>

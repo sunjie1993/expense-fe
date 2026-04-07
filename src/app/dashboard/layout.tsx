@@ -42,7 +42,6 @@ export default function DashboardLayout({children}: Readonly<{ children: ReactNo
             <main className="flex-1 overflow-auto pb-16 md:pb-0 animate-fade-in-up">
                 {children}
             </main>
-            {/* FAB: desktop only — mobile uses the tab bar's add button */}
             <div className="hidden md:block">
                 <AddExpenseFab/>
             </div>

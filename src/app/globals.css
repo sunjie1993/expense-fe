@@ -304,8 +304,12 @@
 
     /* === Squid Game animations === */
     @keyframes squid-overlay-in {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
 
     .animate-squid-overlay-in {
@@ -329,8 +333,12 @@
     }
 
     @keyframes squid-glow {
-        0%, 100% { filter: drop-shadow(0 0 8px oklch(0.58 0.28 350 / 60%)); }
-        50%       { filter: drop-shadow(0 0 28px oklch(0.58 0.28 350 / 90%)); }
+        0%, 100% {
+            filter: drop-shadow(0 0 8px oklch(0.58 0.28 350 / 60%));
+        }
+        50% {
+            filter: drop-shadow(0 0 28px oklch(0.58 0.28 350 / 90%));
+        }
     }
 
     .animate-squid-glow {
@@ -338,8 +346,14 @@
     }
 
     @keyframes squid-shape-pulse {
-        0%, 100% { opacity: 0.3; transform: scale(0.9); }
-        50%       { opacity: 1;   transform: scale(1);   }
+        0%, 100% {
+            opacity: 0.3;
+            transform: scale(0.9);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 
     .animate-squid-shape-pulse {
@@ -432,23 +446,23 @@
     --card-foreground: oklch(0.94 0.008 60);
     --popover: oklch(0.13 0.015 20);
     --popover-foreground: oklch(0.94 0.008 60);
-    --primary: oklch(0.58 0.28 350);       /* hot magenta — guard uniform */
+    --primary: oklch(0.58 0.28 350); /* hot magenta — guard uniform */
     --primary-foreground: oklch(0.98 0 0);
     --secondary: oklch(0.17 0.015 20);
     --secondary-foreground: oklch(0.94 0.008 60);
     --muted: oklch(0.17 0.015 20);
     --muted-foreground: oklch(0.58 0.015 20);
-    --accent: oklch(0.55 0.18 192);        /* teal — shape symbols */
+    --accent: oklch(0.55 0.18 192); /* teal — shape symbols */
     --accent-foreground: oklch(0.98 0 0);
     --destructive: oklch(0.62 0.24 27);
     --border: oklch(1 0 0 / 8%);
     --input: oklch(1 0 0 / 10%);
     --ring: oklch(0.58 0.28 350 / 60%);
-    --chart-1: oklch(0.58 0.28 350);       /* magenta */
-    --chart-2: oklch(0.65 0.16 192);       /* teal */
-    --chart-3: oklch(0.76 0.16 82);        /* dalgona gold */
-    --chart-4: oklch(0.72 0.18 340);       /* light pink */
-    --chart-5: oklch(0.85 0.01 60);        /* off-white */
+    --chart-1: oklch(0.58 0.28 350); /* magenta */
+    --chart-2: oklch(0.65 0.16 192); /* teal */
+    --chart-3: oklch(0.76 0.16 82); /* dalgona gold */
+    --chart-4: oklch(0.72 0.18 340); /* light pink */
+    --chart-5: oklch(0.85 0.01 60); /* off-white */
     --sidebar: oklch(0.11 0.015 20);
     --sidebar-foreground: oklch(0.94 0.008 60);
     --sidebar-primary: oklch(0.58 0.28 350);
