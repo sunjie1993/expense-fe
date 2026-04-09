@@ -50,12 +50,20 @@ function SquidTransitionOverlay() {
                 <SquidShape type="triangle" delay="0.6s"/>
                 <SquidShape type="square" delay="0.9s"/>
             </div>
-            <p
-                className="animate-squid-shape-in text-muted-foreground text-xs tracking-[0.3em] md:tracking-[0.5em] uppercase font-(family-name:--font-heading)"
-                style={{animationDelay: "1.2s"}}
-            >
-                Entering
-            </p>
+            <div className="flex flex-col items-center gap-1">
+                <p
+                    className="animate-squid-shape-in text-muted-foreground text-xs tracking-[0.3em] md:tracking-[0.5em] uppercase font-(family-name:--font-heading)"
+                    style={{animationDelay: "1.2s"}}
+                >
+                    Entering
+                </p>
+                <p
+                    className="animate-squid-shape-in text-primary/60 text-[10px] tracking-[0.2em] uppercase"
+                    style={{animationDelay: "1.4s"}}
+                >
+                    Welcome back, Player
+                </p>
+            </div>
         </div>
     );
 }
@@ -77,7 +85,7 @@ export default function LoginPage() {
 
     const handleLogin = useCallback(async () => {
         const trimmedPasscode = passcode.trim();
-        if (trimmedPasscode.length === 0) {
+        if (!trimmedPasscode) {
             setError("Passcode is required");
             triggerShake();
             inputRef.current?.focus();
@@ -87,30 +95,22 @@ export default function LoginPage() {
         setError(null);
         setIsLoading(true);
 
-        let loginSuccess = false;
         try {
             await login(trimmedPasscode);
-            loginSuccess = true;
+            setIsTransitioning(true);
+            setTimeout(() => { globalThis.location.href = "/dashboard/"; }, 1800);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Login failed");
+            setIsLoading(false);
             triggerShake();
             inputRef.current?.focus();
-        } finally {
-            if (!loginSuccess) setIsLoading(false);
-        }
-
-        if (loginSuccess) {
-            setIsTransitioning(true);
-            setTimeout(() => {
-                globalThis.location.href = "/dashboard/";
-            }, 1800);
         }
     }, [passcode, login]);
 
-    const handleSubmit = useCallback((e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         handleLogin();
-    }, [handleLogin]);
+    };
 
     return (
         <>
@@ -119,30 +119,34 @@ export default function LoginPage() {
             <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
 
                 <div className="absolute inset-0 pointer-events-none select-none text-primary" aria-hidden="true">
-                    <svg className="absolute -top-32 -left-32 opacity-[0.045]" width="420" height="420"
-                         viewBox="0 0 420 420">
+                    <svg className="absolute -top-32 -left-32 opacity-[0.045] animate-squid-shape-pulse"
+                         style={{animationDelay: "0s", animationDuration: "5s"}}
+                         width="420" height="420" viewBox="0 0 420 420">
                         <circle cx="210" cy="210" r="200" fill="none" stroke="currentColor" strokeWidth="2"/>
                         <circle cx="210" cy="210" r="155" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    <svg className="absolute -bottom-24 -right-24 opacity-[0.045]" width="380" height="340"
-                         viewBox="0 0 380 340">
+                    <svg className="absolute -bottom-24 -right-24 opacity-[0.045] animate-squid-shape-pulse"
+                         style={{animationDelay: "1.5s", animationDuration: "6s"}}
+                         width="380" height="340" viewBox="0 0 380 340">
                         <polygon points="190,8 372,332 8,332" fill="none" stroke="currentColor" strokeWidth="2"/>
                         <polygon points="190,48 334,308 46,308" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    <svg className="absolute top-1/4 -right-20 opacity-[0.035]" width="260" height="260"
-                         viewBox="0 0 260 260">
+                    <svg className="absolute top-1/4 -right-20 opacity-[0.035] animate-squid-shape-pulse"
+                         style={{animationDelay: "0.8s", animationDuration: "7s"}}
+                         width="260" height="260" viewBox="0 0 260 260">
                         <rect x="8" y="8" width="244" height="244" fill="none" stroke="currentColor" strokeWidth="2"/>
                         <rect x="36" y="36" width="188" height="188" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    <svg className="absolute bottom-1/4 -left-14 opacity-[0.03]" width="190" height="190"
-                         viewBox="0 0 190 190">
+                    <svg className="absolute bottom-1/4 -left-14 opacity-[0.03] animate-squid-shape-pulse"
+                         style={{animationDelay: "2.2s", animationDuration: "5.5s"}}
+                         width="190" height="190" viewBox="0 0 190 190">
                         <rect x="8" y="8" width="174" height="174" fill="none" stroke="currentColor" strokeWidth="1.5"/>
                     </svg>
                 </div>
 
                 <Card
                     ref={cardRef}
-                    className={cn("w-full max-w-md animate-fade-in-up elevation-2")}
+                    className={cn("w-full max-w-md animate-fade-in-up glass-card elevation-4")}
                     onAnimationEnd={(e) => {
                         if (e.animationName === "shake") {
                             cardRef.current?.classList.remove("animate-shake");
@@ -159,15 +163,15 @@ export default function LoginPage() {
                             <div className="h-6 w-6 border border-primary/70"/>
                         </div>
                         <div className="space-y-1">
-                            <CardTitle className="text-2xl">
+                            <CardTitle className="text-2xl gradient-text">
                                 Expense Tracker
                             </CardTitle>
                             <CardDescription>
-                                Enter your passcode to access your dashboard
+                                Identify yourself to enter
                             </CardDescription>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className={cn("transition-opacity duration-200", isLoading && "opacity-60 pointer-events-none")}>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                                 <label htmlFor="passcode" className="text-sm font-medium">
@@ -188,7 +192,7 @@ export default function LoginPage() {
                                         autoFocus
                                         aria-invalid={Boolean(error)}
                                         aria-describedby={error === null ? undefined : "login-error"}
-                                        className="pr-10"
+                                        className={cn("pr-10", error && "border-destructive focus-visible:ring-destructive/50")}
                                     />
                                     <button
                                         type="button"
@@ -213,7 +217,7 @@ export default function LoginPage() {
                             )}
                             <Button
                                 type="submit"
-                                className="w-full active:scale-[0.98] transition-all"
+                                className="w-full active:scale-[0.98] transition-all gradient-shine"
                                 disabled={isLoading || passcode.trim().length === 0}
                             >
                                 {isLoading ? (
@@ -225,6 +229,11 @@ export default function LoginPage() {
                                     "Sign In"
                                 )}
                             </Button>
+                            {!isLoading && (
+                                <p className="text-center text-xs text-muted-foreground">
+                                    Press ↵ to sign in
+                                </p>
+                            )}
                         </form>
                     </CardContent>
                 </Card>

@@ -41,9 +41,9 @@ export function MobileNav() {
                         <Button
                             type="button"
                             size="icon"
-                            variant="secondary"
+                            variant="default"
                             onClick={() => setDialogOpen(true)}
-                            className="h-14 w-14 rounded-full shadow-lg active:scale-95 transition-all -translate-y-3"
+                            className="h-14 w-14 rounded-full active:scale-95 transition-all -translate-y-3 elevation-2"
                             aria-label="Add Expense"
                         >
                             <Plus className="h-6 w-6"/>
