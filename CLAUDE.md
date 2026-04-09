@@ -23,11 +23,33 @@ No test suite configured.
 
 - **Auth**: React Context (`src/contexts/auth-context.tsx`) — access token in a module-level variable (memory only), refresh token in `sessionStorage`. On mount (non-login pages), attempts a token refresh from `sessionStorage` before marking auth ready. Auto-refresh on 401; redirect to `/login/` on failure.
 - **Server state**: SWR via custom hooks in `src/hooks/` — each wraps `fetcher()` from `src/lib/api.ts`. After mutations, invalidate both `/api/expenses` and `/api/dashboard` keys using `useSWRConfig().mutate` with a key-matching predicate: `(key) => typeof key === "string" && (key.includes("/api/expenses") || key.includes("/api/dashboard"))`.
+- **SWR global config** (`src/components/providers.tsx`): `revalidateOnFocus: false`, `shouldRetryOnError: false`. Also mounts `<Toaster position="top-center" richColors />` (sonner).
 - **Forms**: react-hook-form + Zod schemas (in `src/lib/validations/`). Form fields are modular components in `src/components/expenses/form-fields/`. The expense form uses a two-tier category selection: main category → subcategory (lazy-loaded via `useSubCategories(mainCategoryId)`), managed by `useExpenseForm` hook. `main_category_id` is a form-only field used to drive subcategory loading — it is **not** sent to the API; only `category_id` (the subcategory) is submitted.
+- **Form validation extras** (`src/lib/validations/expense.ts`): exports `SPENDER_OPTIONS` (array of `{value, label}` for SJ/YS/Shared) and `getTodayDate()` (returns today as `YYYY-MM-DD` ISO string, used as the default expense date).
 - **Category icons**: `CategoryIcon` and `CategoryIconBadge` in `src/lib/category-icons.tsx` — map icon name strings from the API to Lucide icons.
 - **API layer**: `src/lib/api.ts` exports `apiGet<T>`, `apiPost<T>`, `apiPut<T>`, `apiDelete<T>` plus the SWR-compatible `fetcher()`. Uses native `fetch` (not Axios despite it being installed).
 - **Types**: All API interfaces in `src/types/api.ts`.
 - **Charts**: `ChartContainer` in `src/components/ui/chart.tsx` uses its own `ResizeObserver` (via `ref`) to measure dimensions before rendering `ResponsiveContainer` with explicit pixel values — this prevents Recharts' `-1` dimension warning on initial render.
+
+### Utility functions (`src/lib/utils.ts`)
+
+- `cn(...inputs)` — merges Tailwind classes via `clsx` + `tailwind-merge`; used throughout all components.
+- `formatCurrency(amount, options?)` — formats to SGD using `en-SG` locale.
+- `getCurrentMonth()` / `getCurrentYear()` — returns current `"YYYY-MM"` / `"YYYY"` strings.
+- `formatPeriodDisplay(period, date)` — human-readable label, e.g. `"April 2026"` or `"2026"`.
+- `navigatePeriod(period, currentDate, direction)` — increments/decrements a period date string.
+- `formatExpenseDate(dateString)` — returns `{ day, monthYear }` split for display in expense rows.
+
+### Custom hooks (`src/hooks/`)
+
+| Hook | Endpoint | Notes |
+|------|----------|-------|
+| `useDashboardOverview(period, date)` | `/api/dashboard/overview` | Main stat cards |
+| `useSpenderBreakdown(period, date)` | `/api/dashboard/spender-breakdown` | Pie/donut chart |
+| `useCategoryDrillDown(categoryId, period, date)` | `/api/dashboard/category-drill/:id` | Null key = disabled |
+| `useDailyTrend(yearMonth)` | `/api/dashboard/daily-trend` | Monthly only; null key = disabled |
+| `useRecentExpenses(limit?)` | `/api/expenses?limit=N&offset=0` | Default limit 5 |
+| `usePaymentMethods()` | `/api/payment-methods` | Used in expense form |
 
 ### Routing & layout
 
@@ -42,7 +64,7 @@ Dashboard layout (`src/app/dashboard/layout.tsx`): `Sidebar` on desktop (md+), `
 
 ### Design system
 
-- **Component library**: Shadcn UI (Radix primitives + Tailwind), components in `src/components/ui/`
+- **Component library**: Shadcn UI (Radix primitives + Tailwind), components in `src/components/ui/`. Config in `src/components.json` — style preset `new-york`, path aliases `@/ui`, `@/hooks`, `@/lib`, `@/components`.
 - **Styling**: Tailwind 4 with `@theme inline` in `globals.css`. All color tokens use oklch.
 - **Fonts**: Two-font system via `next/font/google`:
   - `Bebas Neue` — display/heading font, CSS var `--font-heading`. Applied via base layer CSS to `h1`, `h2`, `h3`, and `[data-slot="card-title"]`. Letter-spacing 0.06em.
@@ -55,6 +77,7 @@ Dashboard layout (`src/app/dashboard/layout.tsx`): `Sidebar` on desktop (md+), `
   - Chart colours: magenta, teal, dalgona gold, light pink, off-white
 - **Radius**: `--radius: 0.375rem` base (sharper/more geometric) — cards `rounded-xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`
 - **Elevation**: `.elevation-0/1/2/4/8` utility classes emit magenta glow box-shadows (defined in `globals.css`) instead of neutral grey shadows.
+- **Extra CSS utilities** (`globals.css`): `.glass-card`, `.glass-hover` (glassmorphism); `.gradient-primary`, `.gradient-card`, `.gradient-shine`, `.glow-border`, `.gradient-text` (gradient effects); `.shimmer`, `.shadow-colored`, `.progress-bar` (misc effects).
 - **Animations**: Custom keyframes in `globals.css`:
   - Page/UI: `animate-fade-in-up`, `animate-fade-in-down`, `animate-shake`, `animate-counter`
   - List stagger: `expense-row-animation`, `category-rank-animation`
@@ -83,3 +106,5 @@ Tailwind badge classes (dark-friendly): `bg-pink-500/15 text-pink-300 border-pin
 - Expenses page uses responsive layout: card list on mobile (`sm:hidden`), table on desktop (`hidden sm:block`).
 - Locale: `en-SG` (Singapore) for currency formatting and dates.
 - Always use trailing slashes in `href` values (`trailingSlash: true` is set in `next.config.ts`).
+- TypeScript path alias `@/*` maps to `./src/*` (configured in `tsconfig.json`).
+- Environment: no `.env.example` — only `.env.production` exists. For local dev, create `.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:8787`.
