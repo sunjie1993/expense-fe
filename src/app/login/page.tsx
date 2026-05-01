@@ -7,66 +7,8 @@ import {Input} from "@/components/ui/input";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {AlertCircle, Eye, EyeOff, Loader2} from "lucide-react";
 import {cn} from "@/lib/utils";
+import {AvengersTransitionOverlay} from "@/components/avengers-transition-overlay";
 
-function SquidShape({type, delay}: { readonly type: "circle" | "triangle" | "square"; readonly delay: string }) {
-    const sharedClass = "animate-squid-shape-in";
-    const sharedStyle = {animationDelay: delay};
-
-    if (type === "circle") {
-        return (
-            <div
-                className={cn(sharedClass, "h-14 w-14 md:h-20 md:w-20 rounded-full border-2 border-primary")}
-                style={sharedStyle}
-            />
-        );
-    }
-
-    if (type === "triangle") {
-        return (
-            <svg
-                viewBox="0 0 80 70"
-                className={cn(sharedClass, "w-14 h-12 md:w-20 md:h-17.5 text-primary shrink-0")}
-                style={sharedStyle}
-            >
-                <polygon points="40,4 76,66 4,66" fill="none" stroke="currentColor" strokeWidth="2"/>
-            </svg>
-        );
-    }
-
-    return (
-        <div
-            className={cn(sharedClass, "h-14 w-14 md:h-20 md:w-20 border-2 border-primary")}
-            style={sharedStyle}
-        />
-    );
-}
-
-function SquidTransitionOverlay() {
-    return (
-        <div
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 md:gap-10 bg-background animate-squid-overlay-in">
-            <div className="flex items-center justify-center gap-6 md:gap-10 animate-squid-glow">
-                <SquidShape type="circle" delay="0.3s"/>
-                <SquidShape type="triangle" delay="0.6s"/>
-                <SquidShape type="square" delay="0.9s"/>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-                <p
-                    className="animate-squid-shape-in text-muted-foreground text-xs tracking-[0.3em] md:tracking-[0.5em] uppercase font-(family-name:--font-heading)"
-                    style={{animationDelay: "1.2s"}}
-                >
-                    Entering
-                </p>
-                <p
-                    className="animate-squid-shape-in text-primary/60 text-[10px] tracking-[0.2em] uppercase"
-                    style={{animationDelay: "1.4s"}}
-                >
-                    Welcome back, Player
-                </p>
-            </div>
-        </div>
-    );
-}
 
 export default function LoginPage() {
     const {login} = useAuth();
@@ -114,33 +56,44 @@ export default function LoginPage() {
 
     return (
         <>
-            {isTransitioning && <SquidTransitionOverlay/>}
+            {isTransitioning && <AvengersTransitionOverlay/>}
 
             <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
 
+                {/* Decorative Avengers background shapes */}
                 <div className="absolute inset-0 pointer-events-none select-none text-primary" aria-hidden="true">
-                    <svg className="absolute -top-32 -left-32 opacity-[0.045] animate-squid-shape-pulse"
+                    {/* Large A — top-left */}
+                    <svg className="absolute -top-20 -left-20 opacity-[0.04] animate-float-pulse"
                          style={{animationDelay: "0s", animationDuration: "5s"}}
-                         width="420" height="420" viewBox="0 0 420 420">
-                        <circle cx="210" cy="210" r="200" fill="none" stroke="currentColor" strokeWidth="2"/>
-                        <circle cx="210" cy="210" r="155" fill="none" stroke="currentColor" strokeWidth="1"/>
+                         width="400" height="400" viewBox="0 0 80 80">
+                        <line x1="40" y1="6" x2="8" y2="74" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="40" y1="6" x2="72" y2="74" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="20" y1="50" x2="60" y2="50" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
                     </svg>
-                    <svg className="absolute -bottom-24 -right-24 opacity-[0.045] animate-squid-shape-pulse"
+                    {/* Shield rings — bottom-right */}
+                    <svg className="absolute -bottom-20 -right-20 opacity-[0.04] animate-float-pulse"
                          style={{animationDelay: "1.5s", animationDuration: "6s"}}
-                         width="380" height="340" viewBox="0 0 380 340">
-                        <polygon points="190,8 372,332 8,332" fill="none" stroke="currentColor" strokeWidth="2"/>
-                        <polygon points="190,48 334,308 46,308" fill="none" stroke="currentColor" strokeWidth="1"/>
+                         width="380" height="380" viewBox="0 0 380 380">
+                        <circle cx="190" cy="190" r="180" fill="none" stroke="currentColor" strokeWidth="2"/>
+                        <circle cx="190" cy="190" r="135" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="190" cy="190" r="90" fill="none" stroke="currentColor" strokeWidth="1"/>
                     </svg>
-                    <svg className="absolute top-1/4 -right-20 opacity-[0.035] animate-squid-shape-pulse"
+                    {/* Star — top-right */}
+                    <svg className="absolute top-1/4 -right-16 opacity-[0.035] animate-float-pulse"
                          style={{animationDelay: "0.8s", animationDuration: "7s"}}
-                         width="260" height="260" viewBox="0 0 260 260">
-                        <rect x="8" y="8" width="244" height="244" fill="none" stroke="currentColor" strokeWidth="2"/>
-                        <rect x="36" y="36" width="188" height="188" fill="none" stroke="currentColor" strokeWidth="1"/>
+                         width="240" height="240" viewBox="0 0 100 100">
+                        <polygon
+                            points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35"
+                            fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"
+                        />
                     </svg>
-                    <svg className="absolute bottom-1/4 -left-14 opacity-[0.03] animate-squid-shape-pulse"
+                    {/* Small A — bottom-left */}
+                    <svg className="absolute bottom-1/4 -left-10 opacity-[0.03] animate-float-pulse"
                          style={{animationDelay: "2.2s", animationDuration: "5.5s"}}
-                         width="190" height="190" viewBox="0 0 190 190">
-                        <rect x="8" y="8" width="174" height="174" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                         width="180" height="180" viewBox="0 0 80 80">
+                        <line x1="40" y1="6" x2="8" y2="74" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="40" y1="6" x2="72" y2="74" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="20" y1="50" x2="60" y2="50" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
                     </svg>
                 </div>
 
@@ -154,13 +107,13 @@ export default function LoginPage() {
                     }}
                 >
                     <CardHeader className="space-y-3 items-center text-center">
-                        <div className="flex items-center justify-center gap-3 text-primary">
-                            <div className="h-6 w-6 rounded-full border border-primary/70"/>
-                            <svg width="22" height="20" viewBox="0 0 22 20" className="shrink-0">
-                                <polygon points="11,1 21,19 1,19" fill="none" stroke="currentColor" strokeOpacity="0.7"
-                                         strokeWidth="1.5"/>
+                        <div className="flex items-center justify-center text-primary">
+                            <svg viewBox="0 0 80 80" className="h-10 w-10 animate-hero-glow" aria-hidden="true">
+                                <line x1="40" y1="6" x2="8" y2="74" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/>
+                                <line x1="40" y1="6" x2="72" y2="74" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/>
+                                <line x1="20" y1="50" x2="60" y2="50" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                                <line x1="40" y1="6" x2="40" y2="18" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
                             </svg>
-                            <div className="h-6 w-6 border border-primary/70"/>
                         </div>
                         <div className="space-y-1">
                             <CardTitle className="text-2xl gradient-text">
