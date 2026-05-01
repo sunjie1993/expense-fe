@@ -18,15 +18,13 @@ export default function DashboardLayout({children}: Readonly<{ children: ReactNo
     if (isLoading) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center gap-8">
-                <div className="flex items-center justify-center gap-7 text-primary animate-squid-glow">
-                    <div className="h-8 w-8 rounded-full border-2 border-current animate-squid-shape-pulse"
-                         style={{animationDelay: "0ms"}}/>
-                    <svg width="34" height="30" viewBox="0 0 34 30"
-                         className="animate-squid-shape-pulse" style={{animationDelay: "200ms"}}>
-                        <polygon points="17,2 32,28 2,28" fill="none" stroke="currentColor" strokeWidth="2"/>
+                <div className="animate-hero-glow text-primary">
+                    <svg viewBox="0 0 80 80" className="h-16 w-16 animate-float-pulse" aria-hidden="true">
+                        <line x1="40" y1="6" x2="8" y2="74" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/>
+                        <line x1="40" y1="6" x2="72" y2="74" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/>
+                        <line x1="20" y1="50" x2="60" y2="50" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="40" y1="6" x2="40" y2="18" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
                     </svg>
-                    <div className="h-8 w-8 border-2 border-current animate-squid-shape-pulse"
-                         style={{animationDelay: "400ms"}}/>
                 </div>
             </div>
         );

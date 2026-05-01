@@ -2,6 +2,7 @@
 
 import {SWRConfig} from "swr";
 import {AuthProvider} from "@/contexts/auth-context";
+import {HeroThemeProvider} from "@/contexts/hero-theme-context";
 import {Toaster} from "@/components/ui/sonner";
 import {fetcher} from "@/lib/api";
 import type {ReactNode} from "react";
@@ -15,10 +16,12 @@ export function Providers({children}: Readonly<{ children: ReactNode }>) {
                 shouldRetryOnError: false,
             }}
         >
-            <AuthProvider>
-                {children}
-                <Toaster position="top-center" richColors/>
-            </AuthProvider>
+            <HeroThemeProvider>
+                <AuthProvider>
+                    {children}
+                    <Toaster position="top-center" richColors/>
+                </AuthProvider>
+            </HeroThemeProvider>
         </SWRConfig>
     );
 }

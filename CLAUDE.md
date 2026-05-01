@@ -25,9 +25,9 @@ No test suite configured.
 - **Server state**: SWR via custom hooks in `src/hooks/` — each wraps `fetcher()` from `src/lib/api.ts`. After mutations, invalidate both `/api/expenses` and `/api/dashboard` keys using `useSWRConfig().mutate` with a key-matching predicate: `(key) => typeof key === "string" && (key.includes("/api/expenses") || key.includes("/api/dashboard"))`.
 - **SWR global config** (`src/components/providers.tsx`): `revalidateOnFocus: false`, `shouldRetryOnError: false`. Also mounts `<Toaster position="top-center" richColors />` (sonner).
 - **Forms**: react-hook-form + Zod schemas (in `src/lib/validations/`). Form fields are modular components in `src/components/expenses/form-fields/`. The expense form uses a two-tier category selection: main category → subcategory (lazy-loaded via `useSubCategories(mainCategoryId)`), managed by `useExpenseForm` hook. `main_category_id` is a form-only field used to drive subcategory loading — it is **not** sent to the API; only `category_id` (the subcategory) is submitted.
-- **Form validation extras** (`src/lib/validations/expense.ts`): exports `SPENDER_OPTIONS` (array of `{value, label}` for SJ/YS/Shared) and `getTodayDate()` (returns today as `YYYY-MM-DD` ISO string, used as the default expense date).
+- **Form validation extras** (`src/lib/validations/expense.ts`): exports `expenseSchema` (Zod schema), `ExpenseFormValues` (inferred TS type), `SPENDER_OPTIONS` (array of `{value, label}` for SJ/YS/Shared), and `getTodayDate()` (returns today as `YYYY-MM-DD` ISO string, used as the default expense date).
 - **Category icons**: `CategoryIcon` and `CategoryIconBadge` in `src/lib/category-icons.tsx` — map icon name strings from the API to Lucide icons.
-- **API layer**: `src/lib/api.ts` exports `apiGet<T>`, `apiPost<T>`, `apiPut<T>`, `apiDelete<T>` plus the SWR-compatible `fetcher()`. Uses native `fetch` (not Axios despite it being installed).
+- **API layer**: `src/lib/api.ts` exports `apiGet<T>`, `apiPost<T>`, `apiPut<T>`, `apiDelete<T>` plus the SWR-compatible `fetcher()`. Also exports token helpers used by auth-context: `getAccessToken()`, `setAccessToken()`, `getRefreshToken()`, `setRefreshToken()`, `clearTokens()`. Uses native `fetch` (not Axios despite it being installed).
 - **Types**: All API interfaces in `src/types/api.ts`.
 - **Charts**: `ChartContainer` in `src/components/ui/chart.tsx` uses its own `ResizeObserver` (via `ref`) to measure dimensions before rendering `ResponsiveContainer` with explicit pixel values — this prevents Recharts' `-1` dimension warning on initial render.
 
@@ -50,6 +50,11 @@ No test suite configured.
 | `useDailyTrend(yearMonth)` | `/api/dashboard/daily-trend` | Monthly only; null key = disabled |
 | `useRecentExpenses(limit?)` | `/api/expenses?limit=N&offset=0` | Default limit 5 |
 | `usePaymentMethods()` | `/api/payment-methods` | Used in expense form |
+| `useExpenses(params?)` | `/api/expenses` | Full filtered list; params: `spentBy`, `categoryId`, `startDate`, `endDate`, `limit`, `offset` |
+| `useMainCategories()` | `/api/categories/main` | Top-level categories |
+| `useSubCategories(parentId)` | `/api/categories/sub/:id` | Null key = disabled; used in expense form |
+| `useAllCategories()` | `/api/categories/all` | Flat list of all categories |
+| `useExpenseForm({open, onSuccess})` | — | Form state + submit logic; not a data-fetching hook |
 
 ### Routing & layout
 
@@ -69,23 +74,25 @@ Dashboard layout (`src/app/dashboard/layout.tsx`): `Sidebar` on desktop (md+), `
 - **Fonts**: Two-font system via `next/font/google`:
   - `Bebas Neue` — display/heading font, CSS var `--font-heading`. Applied via base layer CSS to `h1`, `h2`, `h3`, and `[data-slot="card-title"]`. Letter-spacing 0.06em.
   - `Montserrat` — body font, CSS var `--font-montserrat`. Applied to `<body>`.
-- **Theme**: Squid Game-inspired dark theme. `:root` and `.dark` share the same dark palette — the app is always dark regardless of theme toggle.
-  - Primary: hot magenta `oklch(0.58 0.28 350)` — the guard uniform pink
-  - Accent: teal `oklch(0.55 0.18 192)` — the game shape symbols
-  - Background: near-black `oklch(0.09 0.015 20)`
-  - Card: `oklch(0.13 0.015 20)`
-  - Chart colours: magenta, teal, dalgona gold, light pink, off-white
+- **Hero theme system**: Marvel Avengers-inspired dark theme with per-hero colour palettes. Always dark regardless of system theme.
+  - Background: near-black `oklch(0.09 0.015 20)` — shared by all heroes.
+  - Card: `oklch(0.13 0.015 20)` — shared by all heroes.
+  - Per-hero tokens (`--primary`, `--accent`, `--chart-1..5`, `--glow`, `--ring`, `--shadow-color`) are defined as `[data-hero="<id>"]` CSS blocks in `globals.css`. The active hero id is applied to `<html>` by `HeroThemeProvider`.
+  - Heroes: `iron-man` (red/gold), `captain-america` (navy/silver), `thor` (royal-blue/gold), `hulk` (green/purple), `black-panther` (vibranium-purple/silver), `scarlet-witch` (crimson/magenta).
+  - Hero metadata (id, name, tagline, preview hex swatches) lives in `src/lib/themes.ts`.
+  - Active hero persisted to `localStorage` key `expense-hero-theme`; default is `iron-man`.
+  - **Hero selector**: `src/components/hero-selector.tsx` — Shadcn Dialog with 6 hero cards. Opened from sidebar (desktop) or "Hero" tab in mobile nav.
 - **Radius**: `--radius: 0.375rem` base (sharper/more geometric) — cards `rounded-xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`
-- **Elevation**: `.elevation-0/1/2/4/8` utility classes emit magenta glow box-shadows (defined in `globals.css`) instead of neutral grey shadows.
+- **Elevation**: `.elevation-0/1/2/4/8` utility classes emit hero-coloured glow box-shadows via `color-mix(in oklch, var(--glow) X%, transparent)` — they automatically adapt to the active hero.
 - **Extra CSS utilities** (`globals.css`): `.glass-card`, `.glass-hover` (glassmorphism); `.gradient-primary`, `.gradient-card`, `.gradient-shine`, `.glow-border`, `.gradient-text` (gradient effects); `.shimmer`, `.shadow-colored`, `.progress-bar` (misc effects).
 - **Animations**: Custom keyframes in `globals.css`:
   - Page/UI: `animate-fade-in-up`, `animate-fade-in-down`, `animate-shake`, `animate-counter`
   - List stagger: `expense-row-animation`, `category-rank-animation`
-  - Squid Game: `animate-squid-overlay-in`, `animate-squid-shape-in`, `animate-squid-glow`, `animate-squid-shape-pulse`
+  - Hero/Avengers: `animate-overlay-in`, `animate-shape-in`, `animate-hero-glow`, `animate-float-pulse`
   - Also uses `tw-animate-css` package.
-- **Login transition**: After successful login, `src/app/login/page.tsx` renders a `SquidTransitionOverlay` — a full-screen overlay where ○ △ □ SVG shapes appear one-by-one with a spring entrance and magenta glow, before navigating to `/dashboard/` after 1.8s.
-- **Login background**: Faint large geometric SVG shapes (double-circle, double-triangle, double-square) positioned at screen corners as decorative elements.
-- **Dashboard loading**: The auth-check loading state shows the three pulsing ○ △ □ shapes instead of a plain spinner.
+- **Login transition**: After successful login, `src/app/login/page.tsx` renders `AvengersTransitionOverlay` (`src/components/avengers-transition-overlay.tsx`) — full-screen overlay with the Avengers "A" SVG assembling with a spring + glow animation, before navigating to `/dashboard/` after 1.8s.
+- **Login background**: Faint decorative SVG shapes (large A, shield rings, star, small A) at screen corners, pulsing with `animate-float-pulse`.
+- **Dashboard loading**: The auth-check loading state shows a pulsing Avengers "A" with `animate-hero-glow`.
 
 ### Spender colours
 

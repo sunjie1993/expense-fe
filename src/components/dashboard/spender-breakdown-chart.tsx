@@ -10,9 +10,9 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {TrendingDown, TrendingUp} from "lucide-react";
 
 const SPENDER_COLORS: Record<string, string> = {
-    SJ: "#e8185a",    /* hot magenta */
-    YS: "#0fb8c9",    /* teal */
-    Shared: "#d4a017", /* dalgona gold */
+    SJ: "#e8185a",
+    YS: "#0fb8c9",
+    Shared: "#d4a017",
 };
 
 interface SpenderBreakdownChartProps {

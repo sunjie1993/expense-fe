@@ -4,14 +4,16 @@ import {useState} from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
-import {Plus} from "lucide-react";
+import {Plus, Sword} from "lucide-react";
 import {NAV_ITEMS} from "@/components/dashboard/nav-items";
 import {CreateExpenseDialog} from "@/components/expenses/create-expense-dialog";
+import {HeroSelector} from "@/components/hero-selector";
 import {Button} from "@/components/ui/button";
 
 export function MobileNav() {
     const pathname = usePathname();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [heroSelectorOpen, setHeroSelectorOpen] = useState(false);
 
     const [dashItem, expensesItem] = NAV_ITEMS;
     const DashIcon = dashItem.icon;
@@ -62,10 +64,21 @@ export function MobileNav() {
                         <ExpensesIcon className="h-5 w-5"/>
                         <span>{expensesItem.title}</span>
                     </Link>
+
+                    <button
+                        type="button"
+                        onClick={() => setHeroSelectorOpen(true)}
+                        className="flex flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors text-muted-foreground hover:text-foreground"
+                        aria-label="Choose hero theme"
+                    >
+                        <Sword className="h-5 w-5"/>
+                        <span>Hero</span>
+                    </button>
                 </div>
             </nav>
 
             <CreateExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen}/>
+            <HeroSelector open={heroSelectorOpen} onOpenChange={setHeroSelectorOpen}/>
         </>
     );
 }
