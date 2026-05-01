@@ -14,7 +14,7 @@ const HeroThemeContext = createContext<HeroThemeContextValue | null>(null);
 
 export function HeroThemeProvider({children}: Readonly<{ children: ReactNode }>) {
     const [activeHero, setActiveHero] = useState<HeroId>(() => {
-        if (typeof globalThis.window === "undefined") return DEFAULT_HERO_ID;
+        if (globalThis.window === undefined) return DEFAULT_HERO_ID;
         return (localStorage.getItem(STORAGE_KEY) as HeroId | null) ?? DEFAULT_HERO_ID;
     });
 
