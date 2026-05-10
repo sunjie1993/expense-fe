@@ -28,6 +28,8 @@ const getBarRadius = (index: number, total: number): [number, number, number, nu
     return [0, 0, 0, 0];
 };
 
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 const formatCompact = (value: number): string => {
     if (value >= 1000) return `$${(value / 1000).toFixed(1)}k`;
     return `$${value.toFixed(0)}`;
@@ -87,8 +89,7 @@ export const SpendingTrendChart = memo(function SpendingTrendChart({data, period
                                 tickFormatter={(value) => {
                                     if (isMonthly) {
                                         const [, month] = String(value).split("-");
-                                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                                        return monthNames[Number(month) - 1];
+                                        return MONTH_NAMES[Number(month) - 1];
                                     }
                                     return String(value);
                                 }}

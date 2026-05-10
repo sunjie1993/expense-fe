@@ -96,7 +96,7 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                         </ChartContainer>
 
                         <ul className="mt-3 space-y-3">
-                            {breakdown.spenders.map((s) => {
+                            {breakdown.spenders.filter((s) => s.total > 0).map((s) => {
                                 const color = SPENDER_COLORS[s.spent_by] ?? "#94a3b8";
                                 const isUp = s.change_percentage > 0;
                                 return (

@@ -125,10 +125,7 @@ export async function apiDelete<T>(endpoint: string): Promise<T> {
 
 export const fetcher = async (url: string) => {
     const response = await api(url, {method: "GET"});
-    if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-    }
-    return response.json();
+    return parseResponse(response);
 };
 
 export {API_BASE_URL};

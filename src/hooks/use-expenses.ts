@@ -11,7 +11,7 @@ interface UseExpensesParams {
 }
 
 export function useExpenses(params: UseExpensesParams = {}) {
-    const {limit = 50, offset = 0, spentBy, categoryId, startDate, endDate} = params;
+    const {limit = 10, offset = 0, spentBy, categoryId, startDate, endDate} = params;
 
     const searchParams = new URLSearchParams();
     searchParams.set("limit", limit.toString());
