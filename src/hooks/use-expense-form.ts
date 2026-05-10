@@ -91,13 +91,9 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
                 });
                 onSuccess();
             } catch (err: unknown) {
-                const apiError = err as { response?: { data?: { error?: string } } };
-                const errorMessage =
-                    apiError.response?.data?.error || "Failed to create expense";
-                setError(errorMessage);
-                toast.error("Failed to add expense", {
-                    description: errorMessage,
-                });
+                const message = err instanceof Error ? err.message : "Failed to create expense";
+                setError(message);
+                toast.error("Failed to add expense", {description: message});
             } finally {
                 setIsSubmitting(false);
             }

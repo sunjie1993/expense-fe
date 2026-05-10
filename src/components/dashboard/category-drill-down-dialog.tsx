@@ -3,6 +3,7 @@
 import {memo} from "react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Skeleton} from "@/components/ui/skeleton";
+import {AlertCircle} from "lucide-react";
 import {useCategoryDrillDown} from "@/hooks/use-dashboard";
 import {CategoryIconBadge} from "@/lib/category-icons";
 import {formatCurrency} from "@/lib/utils";
@@ -20,7 +21,7 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
                                                                                  date,
                                                                                  onClose,
                                                                              }: CategoryDrillDownDialogProps) {
-    const {data, isLoading} = useCategoryDrillDown(categoryId, period, date);
+    const {data, isLoading, error} = useCategoryDrillDown(categoryId, period, date);
     const drillDown = data?.data;
 
     return (
@@ -61,7 +62,14 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
                         </div>
                     )}
 
-                    {!isLoading && drillDown && (
+                    {!isLoading && error && (
+                        <div className="flex items-center justify-center gap-2 py-8">
+                            <AlertCircle className="h-4 w-4 text-destructive shrink-0"/>
+                            <p className="text-sm text-destructive">Failed to load category breakdown</p>
+                        </div>
+                    )}
+
+                    {!isLoading && !error && drillDown && (
                         drillDown.breakdown.length > 0 ? (
                             <ul className="space-y-4 list-none">
                                 {drillDown.breakdown.map((item) => (

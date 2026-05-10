@@ -11,7 +11,7 @@ Two-person shared expense tracker for SJ and YS. Passcode-based auth, dashboard 
 - **Framework**: Next.js 16, App Router, static export (`output: 'export'`), React 19
 - **Language**: TypeScript 6 (`@/*` alias → `./src/*`)
 - **Styling**: Tailwind 4 (`@theme inline`), Shadcn UI (new-york preset, Radix primitives)
-- **State**: SWR for server state; React Context for auth and hero theme; react-hook-form + Zod for forms
+- **State**: SWR for server state; React Context for auth; react-hook-form + Zod for forms
 - **Charts**: Recharts with a custom `ChartContainer` to avoid `-1`-dimension warnings
 - **Toasts**: Sonner (`<Toaster position="top-center" richColors />` in providers)
 - **Compiler**: React Compiler enabled via `babel-plugin-react-compiler`
@@ -26,12 +26,11 @@ src/
     ui/                 # Shadcn UI primitives (button, card, dialog, …)
     dashboard/          # Dashboard-specific components (stat cards, charts, nav)
     expenses/           # Expense list, form, form-fields/, filters
-  contexts/             # auth-context.tsx, hero-theme-context.tsx
+  contexts/             # auth-context.tsx
   hooks/                # SWR data-fetching hooks (one file per domain)
   lib/
     api.ts              # fetch wrapper, apiGet/Post/Put/Delete, fetcher(), token helpers
     utils.ts            # cn(), formatCurrency(), period helpers, formatExpenseDate()
-    themes.ts           # HERO_THEMES, HERO_CSS_VARS, HeroId type
     category-icons.tsx  # CategoryIcon / CategoryIconBadge (icon name → Lucide)
     validations/        # Zod schemas (expense.ts exports expenseSchema, SPENDER_OPTIONS, getTodayDate)
   types/
@@ -72,29 +71,20 @@ No test suite configured.
 
 ## Design system
 
-**Hero theme** — Marvel Avengers dark theme, always dark. Six heroes: `iron-man` (default), `captain-america`, `thor`, `hulk`, `black-panther`, `scarlet-witch`. Active hero stored in `localStorage` key `expense-hero-theme`.
-
-Per-hero CSS tokens (`--primary`, `--accent`, `--chart-1..5`, `--glow`, `--ring`, `--shadow-color`) are applied two ways by `HeroThemeProvider`: `el.dataset.hero` (matches `[data-hero="…"]` CSS blocks in `globals.css`) **and** inline `el.style.setProperty` from `HERO_CSS_VARS` in `themes.ts`.
-
-Shared base colors: background `oklch(0.09 0.015 20)`, card `oklch(0.13 0.015 20)`. Elevation utility classes `.elevation-0/1/2/4/8` emit hero-coloured glow shadows via `color-mix(in oklch, var(--glow) X%, transparent)`.
-
-Fonts: `Bebas Neue` (`--font-heading`) for headings/card titles; `Montserrat` (`--font-montserrat`) for body.
-
-Radius: `--radius: 0.375rem` base → cards `rounded-xl`, dialogs `rounded-3xl`, buttons `rounded-full`, inputs `rounded-xl`.
+Standard shadcn light theme (zinc/neutral palette). White background, near-black primary, light gray accents. Font: Inter (`--font-sans`). Radius: `--radius: 0.625rem`.
 
 **Spender colours** — hardcoded in two places, keep in sync: `spender-breakdown-chart.tsx` (`SPENDER_COLORS`) and `spender-badge.tsx` (Tailwind classes):
 
 | Spender | Hex | Tailwind badge |
 |---------|-----|----------------|
-| SJ | `#e8185a` magenta | `bg-pink-500/15 text-pink-300 border-pink-500/30` |
-| YS | `#0fb8c9` teal | `bg-cyan-500/15 text-cyan-300 border-cyan-500/30` |
-| Shared | `#d4a017` gold | `bg-amber-500/15 text-amber-300 border-amber-500/30` |
+| SJ | `#e8185a` magenta | `bg-pink-50 text-pink-600 border-pink-200` |
+| YS | `#0fb8c9` teal | `bg-cyan-50 text-cyan-700 border-cyan-200` |
+| Shared | `#d4a017` gold | `bg-amber-50 text-amber-700 border-amber-200` |
 
 ## Key terminology
 
 - **`spent_by`**: `"SJ"` | `"YS"` | `"Shared"`
 - **period/date pair**: `"monthly"` + `"YYYY-MM"` or `"yearly"` + `"YYYY"`
-- **Hero**: the active Avengers colour palette applied to `<html>`
 
 ## Custom hooks reference
 

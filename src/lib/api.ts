@@ -89,9 +89,17 @@ async function api(endpoint: string, options: RequestInit = {}): Promise<Respons
     return response;
 }
 
+async function parseResponse<T>(response: Response): Promise<T> {
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data?.error ?? data?.message ?? `Request failed with status ${response.status}`);
+    }
+    return data as T;
+}
+
 export async function apiGet<T>(endpoint: string): Promise<T> {
     const response = await api(endpoint, {method: "GET"});
-    return response.json();
+    return parseResponse<T>(response);
 }
 
 export async function apiPost<T>(endpoint: string, body?: unknown): Promise<T> {
@@ -99,7 +107,7 @@ export async function apiPost<T>(endpoint: string, body?: unknown): Promise<T> {
         method: "POST",
         body: body ? JSON.stringify(body) : undefined,
     });
-    return response.json();
+    return parseResponse<T>(response);
 }
 
 export async function apiPut<T>(endpoint: string, body?: unknown): Promise<T> {
@@ -107,12 +115,12 @@ export async function apiPut<T>(endpoint: string, body?: unknown): Promise<T> {
         method: "PUT",
         body: body ? JSON.stringify(body) : undefined,
     });
-    return response.json();
+    return parseResponse<T>(response);
 }
 
 export async function apiDelete<T>(endpoint: string): Promise<T> {
     const response = await api(endpoint, {method: "DELETE"});
-    return response.json();
+    return parseResponse<T>(response);
 }
 
 export const fetcher = async (url: string) => {
@@ -123,4 +131,4 @@ export const fetcher = async (url: string) => {
     return response.json();
 };
 
-export {api, API_BASE_URL};
+export {API_BASE_URL};

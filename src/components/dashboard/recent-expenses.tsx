@@ -4,14 +4,15 @@ import {memo} from "react";
 import {format} from "date-fns";
 import Link from "next/link";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {AlertCircle} from "lucide-react";
 import {CategoryIconBadge} from "@/lib/category-icons";
 import {SpenderBadge} from "@/components/expenses/spender-badge";
 import {SkeletonListItem} from "@/components/dashboard/dashboard-skeleton";
 import {formatCurrency} from "@/lib/utils";
-import {useExpenses} from "@/hooks/use-expenses";
+import {useRecentExpenses} from "@/hooks/use-dashboard";
 
 export const RecentExpenses = memo(function RecentExpenses() {
-    const {data, isLoading} = useExpenses({limit: 5, offset: 0});
+    const {data, isLoading, error} = useRecentExpenses();
     const expenses = data?.data?.expenses ?? [];
 
     let content;
@@ -19,6 +20,13 @@ export const RecentExpenses = memo(function RecentExpenses() {
         content = (
             <div className="space-y-4">
                 {["a", "b", "c", "d", "e"].map((k) => <SkeletonListItem key={k}/>)}
+            </div>
+        );
+    } else if (error) {
+        content = (
+            <div className="flex items-center justify-center gap-2 py-8">
+                <AlertCircle className="h-4 w-4 text-destructive shrink-0"/>
+                <p className="text-sm text-destructive">Failed to load recent transactions</p>
             </div>
         );
     } else if (expenses.length === 0) {
@@ -31,7 +39,7 @@ export const RecentExpenses = memo(function RecentExpenses() {
                 {expenses.map((expense) => (
                     <li key={expense.id}>
                         <Link
-                            href="/dashboard/expenses"
+                            href="/dashboard/expenses/"
                             className="flex items-center gap-3 rounded-md -mx-2 px-2 py-2 transition-colors hover:bg-muted/50"
                         >
                             <CategoryIconBadge
@@ -67,7 +75,7 @@ export const RecentExpenses = memo(function RecentExpenses() {
                     <CardDescription className="mt-1">Your 5 most recent expenses</CardDescription>
                 </div>
                 <Link
-                    href="/dashboard/expenses"
+                    href="/dashboard/expenses/"
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors pt-0.5"
                 >
                     View all →

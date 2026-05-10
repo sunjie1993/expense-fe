@@ -4,34 +4,6 @@ export interface ApiResponse<T> {
     message?: string;
 }
 
-export interface ApiError {
-    success: false;
-    error: string;
-    details?: Record<string, string>;
-}
-
-export interface LoginResponse {
-    expires_in: number;
-    refresh_expires_in: number;
-    message: string;
-}
-
-export interface RateLimitError extends ApiError {
-    retry_after_seconds?: number;
-}
-
-export interface HealthCheck {
-    status: "healthy" | "unhealthy";
-    version: string;
-    timestamp: string;
-    checks: {
-        database: {
-            status: "healthy" | "unhealthy";
-            error?: string;
-        };
-    };
-}
-
 export interface Expense {
     id: number;
     spent_by: "SJ" | "YS" | "Shared";
@@ -80,23 +52,6 @@ export interface MainCategory {
 export interface PaymentMethod {
     id: number;
     name: string;
-}
-
-export interface CategoryBreakdown {
-    main_category_id: number;
-    main_category_name: string;
-    icon: string;
-    color: string;
-    total: number;
-    count: number;
-    percentage: string;
-}
-
-export interface DashboardSummary {
-    start_date: string;
-    end_date: string;
-    total_spent: number;
-    category_breakdown: CategoryBreakdown[];
 }
 
 export interface ExpenseCard {

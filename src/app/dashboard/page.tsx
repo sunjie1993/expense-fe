@@ -81,7 +81,7 @@ export default function DashboardPage() {
             />
 
             <div className="flex flex-col gap-4 p-4">
-                {error && <ErrorCard title="Failed to load dashboard data"/>}
+                {error && !dashboard && <ErrorCard title="Failed to load dashboard data"/>}
 
                 {isLoading && <DashboardSkeleton/>}
 
