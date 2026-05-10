@@ -128,4 +128,8 @@ export const fetcher = async (url: string) => {
     return parseResponse(response);
 };
 
+export const isExpenseKey = (key: unknown): boolean =>
+    typeof key === "string" &&
+    (key.includes("/api/expenses") || key.includes("/api/dashboard"));
+
 export {API_BASE_URL};

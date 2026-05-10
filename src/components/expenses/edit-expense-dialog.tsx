@@ -1,7 +1,7 @@
 "use client";
 
 import {memo} from "react";
-import {AlertCircle, Loader2, Receipt} from "lucide-react";
+import {AlertCircle, Loader2, Pencil} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Form} from "@/components/ui/form";
@@ -15,16 +15,19 @@ import {
     PaymentMethodField,
     SpentByField,
 } from "./form-fields";
+import type {Expense} from "@/types/api";
 
-interface CreateExpenseDialogProps {
+interface EditExpenseDialogProps {
+    readonly expense: Expense | null;
     readonly open: boolean;
     readonly onOpenChange: (open: boolean) => void;
 }
 
-export const CreateExpenseDialog = memo(function CreateExpenseDialog({
+export const EditExpenseDialog = memo(function EditExpenseDialog({
+    expense,
     open,
     onOpenChange,
-}: CreateExpenseDialogProps) {
+}: EditExpenseDialogProps) {
     const {
         form,
         onSubmit,
@@ -35,6 +38,7 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
         paymentMethods,
         isLoadingData,
     } = useExpenseForm({
+        expense,
         open,
         onSuccess: () => onOpenChange(false),
     });
@@ -48,8 +52,8 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
             <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <Receipt className="h-4 w-4"/>
-                        Add New Expense
+                        <Pencil className="h-4 w-4"/>
+                        Edit Expense
                     </DialogTitle>
                 </DialogHeader>
 
@@ -109,7 +113,7 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                                     type="submit"
                                     className="flex-1"
                                     disabled={isSubmitting}
-                                    aria-label={isSubmitting ? "Saving expense" : "Save expense"}
+                                    aria-label={isSubmitting ? "Saving changes" : "Save changes"}
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -117,7 +121,7 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                                             Saving...
                                         </>
                                     ) : (
-                                        "Save Expense"
+                                        "Save Changes"
                                     )}
                                 </Button>
                             </div>
