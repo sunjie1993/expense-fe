@@ -1,9 +1,9 @@
 "use client";
 
 import {useState} from "react";
-import {Button} from "@/components/ui/button";
-import {CreateExpenseDialog} from "./create-expense-dialog";
 import {Plus} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {ExpenseFormDialog} from "./expense-form-dialog";
 
 export function AddExpenseFab() {
     const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export function AddExpenseFab() {
                 <span className="text-sm font-medium">Add Expense</span>
             </Button>
 
-            <CreateExpenseDialog open={open} onOpenChange={setOpen}/>
+            <ExpenseFormDialog open={open} onOpenChange={setOpen}/>
         </>
     );
 }

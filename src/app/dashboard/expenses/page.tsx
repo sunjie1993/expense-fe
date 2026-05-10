@@ -16,7 +16,7 @@ import {PaginationControls} from "@/components/expenses/pagination-controls";
 import {ExpenseFilter, type ExpenseFilters} from "@/components/expenses/expense-filter";
 import {ExpenseCard, ExpenseTableRow} from "@/components/expenses/expense-table-row";
 import {ExpenseEmptyState, ExpenseErrorState, ExpenseLoadingState} from "@/components/expenses/expense-states";
-import {EditExpenseDialog} from "@/components/expenses/edit-expense-dialog";
+import {ExpenseFormDialog} from "@/components/expenses/expense-form-dialog";
 import type {Expense} from "@/types/api";
 
 const PAGE_SIZE = 10;
@@ -158,7 +158,7 @@ export default function ExpensesPage() {
                 </Card>
             </div>
 
-            <EditExpenseDialog
+            <ExpenseFormDialog
                 expense={editingExpense}
                 open={!!editingExpense}
                 onOpenChange={(open) => { if (!open) setEditingExpense(null); }}

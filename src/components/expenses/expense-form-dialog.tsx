@@ -1,7 +1,7 @@
 "use client";
 
 import {memo} from "react";
-import {AlertCircle, Loader2, Pencil} from "lucide-react";
+import {AlertCircle, Loader2, Pencil, Receipt} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Form} from "@/components/ui/form";
@@ -17,17 +17,19 @@ import {
 } from "./form-fields";
 import type {Expense} from "@/types/api";
 
-interface EditExpenseDialogProps {
-    readonly expense: Expense | null;
+interface ExpenseFormDialogProps {
+    readonly expense?: Expense | null;
     readonly open: boolean;
     readonly onOpenChange: (open: boolean) => void;
 }
 
-export const EditExpenseDialog = memo(function EditExpenseDialog({
+export const ExpenseFormDialog = memo(function ExpenseFormDialog({
     expense,
     open,
     onOpenChange,
-}: EditExpenseDialogProps) {
+}: ExpenseFormDialogProps) {
+    const isEdit = !!expense;
+
     const {
         form,
         onSubmit,
@@ -43,17 +45,13 @@ export const EditExpenseDialog = memo(function EditExpenseDialog({
         onSuccess: () => onOpenChange(false),
     });
 
-    const handleClose = () => {
-        if (!isSubmitting) onOpenChange(false);
-    };
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <Pencil className="h-4 w-4"/>
-                        Edit Expense
+                        {isEdit ? <Pencil className="h-4 w-4"/> : <Receipt className="h-4 w-4"/>}
+                        {isEdit ? "Edit Expense" : "Add New Expense"}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -61,11 +59,7 @@ export const EditExpenseDialog = memo(function EditExpenseDialog({
                     <ExpenseFormSkeleton/>
                 ) : (
                     <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-4"
-                            noValidate
-                        >
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
                             <SpentByField control={form.control} disabled={isSubmitting}/>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -104,7 +98,7 @@ export const EditExpenseDialog = memo(function EditExpenseDialog({
                                     type="button"
                                     variant="outline"
                                     className="flex-1"
-                                    onClick={handleClose}
+                                    onClick={() => { if (!isSubmitting) onOpenChange(false); }}
                                     disabled={isSubmitting}
                                 >
                                     Cancel
@@ -113,7 +107,6 @@ export const EditExpenseDialog = memo(function EditExpenseDialog({
                                     type="submit"
                                     className="flex-1"
                                     disabled={isSubmitting}
-                                    aria-label={isSubmitting ? "Saving changes" : "Save changes"}
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -121,7 +114,7 @@ export const EditExpenseDialog = memo(function EditExpenseDialog({
                                             Saving...
                                         </>
                                     ) : (
-                                        "Save Changes"
+                                        isEdit ? "Save Changes" : "Save Expense"
                                     )}
                                 </Button>
                             </div>

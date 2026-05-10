@@ -5,7 +5,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/
 import {Skeleton} from "@/components/ui/skeleton";
 import {AlertCircle} from "lucide-react";
 import {useCategoryDrillDown} from "@/hooks/use-dashboard";
-import {CategoryIconBadge} from "@/lib/category-icons";
+import {CategoryIconBadge} from "@/components/ui/category-icon";
 import {cn, formatCurrency} from "@/lib/utils";
 
 interface CategoryDrillDownDialogProps {

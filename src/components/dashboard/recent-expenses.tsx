@@ -5,7 +5,7 @@ import {format} from "date-fns";
 import Link from "next/link";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {AlertCircle} from "lucide-react";
-import {CategoryIconBadge} from "@/lib/category-icons";
+import {CategoryIconBadge} from "@/components/ui/category-icon";
 import {SpenderBadge} from "@/components/expenses/spender-badge";
 import {SkeletonListItem} from "@/components/dashboard/dashboard-skeleton";
 import {formatCurrency} from "@/lib/utils";

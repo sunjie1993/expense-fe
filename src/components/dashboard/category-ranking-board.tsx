@@ -3,7 +3,7 @@
 import {memo} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import type {CategoryRanking} from "@/types/api";
-import {CategoryIconBadge} from "@/lib/category-icons";
+import {CategoryIconBadge} from "@/components/ui/category-icon";
 import {formatCurrency} from "@/lib/utils";
 
 interface CategoryRankingBoardProps {

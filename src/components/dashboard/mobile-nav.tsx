@@ -6,7 +6,7 @@ import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {Plus} from "lucide-react";
 import {NAV_ITEMS} from "@/components/dashboard/nav-items";
-import {CreateExpenseDialog} from "@/components/expenses/create-expense-dialog";
+import {ExpenseFormDialog} from "@/components/expenses/expense-form-dialog";
 import {Button} from "@/components/ui/button";
 
 export function MobileNav() {
@@ -65,7 +65,7 @@ export function MobileNav() {
                 </div>
             </nav>
 
-            <CreateExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen}/>
+            <ExpenseFormDialog open={dialogOpen} onOpenChange={setDialogOpen}/>
         </>
     );
 }

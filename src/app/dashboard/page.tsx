@@ -16,7 +16,7 @@ import {SpenderBreakdownChart} from "@/components/dashboard/spender-breakdown-ch
 import {DailyTrendChart} from "@/components/dashboard/daily-trend-chart";
 import {CategoryDrillDownDialog} from "@/components/dashboard/category-drill-down-dialog";
 import {Button} from "@/components/ui/button";
-import {CategoryIcon} from "@/lib/category-icons";
+import {CategoryIcon} from "@/components/ui/category-icon";
 import {formatCurrency, formatPeriodDisplay, getCurrentMonth, getCurrentYear, navigatePeriod} from "@/lib/utils";
 
 export default function DashboardPage() {
