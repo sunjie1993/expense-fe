@@ -29,6 +29,7 @@ export const ExpenseFormDialog = memo(function ExpenseFormDialog({
     onOpenChange,
 }: ExpenseFormDialogProps) {
     const isEdit = !!expense;
+    const submitLabel = isEdit ? "Save Changes" : "Save Expense";
 
     const {
         form,
@@ -113,9 +114,7 @@ export const ExpenseFormDialog = memo(function ExpenseFormDialog({
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true"/>
                                             Saving...
                                         </>
-                                    ) : (
-                                        isEdit ? "Save Changes" : "Save Expense"
-                                    )}
+                                    ) : submitLabel}
                                 </Button>
                             </div>
                         </form>
