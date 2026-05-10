@@ -7,7 +7,7 @@ import {Pie, PieChart} from "recharts";
 import {useSpenderBreakdown} from "@/hooks/use-dashboard";
 import {formatCurrency} from "@/lib/utils";
 import {Skeleton} from "@/components/ui/skeleton";
-import {TrendingDown, TrendingUp} from "lucide-react";
+import {AlertCircle, TrendingDown, TrendingUp} from "lucide-react";
 
 const SPENDER_COLORS: Record<string, string> = {
     SJ: "#e8185a",
@@ -24,7 +24,7 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                                                                              period,
                                                                              date,
                                                                          }: SpenderBreakdownChartProps) {
-    const {data, isLoading} = useSpenderBreakdown(period, date);
+    const {data, isLoading, error} = useSpenderBreakdown(period, date);
     const breakdown = data?.data;
 
     const {chartData, chartConfig} = useMemo(() => {
@@ -45,7 +45,14 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
     const periodLabel = period === "yearly" ? "year" : "month";
     const hasData = chartData.length > 0;
     const spendingDescription = hasData ? `Who spent what this ${periodLabel}` : "No spending data this period";
-    const description = isLoading ? "Loading..." : spendingDescription;
+    let description: string;
+    if (isLoading) {
+        description = "Loading...";
+    } else if (error) {
+        description = "Could not load data";
+    } else {
+        description = spendingDescription;
+    }
 
     return (
         <Card className="h-full">
@@ -56,7 +63,14 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
             <CardContent>
                 {isLoading && <Skeleton className="h-60 w-full"/>}
 
-                {!isLoading && breakdown && chartData.length > 0 && (
+                {!isLoading && error && (
+                    <div className="flex items-center justify-center gap-2 py-12">
+                        <AlertCircle className="h-4 w-4 text-destructive shrink-0"/>
+                        <p className="text-sm text-destructive">Failed to load spender breakdown</p>
+                    </div>
+                )}
+
+                {!isLoading && !error && breakdown && chartData.length > 0 && (
                     <>
                         <ChartContainer config={chartConfig} className="h-44 w-full">
                             <PieChart>
@@ -121,7 +135,7 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
                     </>
                 )}
 
-                {!isLoading && chartData.length === 0 && (
+                {!isLoading && !error && chartData.length === 0 && (
                     <div className="flex items-center justify-center py-12">
                         <p className="text-sm text-muted-foreground">No spending data for this period</p>
                     </div>

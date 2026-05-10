@@ -1,16 +1,10 @@
 import type {Metadata} from "next";
-import {Bebas_Neue, Montserrat} from "next/font/google";
+import {Inter} from "next/font/google";
 import {Providers} from "@/components/providers";
 import "./globals.css";
 
-const bebasNeue = Bebas_Neue({
-    variable: "--font-heading",
-    weight: "400",
-    subsets: ["latin"],
-});
-
-const montserrat = Montserrat({
-    variable: "--font-montserrat",
+const inter = Inter({
+    variable: "--font-sans",
     subsets: ["latin"],
 });
 
@@ -26,8 +20,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-        <body
-            className={`${bebasNeue.variable} ${montserrat.variable} font-[family-name:var(--font-montserrat)] antialiased`}>
+        <body className={`${inter.variable} font-[family-name:var(--font-sans)] antialiased`}>
         <Providers>{children}</Providers>
         </body>
         </html>

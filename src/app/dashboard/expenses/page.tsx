@@ -31,14 +31,10 @@ export default function ExpensesPage() {
     const totalPages = pagination ? Math.ceil(pagination.total / PAGE_SIZE) : 0;
     const hasExpenses = expenses.length > 0;
 
-    const handlePageChange = useCallback((page: number) => setCurrentPage(page), []);
-
     const handleFiltersChange = useCallback((newFilters: ExpenseFilters) => {
         setFilters(newFilters);
         setCurrentPage(1);
     }, []);
-
-    if (error) return <ExpenseErrorState/>;
 
     let headerDescription: string;
     if (isLoading) {
@@ -74,16 +70,16 @@ export default function ExpensesPage() {
                     <CardContent>
                         {isLoading && <ExpenseLoadingState/>}
 
-                        {!isLoading && hasExpenses && (
+                        {!isLoading && error && <ExpenseErrorState/>}
+
+                        {!isLoading && !error && hasExpenses && (
                             <>
-                                {/* Mobile card list */}
                                 <div className="sm:hidden">
                                     {expenses.map((expense) => (
                                         <ExpenseCard key={expense.id} expense={expense}/>
                                     ))}
                                 </div>
 
-                                {/* Desktop table */}
                                 <div className="hidden sm:block overflow-x-auto">
                                     <Table>
                                         <TableHeader>
@@ -106,9 +102,9 @@ export default function ExpensesPage() {
                             </>
                         )}
 
-                        {!isLoading && !hasExpenses && <ExpenseEmptyState/>}
+                        {!isLoading && !error && !hasExpenses && <ExpenseEmptyState/>}
 
-                        {!isLoading && pagination && pagination.total > PAGE_SIZE && (
+                        {!isLoading && !error && pagination && pagination.total > PAGE_SIZE && (
                             <PaginationControls
                                 currentPage={currentPage}
                                 totalPages={totalPages}
@@ -118,7 +114,7 @@ export default function ExpensesPage() {
                                 hasNextPage={pagination.has_more}
                                 hasPrevPage={currentPage > 1}
                                 isLoading={isLoading}
-                                onPageChange={handlePageChange}
+                                onPageChange={setCurrentPage}
                             />
                         )}
                     </CardContent>

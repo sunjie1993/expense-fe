@@ -7,7 +7,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (passcode: string) => Promise<void>;
-    logout: () => Promise<void>;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,7 +75,7 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
         setIsAuthenticated(true);
     }, []);
 
-    const logout = useCallback(async () => {
+    const logout = useCallback(() => {
         clearTokens();
         setIsAuthenticated(false);
     }, []);

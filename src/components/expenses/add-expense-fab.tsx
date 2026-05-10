@@ -13,7 +13,7 @@ export function AddExpenseFab() {
             <Button
                 onClick={() => setOpen(true)}
                 variant="default"
-                className="fixed bottom-6 right-6 h-14 px-5 rounded-full active:scale-95 transition-all z-50 gap-2 elevation-2 hover:elevation-4"
+                className="fixed bottom-6 right-6 h-14 px-5 rounded-full active:scale-95 transition-all z-50 gap-2 shadow-lg hover:shadow-xl"
             >
                 <Plus className="h-5 w-5 shrink-0"/>
                 <span className="text-sm font-medium">Add Expense</span>

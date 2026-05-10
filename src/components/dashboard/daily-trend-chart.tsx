@@ -7,6 +7,7 @@ import {Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis} from "recha
 import {useDailyTrend} from "@/hooks/use-dashboard";
 import {formatCurrency} from "@/lib/utils";
 import {Skeleton} from "@/components/ui/skeleton";
+import {AlertCircle} from "lucide-react";
 
 interface DailyTrendChartProps {
     readonly yearMonth: string;
@@ -28,7 +29,7 @@ const formatCompact = (value: number): string => {
 };
 
 export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyTrendChartProps) {
-    const {data, isLoading} = useDailyTrend(yearMonth);
+    const {data, isLoading, error} = useDailyTrend(yearMonth);
     const trend = data?.data;
 
     const {chartData, peakDay} = useMemo((): { chartData: DailyChartPoint[]; peakDay: number | null } => {
@@ -55,7 +56,15 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
     const spendingDescription = hasSpending
         ? `Avg ${formatCurrency(trend.avg_per_day)}/active day${peakSuffix}`
         : "No spending this month";
-    const description = isLoading ? "Loading..." : spendingDescription;
+
+    let description: string;
+    if (isLoading) {
+        description = "Loading...";
+    } else if (error) {
+        description = "Could not load data";
+    } else {
+        description = spendingDescription;
+    }
 
     return (
         <Card>
@@ -66,7 +75,14 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
             <CardContent>
                 {isLoading && <Skeleton className="h-72 w-full"/>}
 
-                {!isLoading && trend && hasSpending && (
+                {!isLoading && error && (
+                    <div className="flex items-center justify-center gap-2 h-72">
+                        <AlertCircle className="h-4 w-4 text-destructive shrink-0"/>
+                        <p className="text-sm text-destructive">Failed to load daily trend</p>
+                    </div>
+                )}
+
+                {!isLoading && !error && trend && hasSpending && (
                     <ChartContainer config={chartConfig} className="h-72 w-full">
                         <AreaChart data={chartData} accessibilityLayer>
                             <defs>
@@ -135,7 +151,7 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
                     </ChartContainer>
                 )}
 
-                {!isLoading && !hasSpending && (
+                {!isLoading && !error && !hasSpending && (
                     <div className="flex h-72 items-center justify-center">
                         <p className="text-sm text-muted-foreground">No spending data for this month</p>
                     </div>
