@@ -1,12 +1,12 @@
 "use client";
 
 import {memo} from "react";
+import {AlertCircle, Loader2, Pencil, Receipt} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Form} from "@/components/ui/form";
-import {Skeleton} from "@/components/ui/skeleton";
-import {AlertCircle, Loader2, Receipt} from "lucide-react";
 import {useExpenseForm} from "@/hooks/use-expense-form";
+import {ExpenseFormSkeleton} from "@/components/expenses/expense-states";
 import {
     AmountField,
     CategoryInlineField,
@@ -15,53 +15,22 @@ import {
     PaymentMethodField,
     SpentByField,
 } from "./form-fields";
+import type {Expense} from "@/types/api";
 
-interface CreateExpenseDialogProps {
+interface ExpenseFormDialogProps {
+    readonly expense?: Expense | null;
     readonly open: boolean;
     readonly onOpenChange: (open: boolean) => void;
 }
 
-function FormSkeleton() {
-    return (
-        <div className="space-y-5">
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-16"/>
-                <Skeleton className="h-9 w-full"/>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Skeleton className="h-4 w-12"/>
-                    <Skeleton className="h-9 w-full"/>
-                </div>
-                <div className="space-y-2">
-                    <Skeleton className="h-4 w-8"/>
-                    <Skeleton className="h-9 w-full"/>
-                </div>
-            </div>
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-16"/>
-                <Skeleton className="h-9 w-full"/>
-            </div>
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-28"/>
-                <Skeleton className="h-9 w-full"/>
-            </div>
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-20"/>
-                <Skeleton className="h-16 w-full"/>
-            </div>
-            <div className="flex gap-3 pt-2">
-                <Skeleton className="h-9 flex-1"/>
-                <Skeleton className="h-9 flex-1"/>
-            </div>
-        </div>
-    );
-}
-
-export const CreateExpenseDialog = memo(function CreateExpenseDialog({
+export const ExpenseFormDialog = memo(function ExpenseFormDialog({
+    expense,
     open,
     onOpenChange,
-}: CreateExpenseDialogProps) {
+}: ExpenseFormDialogProps) {
+    const isEdit = !!expense;
+    const submitLabel = isEdit ? "Save Changes" : "Save Expense";
+
     const {
         form,
         onSubmit,
@@ -72,33 +41,26 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
         paymentMethods,
         isLoadingData,
     } = useExpenseForm({
+        expense,
         open,
         onSuccess: () => onOpenChange(false),
     });
-
-    const handleClose = () => {
-        if (!isSubmitting) onOpenChange(false);
-    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <Receipt className="h-4 w-4"/>
-                        Add New Expense
+                        {isEdit ? <Pencil className="h-4 w-4"/> : <Receipt className="h-4 w-4"/>}
+                        {isEdit ? "Edit Expense" : "Add New Expense"}
                     </DialogTitle>
                 </DialogHeader>
 
                 {isLoadingData ? (
-                    <FormSkeleton/>
+                    <ExpenseFormSkeleton/>
                 ) : (
                     <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-4"
-                            noValidate
-                        >
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
                             <SpentByField control={form.control} disabled={isSubmitting}/>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -137,7 +99,7 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                                     type="button"
                                     variant="outline"
                                     className="flex-1"
-                                    onClick={handleClose}
+                                    onClick={() => { if (!isSubmitting) onOpenChange(false); }}
                                     disabled={isSubmitting}
                                 >
                                     Cancel
@@ -146,16 +108,13 @@ export const CreateExpenseDialog = memo(function CreateExpenseDialog({
                                     type="submit"
                                     className="flex-1"
                                     disabled={isSubmitting}
-                                    aria-label={isSubmitting ? "Saving expense" : "Save expense"}
                                 >
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true"/>
                                             Saving...
                                         </>
-                                    ) : (
-                                        "Save Expense"
-                                    )}
+                                    ) : submitLabel}
                                 </Button>
                             </div>
                         </form>

@@ -2,7 +2,15 @@
 
 import {memo} from "react";
 import {format} from "date-fns";
+import {MoreHorizontal, Pencil, Trash2} from "lucide-react";
 import {TableCell, TableRow} from "@/components/ui/table";
+import {Button} from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {SpenderBadge} from "./spender-badge";
 import {CategoryCell} from "./category-cell";
 import {formatCurrency} from "@/lib/utils";
@@ -10,9 +18,15 @@ import type {Expense} from "@/types/api";
 
 interface ExpenseTableRowProps {
     readonly expense: Expense;
+    readonly onEdit: (expense: Expense) => void;
+    readonly onDelete: (expense: Expense) => void;
 }
 
-export const ExpenseTableRow = memo(function ExpenseTableRow({expense}: ExpenseTableRowProps) {
+interface ExpenseCardProps {
+    readonly expense: Expense;
+}
+
+export const ExpenseTableRow = memo(function ExpenseTableRow({expense, onEdit, onDelete}: ExpenseTableRowProps) {
     return (
         <TableRow>
             <TableCell>
@@ -42,11 +56,33 @@ export const ExpenseTableRow = memo(function ExpenseTableRow({expense}: ExpenseT
                     {formatCurrency(expense.amount)}
                 </span>
             </TableCell>
+            <TableCell className="w-10 pl-0">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Expense actions">
+                            <MoreHorizontal className="h-4 w-4"/>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => onEdit(expense)}>
+                            <Pencil className="mr-2 h-4 w-4"/>
+                            Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => onDelete(expense)}
+                            className="text-destructive focus:text-destructive"
+                        >
+                            <Trash2 className="mr-2 h-4 w-4"/>
+                            Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </TableCell>
         </TableRow>
     );
 });
 
-export const ExpenseCard = memo(function ExpenseCard({expense}: ExpenseTableRowProps) {
+export const ExpenseCard = memo(function ExpenseCard({expense}: ExpenseCardProps) {
     return (
         <div className="flex items-start gap-3 py-3 border-b last:border-b-0">
             <CategoryCell

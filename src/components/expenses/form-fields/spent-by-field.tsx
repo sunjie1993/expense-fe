@@ -2,7 +2,7 @@
 
 import {memo} from "react";
 import {Control} from "react-hook-form";
-import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {cn} from "@/lib/utils";
 import {type ExpenseFormValues, SPENDER_OPTIONS} from "@/lib/validations/expense";
 
@@ -11,20 +11,20 @@ interface SpentByFieldProps {
     readonly disabled?: boolean;
 }
 
-export const SpentByField = memo(function SpentByField({
-                                                           control,
-                                                           disabled = false,
-                                                       }: SpentByFieldProps) {
+export const SpentByField = memo(function SpentByField({control, disabled = false}: SpentByFieldProps) {
     return (
         <FormField
             control={control}
             name="spent_by"
-            render={({field}) => (
+            render={({field, fieldState}) => (
                 <FormItem>
-                    <FormLabel className="text-sm font-medium">
-                        Spent By <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
+                    <fieldset className="border-0 p-0 m-0 min-w-0 space-y-2">
+                        <legend className={cn(
+                            "text-sm font-medium",
+                            fieldState.error && "text-destructive"
+                        )}>
+                            Spent By <span className="text-destructive">*</span>
+                        </legend>
                         <div className="flex h-9 rounded-md border border-input overflow-hidden">
                             {SPENDER_OPTIONS.map((option) => (
                                 <button
@@ -43,7 +43,7 @@ export const SpentByField = memo(function SpentByField({
                                 </button>
                             ))}
                         </div>
-                    </FormControl>
+                    </fieldset>
                     <FormMessage/>
                 </FormItem>
             )}

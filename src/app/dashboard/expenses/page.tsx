@@ -1,21 +1,33 @@
 "use client";
 
 import {useCallback, useState} from "react";
+import {useSWRConfig} from "swr";
+import {toast} from "sonner";
+import {Loader2, Receipt} from "lucide-react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Button} from "@/components/ui/button";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useExpenses} from "@/hooks/use-expenses";
-import {Receipt} from "lucide-react";
+import {apiDelete, isExpenseKey} from "@/lib/api";
+import {formatCurrency} from "@/lib/utils";
 import {PageHeader} from "@/components/dashboard/page-header";
 import {PaginationControls} from "@/components/expenses/pagination-controls";
 import {ExpenseFilter, type ExpenseFilters} from "@/components/expenses/expense-filter";
 import {ExpenseCard, ExpenseTableRow} from "@/components/expenses/expense-table-row";
 import {ExpenseEmptyState, ExpenseErrorState, ExpenseLoadingState} from "@/components/expenses/expense-states";
+import {ExpenseFormDialog} from "@/components/expenses/expense-form-dialog";
+import type {Expense} from "@/types/api";
 
 const PAGE_SIZE = 10;
 
 export default function ExpensesPage() {
+    const {mutate} = useSWRConfig();
     const [currentPage, setCurrentPage] = useState(1);
     const [filters, setFilters] = useState<ExpenseFilters>({});
+    const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+    const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const offset = (currentPage - 1) * PAGE_SIZE;
     const {data, error, isLoading} = useExpenses({
@@ -35,6 +47,22 @@ export default function ExpensesPage() {
         setFilters(newFilters);
         setCurrentPage(1);
     }, []);
+
+    const handleDeleteConfirm = useCallback(async () => {
+        if (!deletingExpense) return;
+        setIsDeleting(true);
+        try {
+            await apiDelete(`/api/expenses/${deletingExpense.id}`);
+            await mutate(isExpenseKey);
+            toast.success("Expense deleted");
+            setDeletingExpense(null);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Failed to delete expense";
+            toast.error("Failed to delete expense", {description: message});
+        } finally {
+            setIsDeleting(false);
+        }
+    }, [deletingExpense, mutate]);
 
     let headerDescription: string;
     if (isLoading) {
@@ -76,7 +104,10 @@ export default function ExpensesPage() {
                             <>
                                 <div className="sm:hidden">
                                     {expenses.map((expense) => (
-                                        <ExpenseCard key={expense.id} expense={expense}/>
+                                        <ExpenseCard
+                                            key={expense.id}
+                                            expense={expense}
+                                        />
                                     ))}
                                 </div>
 
@@ -90,11 +121,17 @@ export default function ExpensesPage() {
                                                 <TableHead>Spent By</TableHead>
                                                 <TableHead className="hidden md:table-cell">Payment</TableHead>
                                                 <TableHead className="text-right">Amount</TableHead>
+                                                <TableHead className="w-10"/>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {expenses.map((expense) => (
-                                                <ExpenseTableRow key={expense.id} expense={expense}/>
+                                                <ExpenseTableRow
+                                                    key={expense.id}
+                                                    expense={expense}
+                                                    onEdit={setEditingExpense}
+                                                    onDelete={setDeletingExpense}
+                                                />
                                             ))}
                                         </TableBody>
                                     </Table>
@@ -120,6 +157,60 @@ export default function ExpensesPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            <ExpenseFormDialog
+                expense={editingExpense}
+                open={!!editingExpense}
+                onOpenChange={(open) => { if (!open) setEditingExpense(null); }}
+            />
+
+            <Dialog
+                open={!!deletingExpense}
+                onOpenChange={(open) => { if (!open && !isDeleting) setDeletingExpense(null); }}
+            >
+                <DialogContent className="sm:max-w-sm" aria-describedby={undefined}>
+                    <DialogHeader>
+                        <DialogTitle>Delete Expense</DialogTitle>
+                    </DialogHeader>
+                    {deletingExpense && (
+                        <div className="space-y-4">
+                            <p className="text-sm text-muted-foreground">
+                                {"Are you sure you want to delete the "}
+                                <span className="font-medium text-foreground">{formatCurrency(deletingExpense.amount)}</span>
+                                {" expense from "}
+                                <span className="font-medium text-foreground">{deletingExpense.category_name}</span>
+                                {"? This cannot be undone."}
+                            </p>
+                            <div className="flex gap-3">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => setDeletingExpense(null)}
+                                    disabled={isDeleting}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    className="flex-1"
+                                    onClick={handleDeleteConfirm}
+                                    disabled={isDeleting}
+                                    aria-label={isDeleting ? "Deleting expense" : "Confirm delete"}
+                                >
+                                    {isDeleting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true"/>
+                                            Deleting...
+                                        </>
+                                    ) : (
+                                        "Delete"
+                                    )}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

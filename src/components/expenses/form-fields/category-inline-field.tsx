@@ -6,7 +6,7 @@ import {ArrowLeft, Check, ChevronRight, ChevronsUpDown} from "lucide-react";
 import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Button} from "@/components/ui/button";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {CategoryIcon} from "@/lib/category-icons";
+import {CategoryIcon} from "@/components/ui/category-icon";
 import {cn} from "@/lib/utils";
 import type {ExpenseFormValues} from "@/lib/validations/expense";
 import type {Category, MainCategory} from "@/types/api";

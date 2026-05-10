@@ -4,6 +4,43 @@ import {Receipt} from "lucide-react";
 import {ErrorCard} from "@/components/ui/error-card";
 import {Skeleton} from "@/components/ui/skeleton";
 
+export function ExpenseFormSkeleton() {
+    return (
+        <div className="space-y-5">
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-16"/>
+                <Skeleton className="h-9 w-full"/>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-12"/>
+                    <Skeleton className="h-9 w-full"/>
+                </div>
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-8"/>
+                    <Skeleton className="h-9 w-full"/>
+                </div>
+            </div>
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-16"/>
+                <Skeleton className="h-9 w-full"/>
+            </div>
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-28"/>
+                <Skeleton className="h-9 w-full"/>
+            </div>
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-20"/>
+                <Skeleton className="h-16 w-full"/>
+            </div>
+            <div className="flex gap-3 pt-2">
+                <Skeleton className="h-9 flex-1"/>
+                <Skeleton className="h-9 flex-1"/>
+            </div>
+        </div>
+    );
+}
+
 export function ExpenseLoadingState() {
     return (
         <div className="space-y-3" aria-label="Loading expenses">
