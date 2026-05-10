@@ -175,15 +175,11 @@ export default function ExpensesPage() {
                     {deletingExpense && (
                         <div className="space-y-4">
                             <p className="text-sm text-muted-foreground">
-                                Are you sure you want to delete the{" "}
-                                <span className="font-medium text-foreground">
-                                    {formatCurrency(deletingExpense.amount)}
-                                </span>{" "}
-                                expense from{" "}
-                                <span className="font-medium text-foreground">
-                                    {deletingExpense.category_name}
-                                </span>
-                                ? This cannot be undone.
+                                {"Are you sure you want to delete the "}
+                                <span className="font-medium text-foreground">{formatCurrency(deletingExpense.amount)}</span>
+                                {" expense from "}
+                                <span className="font-medium text-foreground">{deletingExpense.category_name}</span>
+                                {"? This cannot be undone."}
                             </p>
                             <div className="flex gap-3">
                                 <Button
