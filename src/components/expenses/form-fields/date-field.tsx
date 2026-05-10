@@ -1,6 +1,6 @@
 "use client";
 
-import {memo} from "react";
+import {memo, useState} from "react";
 import {Control} from "react-hook-form";
 import {format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
@@ -17,6 +17,8 @@ interface DateFieldProps {
 }
 
 export const DateField = memo(function DateField({control, disabled = false}: DateFieldProps) {
+    const [open, setOpen] = useState(false);
+
     return (
         <FormField
             control={control}
@@ -29,7 +31,7 @@ export const DateField = memo(function DateField({control, disabled = false}: Da
                         <FormLabel>
                             Date <span className="text-destructive">*</span>
                         </FormLabel>
-                        <Popover>
+                        <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                                 <FormControl>
                                     <Button
@@ -52,6 +54,7 @@ export const DateField = memo(function DateField({control, disabled = false}: Da
                                     selected={selectedDate}
                                     onSelect={(date) => {
                                         field.onChange(date ? format(date, "yyyy-MM-dd") : "");
+                                        setOpen(false);
                                     }}
                                     disabled={(date) => date > new Date()}
                                     defaultMonth={selectedDate}
