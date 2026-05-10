@@ -23,15 +23,14 @@ Two-person shared expense tracker for SJ and YS. Passcode-based auth, dashboard 
 src/
   app/                  # Routes: /, /login/, /dashboard/, /dashboard/expenses/
   components/
-    ui/                 # Shadcn UI primitives (button, card, dialog, …)
+    ui/                 # Shadcn UI primitives (button, card, dialog, …) + category-icon.tsx (CategoryIcon / CategoryIconBadge)
     dashboard/          # Dashboard-specific components (stat cards, charts, nav)
-    expenses/           # Expense list, form, form-fields/, filters
+    expenses/           # Expense list, expense-form-dialog.tsx, form-fields/, filters
   contexts/             # auth-context.tsx
   hooks/                # SWR data-fetching hooks (one file per domain)
   lib/
-    api.ts              # fetch wrapper, apiGet/Post/Put/Delete, fetcher(), token helpers
+    api.ts              # fetch wrapper, apiGet/Post/Put/Delete, fetcher(), isExpenseKey, token helpers
     utils.ts            # cn(), formatCurrency(), period helpers, formatExpenseDate()
-    category-icons.tsx  # CategoryIcon / CategoryIconBadge (icon name → Lucide)
     validations/        # Zod schemas (expense.ts exports expenseSchema, SPENDER_OPTIONS, getTodayDate)
   types/
     api.ts              # All API response interfaces
@@ -51,7 +50,7 @@ No test suite configured.
 ## Always do
 
 - **Trailing slashes** — all `href` values must end with `/` (`trailingSlash: true` is set).
-- **SWR invalidation after mutations** — invalidate with the predicate `(key) => typeof key === "string" && (key.includes("/api/expenses") || key.includes("/api/dashboard"))` to cover both pages.
+- **SWR invalidation after mutations** — use `isExpenseKey` from `src/lib/api.ts` as the predicate passed to `mutate(isExpenseKey)`. It covers both `/api/expenses` and `/api/dashboard` keys.
 - **SSR guards** — use `globalThis.window` / `globalThis.sessionStorage`, not `typeof window`.
 - **Use `api*` helpers, never raw `fetch`** — `apiGet`, `apiPost`, `apiPut`, `apiDelete` in `src/lib/api.ts` handle auth headers and token refresh automatically.
 - **Locale `en-SG`** — all currency (`formatCurrency`) and date formatting.
@@ -64,7 +63,7 @@ No test suite configured.
 
 **Auth**: access token in a module-level variable (memory only); refresh token in `sessionStorage`. `auth-context.tsx` handles refresh on mount and redirects to `/login/` on 401.
 
-**Forms**: single inline grouped category picker. `useExpenseForm` uses `useAllCategories` + `useMainCategories` together; `CategoryInlineField` groups subcategories under their parent header. Only `category_id` is sent to the API.
+**Forms**: single inline grouped category picker. `useExpenseForm` handles both create and edit — pass `expense` for edit mode, omit it for create. It uses `useAllCategories` + `useMainCategories` together; `CategoryInlineField` groups subcategories under their parent header. Only `category_id` is sent to the API. `ExpenseFormDialog` is the single dialog component for both modes.
 
 **`getRefreshToken`** in `api.ts` is private (not exported); token helpers exported are `getAccessToken`, `setAccessToken`, `setRefreshToken`, `clearTokens`.
 
@@ -99,7 +98,7 @@ Standard shadcn light theme (zinc/neutral palette). White background, near-black
 | `useSubCategories(parentId)` | `/api/categories/sub/:id` (null = disabled) |
 | `useAllCategories()` | `/api/categories/all` |
 | `usePaymentMethods()` | `/api/payment-methods` |
-| `useExpenseForm({open, onSuccess})` | — form state + submit, not a data hook |
+| `useExpenseForm({expense?, open, onSuccess})` | — form state + submit; `expense` omitted = create, provided = edit |
 
 ## Local dev
 
