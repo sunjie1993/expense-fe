@@ -107,8 +107,6 @@ export default function ExpensesPage() {
                                         <ExpenseCard
                                             key={expense.id}
                                             expense={expense}
-                                            onEdit={setEditingExpense}
-                                            onDelete={setDeletingExpense}
                                         />
                                     ))}
                                 </div>

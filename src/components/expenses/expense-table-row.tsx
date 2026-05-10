@@ -22,6 +22,10 @@ interface ExpenseTableRowProps {
     readonly onDelete: (expense: Expense) => void;
 }
 
+interface ExpenseCardProps {
+    readonly expense: Expense;
+}
+
 export const ExpenseTableRow = memo(function ExpenseTableRow({expense, onEdit, onDelete}: ExpenseTableRowProps) {
     return (
         <TableRow>
@@ -78,7 +82,7 @@ export const ExpenseTableRow = memo(function ExpenseTableRow({expense, onEdit, o
     );
 });
 
-export const ExpenseCard = memo(function ExpenseCard({expense, onEdit, onDelete}: ExpenseTableRowProps) {
+export const ExpenseCard = memo(function ExpenseCard({expense}: ExpenseCardProps) {
     return (
         <div className="flex items-start gap-3 py-3 border-b last:border-b-0">
             <CategoryCell
@@ -102,26 +106,6 @@ export const ExpenseCard = memo(function ExpenseCard({expense, onEdit, onDelete}
                         {expense.description}
                     </span>
                 )}
-                <div className="flex items-center gap-0.5 mt-0.5">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
-                        aria-label="Edit expense"
-                        onClick={() => onEdit(expense)}
-                    >
-                        <Pencil className="h-3.5 w-3.5"/>
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-destructive hover:text-destructive"
-                        aria-label="Delete expense"
-                        onClick={() => onDelete(expense)}
-                    >
-                        <Trash2 className="h-3.5 w-3.5"/>
-                    </Button>
-                </div>
             </div>
         </div>
     );
