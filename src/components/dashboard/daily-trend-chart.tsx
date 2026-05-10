@@ -56,7 +56,15 @@ export const DailyTrendChart = memo(function DailyTrendChart({yearMonth}: DailyT
     const spendingDescription = hasSpending
         ? `Avg ${formatCurrency(trend.avg_per_day)}/active day${peakSuffix}`
         : "No spending this month";
-    const description = isLoading ? "Loading..." : error ? "Could not load data" : spendingDescription;
+
+    let description: string;
+    if (isLoading) {
+        description = "Loading...";
+    } else if (error) {
+        description = "Could not load data";
+    } else {
+        description = spendingDescription;
+    }
 
     return (
         <Card>

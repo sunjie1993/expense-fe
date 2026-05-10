@@ -45,7 +45,14 @@ export const SpenderBreakdownChart = memo(function SpenderBreakdownChart({
     const periodLabel = period === "yearly" ? "year" : "month";
     const hasData = chartData.length > 0;
     const spendingDescription = hasData ? `Who spent what this ${periodLabel}` : "No spending data this period";
-    const description = isLoading ? "Loading..." : error ? "Could not load data" : spendingDescription;
+    let description: string;
+    if (isLoading) {
+        description = "Loading...";
+    } else if (error) {
+        description = "Could not load data";
+    } else {
+        description = spendingDescription;
+    }
 
     return (
         <Card className="h-full">

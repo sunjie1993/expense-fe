@@ -17,9 +17,9 @@ export function useSpenderBreakdown(period: "monthly" | "yearly", date: string) 
 }
 
 export function useCategoryDrillDown(categoryId: number | null, period: "monthly" | "yearly", date: string) {
-    const url = categoryId !== null
-        ? `/api/dashboard/category-drill/${categoryId}?period=${period}&date=${date}`
-        : null;
+    const url = categoryId === null
+        ? null
+        : `/api/dashboard/category-drill/${categoryId}?period=${period}&date=${date}`;
     return useSWR<ApiResponse<CategoryDrillDownData>>(url);
 }
 
