@@ -24,6 +24,8 @@ export default function DashboardPage() {
     const [date, setDate] = useState(getCurrentMonth());
     const [drillDownCategoryId, setDrillDownCategoryId] = useState<number | null>(null);
 
+    const isAtCurrentPeriod = date >= (period === "monthly" ? getCurrentMonth() : getCurrentYear());
+
     const {data: dashboardData, error, isLoading} = useDashboardOverview(period, date);
     const dashboard = dashboardData?.data;
 
@@ -70,7 +72,7 @@ export default function DashboardPage() {
                             size="icon"
                             className="h-8 w-8"
                             onClick={() => handleNavigate("next")}
-                            disabled={isLoading}
+                            disabled={isLoading || isAtCurrentPeriod}
                             aria-label="Next period"
                         >
                             <ChevronRight className="h-4 w-4"/>

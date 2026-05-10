@@ -40,11 +40,10 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
 
     useEffect(() => {
         if (!open) {
-            const reset = async () => {
+            queueMicrotask(() => {
                 form.reset();
                 setError(null);
-            };
-            void reset();
+            });
         }
     }, [open, form]);
 

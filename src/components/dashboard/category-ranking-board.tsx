@@ -64,7 +64,7 @@ export const CategoryRankingBoard = memo(function CategoryRankingBoard({
                                                                            categories,
                                                                            onCategoryClick,
                                                                        }: CategoryRankingBoardProps) {
-    const hasCategories = categories && categories.length > 0;
+    const hasCategories = categories.length > 0;
 
     let description: string;
     if (!hasCategories) {

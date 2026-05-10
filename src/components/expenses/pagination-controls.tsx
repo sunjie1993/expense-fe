@@ -30,17 +30,8 @@ export const PaginationControls = memo(function PaginationControls({
     const startItem = offset + 1;
     const endItem = Math.min(offset + pageSize, totalItems);
 
-    const handlePrevious = () => {
-        if (hasPrevPage && !isLoading) {
-            onPageChange(currentPage - 1);
-        }
-    };
-
-    const handleNext = () => {
-        if (hasNextPage && !isLoading) {
-            onPageChange(currentPage + 1);
-        }
-    };
+    const handlePrevious = () => onPageChange(currentPage - 1);
+    const handleNext = () => onPageChange(currentPage + 1);
 
     return (
         <nav

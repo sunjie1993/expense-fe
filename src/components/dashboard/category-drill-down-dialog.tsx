@@ -6,7 +6,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {AlertCircle} from "lucide-react";
 import {useCategoryDrillDown} from "@/hooks/use-dashboard";
 import {CategoryIconBadge} from "@/lib/category-icons";
-import {formatCurrency} from "@/lib/utils";
+import {cn, formatCurrency} from "@/lib/utils";
 
 interface CategoryDrillDownDialogProps {
     readonly categoryId: number | null;
@@ -74,24 +74,18 @@ export const CategoryDrillDownDialog = memo(function CategoryDrillDownDialog({
                             <ul className="space-y-4 list-none">
                                 {drillDown.breakdown.map((item) => (
                                     <li key={item.id} className="flex items-center gap-3">
-                                        {drillDown.breakdown_type === "subcategories" ? (
-                                            <div
-                                                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-                                                style={{
-                                                    backgroundColor: drillDown.main_category.color
-                                                        ? `${drillDown.main_category.color}20`
-                                                        : undefined,
-                                                    color: drillDown.main_category.color ?? undefined,
-                                                }}
-                                            >
-                                                {item.name.slice(0, 2).toUpperCase()}
-                                            </div>
-                                        ) : (
-                                            <div
-                                                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-                                                {item.name.slice(0, 2).toUpperCase()}
-                                            </div>
-                                        )}
+                                        <div
+                                            className={cn(
+                                                "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                                                drillDown.breakdown_type !== "subcategories" && "bg-muted text-muted-foreground"
+                                            )}
+                                            style={drillDown.breakdown_type === "subcategories" ? {
+                                                backgroundColor: drillDown.main_category.color ? `${drillDown.main_category.color}20` : undefined,
+                                                color: drillDown.main_category.color ?? undefined,
+                                            } : undefined}
+                                        >
+                                            {item.name.slice(0, 2).toUpperCase()}
+                                        </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between">
                                                 <p className="text-sm font-medium truncate">{item.name}</p>
