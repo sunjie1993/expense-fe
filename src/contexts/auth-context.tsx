@@ -19,13 +19,13 @@ export function AuthProvider({children}: Readonly<{ children: ReactNode }>) {
     useEffect(() => {
         if (globalThis.sessionStorage === undefined) return;
 
-        const pathname = globalThis.location.pathname;
-        if (pathname.includes("/login")) {
-            setIsLoading(false);
-            return;
-        }
-
         const initAuth = async () => {
+            const pathname = globalThis.location.pathname;
+            if (pathname.includes("/login")) {
+                setIsLoading(false);
+                return;
+            }
+
             const refreshToken = sessionStorage.getItem("refreshToken");
             if (!refreshToken) {
                 setIsLoading(false);

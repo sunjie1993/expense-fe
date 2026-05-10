@@ -52,7 +52,6 @@ No test suite configured.
 
 - **Trailing slashes** — all `href` values must end with `/` (`trailingSlash: true` is set).
 - **SWR invalidation after mutations** — invalidate with the predicate `(key) => typeof key === "string" && (key.includes("/api/expenses") || key.includes("/api/dashboard"))` to cover both pages.
-- **`main_category_id` is UI-only** — drives subcategory loading; never include it in API payloads (only `category_id` is sent).
 - **SSR guards** — use `globalThis.window` / `globalThis.sessionStorage`, not `typeof window`.
 - **Use `api*` helpers, never raw `fetch`** — `apiGet`, `apiPost`, `apiPut`, `apiDelete` in `src/lib/api.ts` handle auth headers and token refresh automatically.
 - **Locale `en-SG`** — all currency (`formatCurrency`) and date formatting.
@@ -65,7 +64,7 @@ No test suite configured.
 
 **Auth**: access token in a module-level variable (memory only); refresh token in `sessionStorage`. `auth-context.tsx` handles refresh on mount and redirects to `/login/` on 401.
 
-**Forms**: two-tier category selection — main category → subcategory. `useExpenseForm` manages state. `main_category_id` resets `category_id` when changed.
+**Forms**: single inline grouped category picker. `useExpenseForm` uses `useAllCategories` + `useMainCategories` together; `CategoryInlineField` groups subcategories under their parent header. Only `category_id` is sent to the API.
 
 **`getRefreshToken`** in `api.ts` is private (not exported); token helpers exported are `getAccessToken`, `setAccessToken`, `setRefreshToken`, `clearTokens`.
 

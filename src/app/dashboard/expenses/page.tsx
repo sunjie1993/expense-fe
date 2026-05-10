@@ -104,7 +104,7 @@ export default function ExpensesPage() {
 
                         {!isLoading && !error && !hasExpenses && <ExpenseEmptyState/>}
 
-                        {!isLoading && !error && pagination && pagination.total > PAGE_SIZE && (
+                        {!isLoading && !error && pagination && totalPages > 1 && (
                             <PaginationControls
                                 currentPage={currentPage}
                                 totalPages={totalPages}

@@ -4,8 +4,7 @@ export const expenseSchema = z.object({
     spent_by: z.enum(["SJ", "YS", "Shared"], {
         message: "Please select who spent",
     }),
-    main_category_id: z.string().min(1, "Please select a category"),
-    category_id: z.string().min(1, "Please select a subcategory"),
+    category_id: z.string().min(1, "Please select a category"),
     payment_method_id: z.string().min(1, "Please select a payment method"),
     amount: z
         .string()

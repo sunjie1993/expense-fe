@@ -4,9 +4,9 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSWRConfig} from "swr";
 import {toast} from "sonner";
 import {apiPost} from "@/lib/api";
-import {useMainCategories, useSubCategories} from "@/hooks/use-categories";
+import {useAllCategories, useMainCategories} from "@/hooks/use-categories";
 import {usePaymentMethods} from "@/hooks/use-payment-methods";
-import {type ExpenseFormValues, expenseSchema, getTodayDate,} from "@/lib/validations/expense";
+import {type ExpenseFormValues, expenseSchema, getTodayDate} from "@/lib/validations/expense";
 
 interface UseExpenseFormProps {
     readonly open: boolean;
@@ -17,24 +17,19 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     const {mutate} = useSWRConfig();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [selectedMainCategory, setSelectedMainCategory] = useState<number | null>(null);
 
-    const {data: mainCategoriesData, isLoading: loadingMainCategories} =
-        useMainCategories();
-    const {data: subCategoriesData, isLoading: loadingSubCategories} =
-        useSubCategories(selectedMainCategory);
-    const {data: paymentMethodsData, isLoading: loadingPaymentMethods} =
-        usePaymentMethods();
+    const {data: mainCategoriesData, isLoading: loadingMainCategories} = useMainCategories();
+    const {data: allCategoriesData, isLoading: loadingAllCategories} = useAllCategories();
+    const {data: paymentMethodsData, isLoading: loadingPaymentMethods} = usePaymentMethods();
 
-    const mainCategories = mainCategoriesData?.data || [];
-    const subCategories = subCategoriesData?.data || [];
-    const paymentMethods = paymentMethodsData?.data || [];
+    const mainCategories = mainCategoriesData?.data ?? [];
+    const allCategories = allCategoriesData?.data ?? [];
+    const paymentMethods = paymentMethodsData?.data ?? [];
 
     const form = useForm<ExpenseFormValues>({
         resolver: zodResolver(expenseSchema),
         defaultValues: {
             spent_by: undefined,
-            main_category_id: "",
             category_id: "",
             payment_method_id: "",
             amount: "",
@@ -44,26 +39,14 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
     });
 
     useEffect(() => {
-        if (selectedMainCategory) {
-            form.setValue("category_id", "");
-        }
-    }, [selectedMainCategory, form]);
-
-    useEffect(() => {
         if (!open) {
-            form.reset();
-            setSelectedMainCategory(null);
-            setError(null);
+            const reset = async () => {
+                form.reset();
+                setError(null);
+            };
+            void reset();
         }
     }, [open, form]);
-
-    const handleMainCategoryChange = useCallback(
-        (value: string) => {
-            form.setValue("main_category_id", value);
-            setSelectedMainCategory(Number.parseInt(value, 10));
-        },
-        [form]
-    );
 
     const onSubmit = useCallback(
         async (data: ExpenseFormValues) => {
@@ -101,29 +84,16 @@ export function useExpenseForm({open, onSuccess}: UseExpenseFormProps) {
         [mutate, onSuccess]
     );
 
-    let subcategoryPlaceholder: string;
-    if (loadingSubCategories) {
-        subcategoryPlaceholder = "Loading...";
-    } else if (selectedMainCategory) {
-        subcategoryPlaceholder = "Select subcategory";
-    } else {
-        subcategoryPlaceholder = "Select category first";
-    }
-
-    const isLoadingData = loadingMainCategories || loadingPaymentMethods;
+    const isLoadingData = loadingMainCategories || loadingAllCategories || loadingPaymentMethods;
 
     return {
         form,
         onSubmit,
         isSubmitting,
         error,
-        selectedMainCategory,
         mainCategories,
-        subCategories,
+        allCategories,
         paymentMethods,
         isLoadingData,
-        loadingSubCategories,
-        handleMainCategoryChange,
-        subcategoryPlaceholder,
     };
 }
