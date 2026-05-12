@@ -23,7 +23,7 @@ Two-person shared expense tracker for SJ and YS. Passcode-based auth, dashboard 
 src/
   app/                  # Routes: /, /login/, /dashboard/, /dashboard/expenses/
   components/
-    ui/                 # Shadcn UI primitives (button, card, dialog, …) + category-icon.tsx (CategoryIcon / CategoryIconBadge)
+    ui/                 # Shadcn UI primitives (button, card, dialog, …) + category-icon.tsx + server-status-badge.tsx
     dashboard/          # Dashboard-specific components (stat cards, charts, nav)
     expenses/           # Expense list, expense-form-dialog.tsx, form-fields/, filters
   contexts/             # auth-context.tsx
@@ -52,7 +52,7 @@ No test suite configured.
 - **Trailing slashes** — all `href` values must end with `/` (`trailingSlash: true` is set).
 - **SWR invalidation after mutations** — use `isExpenseKey` from `src/lib/api.ts` as the predicate passed to `mutate(isExpenseKey)`. It covers both `/api/expenses` and `/api/dashboard` keys.
 - **SSR guards** — use `globalThis.window` / `globalThis.sessionStorage`, not `typeof window`.
-- **Use `api*` helpers, never raw `fetch`** — `apiGet`, `apiPost`, `apiPut`, `apiDelete` in `src/lib/api.ts` handle auth headers and token refresh automatically.
+- **Use `api*` helpers, never raw `fetch`** — `apiGet`, `apiPost`, `apiPut`, `apiDelete` in `src/lib/api.ts` handle auth headers and token refresh automatically. Exception: unauthenticated endpoints (e.g. health check `GET /`) may use raw `fetch` with `API_BASE_URL` (exported from `api.ts`).
 - **Locale `en-SG`** — all currency (`formatCurrency`) and date formatting.
 
 ## Key conventions
@@ -69,7 +69,7 @@ No test suite configured.
 
 ## Design system
 
-Standard shadcn light theme (zinc/neutral palette). White background, near-black primary, light gray accents. Font: Inter (`--font-sans`). Radius: `--radius: 0.625rem`.
+Standard shadcn light theme (zinc/neutral palette). White background, near-black primary, light gray accents. Font: Inter via `next/font/google`; applied on `<body>` via both `inter.className` (direct font-family, avoids preload warning) and `inter.variable` (sets `--font-sans` CSS var). Radius: `--radius: 0.625rem`.
 
 **Spender colours** — hardcoded in two places, keep in sync: `spender-breakdown-chart.tsx` (`SPENDER_COLORS`) and `spender-badge.tsx` (Tailwind classes):
 
