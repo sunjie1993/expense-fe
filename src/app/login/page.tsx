@@ -15,17 +15,23 @@ const TIME_GREETINGS = {
     night:     {en: "Good Night",     ko: "안녕히 주무세요"},
 } as const;
 
+function getTimeKey(h: number): keyof typeof TIME_GREETINGS {
+    if (h < 5 || h >= 21) return "night";
+    if (h < 12) return "morning";
+    if (h < 17) return "afternoon";
+    return "evening";
+}
+
 function useRotatingGreeting(intervalMs = 2500) {
-    const h = new Date().getHours();
-    const key = h < 5 || h >= 21 ? "night" : h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
-    const pair = TIME_GREETINGS[key];
+    const pair = TIME_GREETINGS[getTimeKey(new Date().getHours())];
     const [isKorean, setIsKorean] = useState(false);
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
+        const flip = () => { setIsKorean(v => !v); setVisible(true); };
         const id = setInterval(() => {
             setVisible(false);
-            setTimeout(() => { setIsKorean(v => !v); setVisible(true); }, 300);
+            setTimeout(flip, 300);
         }, intervalMs);
         return () => clearInterval(id);
     }, [intervalMs]);
