@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "@/contexts/auth-context";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -28,17 +28,36 @@ function useRotatingGreeting(intervalMs = 2500) {
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
-        const id = setInterval(() => {
+        function swapLanguage() {
+            setIsKorean(v => !v);
+            setVisible(true);
+        }
+        function startSwap() {
             setVisible(false);
-            setTimeout(() => {
-                setIsKorean(v => !v);
-                setVisible(true);
-            }, 300);
-        }, intervalMs);
+            setTimeout(swapLanguage, 300);
+        }
+        const id = setInterval(startSwap, intervalMs);
         return () => clearInterval(id);
     }, [intervalMs]);
 
     return {text: isKorean ? pair.ko : pair.en, visible};
+}
+
+function getPasscodeDisplay(showPassword: boolean, passcode: string): React.ReactNode {
+    const placeholder = <span className="text-sm text-muted-foreground">Enter your passcode</span>;
+    if (showPassword) {
+        return passcode
+            ? <span className="text-sm font-mono tracking-widest">{passcode}</span>
+            : placeholder;
+    }
+    if (!passcode) return placeholder;
+    return (
+        <div className="flex items-center gap-2 flex-wrap">
+            {Array.from({length: passcode.length}).map((_, i) => (
+                <div key={i} className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"/>
+            ))}
+        </div>
+    );
 }
 
 export default function LoginPage() {
@@ -127,6 +146,7 @@ export default function LoginPage() {
                                 Passcode
                             </label>
                             <div
+                                role="presentation"
                                 className={cn(
                                     "relative flex items-center h-10 w-full rounded-md border bg-background px-3",
                                     "focus-within:outline-none focus-within:ring-1 focus-within:ring-ring",
@@ -135,7 +155,6 @@ export default function LoginPage() {
                                 )}
                                 onClick={() => inputRef.current?.focus()}
                             >
-                                {/* Invisible but focusable real input */}
                                 <input
                                     ref={inputRef}
                                     id="passcode"
@@ -152,26 +171,8 @@ export default function LoginPage() {
                                     className="absolute inset-0 opacity-0 pointer-events-none w-full h-full"
                                 />
 
-                                {/* Visual display */}
                                 <div className="flex-1 flex items-center overflow-hidden min-w-0">
-                                    {showPassword ? (
-                                        passcode ? (
-                                            <span className="text-sm font-mono tracking-widest">{passcode}</span>
-                                        ) : (
-                                            <span className="text-sm text-muted-foreground">Enter your passcode</span>
-                                        )
-                                    ) : passcode.length === 0 ? (
-                                        <span className="text-sm text-muted-foreground">Enter your passcode</span>
-                                    ) : (
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            {Array.from({length: passcode.length}).map((_, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
+                                    {getPasscodeDisplay(showPassword, passcode)}
                                 </div>
 
                                 <button
