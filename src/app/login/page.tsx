@@ -1,12 +1,64 @@
 "use client";
 
-import {useCallback, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "@/contexts/auth-context";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {AlertCircle, Eye, EyeOff, Loader2, Wallet} from "lucide-react";
 import {cn} from "@/lib/utils";
+
+const TIME_GREETINGS = {
+    morning:   {en: "Good Morning",   ko: "좋은 아침이에요"},
+    afternoon: {en: "Good Afternoon", ko: "좋은 오후예요"},
+    evening:   {en: "Good Evening",   ko: "좋은 저녁이에요"},
+    night:     {en: "Good Night",     ko: "안녕히 주무세요"},
+} as const;
+
+function getGreetingKey(): keyof typeof TIME_GREETINGS {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 12) return "morning";
+    if (h >= 12 && h < 17) return "afternoon";
+    if (h >= 17 && h < 21) return "evening";
+    return "night";
+}
+
+function useRotatingGreeting(intervalMs = 2500) {
+    const pair = TIME_GREETINGS[getGreetingKey()];
+    const [isKorean, setIsKorean] = useState(false);
+    const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        function swapLanguage() {
+            setIsKorean(v => !v);
+            setVisible(true);
+        }
+        function startSwap() {
+            setVisible(false);
+            setTimeout(swapLanguage, 300);
+        }
+        const id = setInterval(startSwap, intervalMs);
+        return () => clearInterval(id);
+    }, [intervalMs]);
+
+    return {text: isKorean ? pair.ko : pair.en, visible};
+}
+
+function getPasscodeDisplay(showPassword: boolean, passcode: string): React.ReactNode {
+    const placeholder = <span className="text-sm text-muted-foreground">Enter your passcode</span>;
+    if (showPassword) {
+        return passcode
+            ? <span className="text-sm font-mono tracking-widest">{passcode}</span>
+            : placeholder;
+    }
+    if (!passcode) return placeholder;
+    return (
+        <div className="flex items-center gap-2 flex-wrap">
+            {Array.from({length: passcode.length}).map((_, i) => (
+                <div key={passcode.slice(0, i + 1)} className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"/>
+            ))}
+        </div>
+    );
+}
 
 export default function LoginPage() {
     const {login} = useAuth();
@@ -14,8 +66,10 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [transitioning, setTransitioning] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
+    const greeting = useRotatingGreeting();
 
     const triggerShake = () => {
         cardRef.current?.classList.remove("animate-shake");
@@ -36,7 +90,8 @@ export default function LoginPage() {
 
         try {
             await login(trimmedPasscode);
-            globalThis.location.href = "/dashboard/";
+            setTransitioning(true);
+            setTimeout(() => { globalThis.location.href = "/dashboard/"; }, 450);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Login failed");
             setIsLoading(false);
@@ -52,9 +107,15 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+            {transitioning && (
+                <div className="fixed inset-0 z-50 bg-background animate-fade-in pointer-events-none" />
+            )}
             <Card
                 ref={cardRef}
-                className="w-full max-w-md shadow-lg animate-fade-in-up"
+                className={cn(
+                    "w-full max-w-md shadow-lg animate-fade-in-up transition-all duration-300",
+                    transitioning && "opacity-0 scale-95 pointer-events-none"
+                )}
                 onAnimationEnd={(e) => {
                     if (e.animationName === "shake") {
                         cardRef.current?.classList.remove("animate-shake");
@@ -67,22 +128,36 @@ export default function LoginPage() {
                     </div>
                     <div className="space-y-1">
                         <CardTitle className="text-2xl">Expense Tracker</CardTitle>
-                        <CardDescription>Enter your passcode to continue</CardDescription>
+                        <CardDescription
+                            className={cn(
+                                "transition-all duration-300",
+                                greeting.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"
+                            )}
+                        >
+                            {greeting.text}
+                        </CardDescription>
                     </div>
                 </CardHeader>
                 <CardContent
                     className={cn("transition-opacity duration-200", isLoading && "opacity-60 pointer-events-none")}>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <label htmlFor="passcode" className="text-sm font-medium">
-                                Passcode
-                            </label>
-                            <div className="relative">
-                                <Input
+                        <label
+                            htmlFor="passcode"
+                            className="space-y-2 block"
+                        >
+                            <span className="text-sm font-medium">Passcode</span>
+                            <div
+                                className={cn(
+                                    "relative flex items-center h-10 w-full rounded-md border bg-background px-3",
+                                    "focus-within:outline-none focus-within:ring-1 focus-within:ring-ring",
+                                    error && "border-destructive focus-within:ring-destructive/50",
+                                    "cursor-text"
+                                )}
+                            >
+                                <input
                                     ref={inputRef}
                                     id="passcode"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Enter your passcode"
+                                    type="text"
                                     value={passcode}
                                     onChange={(e) => {
                                         setPasscode(e.target.value);
@@ -92,19 +167,27 @@ export default function LoginPage() {
                                     autoFocus
                                     aria-invalid={Boolean(error)}
                                     aria-describedby={error === null ? undefined : "login-error"}
-                                    className={cn("pr-10", error && "border-destructive focus-visible:ring-destructive/50")}
+                                    className="absolute inset-0 opacity-0 pointer-events-none w-full h-full"
                                 />
+
+                                <div className="flex-1 flex items-center overflow-hidden min-w-0">
+                                    {getPasscodeDisplay(showPassword, passcode)}
+                                </div>
+
                                 <button
                                     type="button"
-                                    onClick={() => setShowPassword(v => !v)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowPassword(v => !v);
+                                    }}
+                                    className="ml-2 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                     tabIndex={-1}
                                 >
                                     {showPassword ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
                                 </button>
                             </div>
-                        </div>
+                        </label>
                         {error && (
                             <div
                                 id="login-error"
