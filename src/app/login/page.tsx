@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {AlertCircle, Eye, EyeOff, Loader2, Wallet} from "lucide-react";
 import {cn} from "@/lib/utils";
+import {ServerStatusBadge} from "@/components/ui/server-status-badge";
 
 const TIME_GREETINGS = {
     morning:   {en: "Good Morning",   ko: "좋은 아침이에요"},
@@ -14,29 +15,24 @@ const TIME_GREETINGS = {
     night:     {en: "Good Night",     ko: "안녕히 주무세요"},
 } as const;
 
-function getGreetingKey(): keyof typeof TIME_GREETINGS {
-    const h = new Date().getHours();
-    if (h >= 5 && h < 12) return "morning";
-    if (h >= 12 && h < 17) return "afternoon";
-    if (h >= 17 && h < 21) return "evening";
-    return "night";
+function getTimeKey(h: number): keyof typeof TIME_GREETINGS {
+    if (h < 5 || h >= 21) return "night";
+    if (h < 12) return "morning";
+    if (h < 17) return "afternoon";
+    return "evening";
 }
 
 function useRotatingGreeting(intervalMs = 2500) {
-    const pair = TIME_GREETINGS[getGreetingKey()];
+    const pair = TIME_GREETINGS[getTimeKey(new Date().getHours())];
     const [isKorean, setIsKorean] = useState(false);
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
-        function swapLanguage() {
-            setIsKorean(v => !v);
-            setVisible(true);
-        }
-        function startSwap() {
+        const flip = () => { setIsKorean(v => !v); setVisible(true); };
+        const id = setInterval(() => {
             setVisible(false);
-            setTimeout(swapLanguage, 300);
-        }
-        const id = setInterval(startSwap, intervalMs);
+            setTimeout(flip, 300);
+        }, intervalMs);
         return () => clearInterval(id);
     }, [intervalMs]);
 
@@ -44,13 +40,8 @@ function useRotatingGreeting(intervalMs = 2500) {
 }
 
 function getPasscodeDisplay(showPassword: boolean, passcode: string): React.ReactNode {
-    const placeholder = <span className="text-sm text-muted-foreground">Enter your passcode</span>;
-    if (showPassword) {
-        return passcode
-            ? <span className="text-sm font-mono tracking-widest">{passcode}</span>
-            : placeholder;
-    }
-    if (!passcode) return placeholder;
+    if (!passcode) return <span className="text-sm text-muted-foreground">Enter your passcode</span>;
+    if (showPassword) return <span className="text-sm font-mono tracking-widest">{passcode}</span>;
     return (
         <div className="flex items-center gap-2 flex-wrap">
             {Array.from({length: passcode.length}).map((_, i) => (
@@ -141,10 +132,7 @@ export default function LoginPage() {
                 <CardContent
                     className={cn("transition-opacity duration-200", isLoading && "opacity-60 pointer-events-none")}>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <label
-                            htmlFor="passcode"
-                            className="space-y-2 block"
-                        >
+                        <label htmlFor="passcode" className="space-y-2 block">
                             <span className="text-sm font-medium">Passcode</span>
                             <div
                                 className={cn(
@@ -169,11 +157,9 @@ export default function LoginPage() {
                                     aria-describedby={error === null ? undefined : "login-error"}
                                     className="absolute inset-0 opacity-0 pointer-events-none w-full h-full"
                                 />
-
                                 <div className="flex-1 flex items-center overflow-hidden min-w-0">
                                     {getPasscodeDisplay(showPassword, passcode)}
                                 </div>
-
                                 <button
                                     type="button"
                                     onClick={(e) => {
@@ -218,6 +204,9 @@ export default function LoginPage() {
                             </p>
                         )}
                     </form>
+                    <div className="mt-5 pt-4 border-t border-border/50">
+                        <ServerStatusBadge />
+                    </div>
                 </CardContent>
             </Card>
         </div>
