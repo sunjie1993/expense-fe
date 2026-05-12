@@ -54,7 +54,7 @@ function getPasscodeDisplay(showPassword: boolean, passcode: string): React.Reac
     return (
         <div className="flex items-center gap-2 flex-wrap">
             {Array.from({length: passcode.length}).map((_, i) => (
-                <div key={i} className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"/>
+                <div key={passcode.slice(0, i + 1)} className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"/>
             ))}
         </div>
     );
@@ -141,19 +141,18 @@ export default function LoginPage() {
                 <CardContent
                     className={cn("transition-opacity duration-200", isLoading && "opacity-60 pointer-events-none")}>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <label htmlFor="passcode" className="text-sm font-medium">
-                                Passcode
-                            </label>
+                        <label
+                            htmlFor="passcode"
+                            className="space-y-2 block"
+                        >
+                            <span className="text-sm font-medium">Passcode</span>
                             <div
-                                role="presentation"
                                 className={cn(
                                     "relative flex items-center h-10 w-full rounded-md border bg-background px-3",
                                     "focus-within:outline-none focus-within:ring-1 focus-within:ring-ring",
                                     error && "border-destructive focus-within:ring-destructive/50",
                                     "cursor-text"
                                 )}
-                                onClick={() => inputRef.current?.focus()}
                             >
                                 <input
                                     ref={inputRef}
@@ -188,7 +187,7 @@ export default function LoginPage() {
                                     {showPassword ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
                                 </button>
                             </div>
-                        </div>
+                        </label>
                         {error && (
                             <div
                                 id="login-error"
