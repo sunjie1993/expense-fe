@@ -4,9 +4,11 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "@/contexts/auth-context";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {AlertCircle, Eye, EyeOff, Loader2, Wallet} from "lucide-react";
+import {AlertCircle, Eye, EyeOff, Wallet} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {ServerStatusBadge} from "@/components/ui/server-status-badge";
+
+const LOADING_MESSAGES = ["Verifying...", "Checking passcode...", "Almost there...", "Signing you in..."];
 
 const TIME_GREETINGS = {
     morning:   {en: "Good Morning",   ko: "좋은 아침이에요"},
@@ -56,8 +58,15 @@ export default function LoginPage() {
     const [passcode, setPasscode] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [transitioning, setTransitioning] = useState(false);
+
+    useEffect(() => {
+        if (!isLoading) { setLoadingMsgIdx(0); return; }
+        const id = setInterval(() => setLoadingMsgIdx(i => (i + 1) % LOADING_MESSAGES.length), 420);
+        return () => clearInterval(id);
+    }, [isLoading]);
     const inputRef = useRef<HTMLInputElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
     const greeting = useRotatingGreeting();
@@ -79,15 +88,20 @@ export default function LoginPage() {
         setError(null);
         setIsLoading(true);
 
-        try {
-            await login(trimmedPasscode);
-            setTransitioning(true);
-            setTimeout(() => { globalThis.location.href = "/dashboard/"; }, 450);
-        } catch (err) {
+        const [result] = await Promise.allSettled([
+            login(trimmedPasscode),
+            new Promise(resolve => setTimeout(resolve, 1600)),
+        ]);
+
+        if (result.status === "rejected") {
+            const err = result.reason;
             setError(err instanceof Error ? err.message : "Login failed");
             setIsLoading(false);
             triggerShake();
             inputRef.current?.focus();
+        } else {
+            setTransitioning(true);
+            setTimeout(() => { globalThis.location.href = "/dashboard/"; }, 450);
         }
     }, [passcode, login]);
 
@@ -114,7 +128,10 @@ export default function LoginPage() {
                 }}
             >
                 <CardHeader className="space-y-3 items-center text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary">
+                    <div className={cn(
+                        "flex h-12 w-12 items-center justify-center rounded-full bg-primary",
+                        isLoading && "animate-coin-flip"
+                    )}>
                         <Wallet className="h-6 w-6 text-primary-foreground"/>
                     </div>
                     <div className="space-y-1">
@@ -190,10 +207,12 @@ export default function LoginPage() {
                             disabled={isLoading || passcode.trim().length === 0}
                         >
                             {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                    Signing in...
-                                </>
+                                <span
+                                    key={loadingMsgIdx}
+                                    className="animate-fade-in-down"
+                                >
+                                    {LOADING_MESSAGES[loadingMsgIdx]}
+                                </span>
                             ) : (
                                 "Sign In"
                             )}
