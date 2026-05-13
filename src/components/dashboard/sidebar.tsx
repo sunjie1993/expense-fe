@@ -3,14 +3,10 @@
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
-import {useAuth} from "@/contexts/auth-context";
-import {LogOut} from "lucide-react";
 import {NAV_ITEMS} from "@/components/dashboard/nav-items";
 
 export function Sidebar() {
     const pathname = usePathname();
-    const {logout} = useAuth();
 
     return (
         <aside className="hidden md:flex flex-col w-64 border-r bg-sidebar">
@@ -34,16 +30,6 @@ export function Sidebar() {
                     );
                 })}
             </nav>
-            <div className="p-4 border-t">
-                <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 text-muted-foreground"
-                    onClick={logout}
-                >
-                    <LogOut className="h-4 w-4"/>
-                    Logout
-                </Button>
-            </div>
         </aside>
     );
 }

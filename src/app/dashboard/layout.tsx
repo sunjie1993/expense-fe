@@ -5,10 +5,11 @@ import {useAuth} from "@/contexts/auth-context";
 import {Sidebar} from "@/components/dashboard/sidebar";
 import {MobileNav} from "@/components/dashboard/mobile-nav";
 import {AddExpenseFab} from "@/components/expenses/add-expense-fab";
-import {Loader2} from "lucide-react";
+import {Loader2, LogOut, User} from "lucide-react";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
 export default function DashboardLayout({children}: Readonly<{ children: ReactNode }>) {
-    const {isAuthenticated, isLoading} = useAuth();
+    const {isAuthenticated, isLoading, logout} = useAuth();
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
@@ -30,8 +31,21 @@ export default function DashboardLayout({children}: Readonly<{ children: ReactNo
 
     return (
         <div className="min-h-screen flex flex-col bg-muted/30">
-            <header className="h-14 border-b bg-background flex items-center px-6 shrink-0">
+            <header className="h-14 border-b bg-background flex items-center justify-between px-6 shrink-0">
                 <h1 className="text-xl font-semibold tracking-tight">Expense Tracker</h1>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-accent transition-colors">
+                            <User className="h-4 w-4"/>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive gap-2">
+                            <LogOut className="h-4 w-4"/>
+                            Logout
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </header>
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar/>
