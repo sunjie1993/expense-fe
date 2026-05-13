@@ -4,7 +4,7 @@ import {useCallback, useState} from "react";
 import {useSWRConfig} from "swr";
 import {toast} from "sonner";
 import {Loader2, Receipt} from "lucide-react";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
@@ -89,11 +89,6 @@ export default function ExpensesPage() {
                             <Receipt className="h-4 w-4" aria-hidden="true"/>
                             Transactions
                         </CardTitle>
-                        <CardDescription>
-                            {hasExpenses
-                                ? "A detailed list of your recent transactions"
-                                : "Your expense history will appear here"}
-                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {isLoading && <ExpenseLoadingState/>}
