@@ -29,11 +29,16 @@ export default function DashboardLayout({children}: Readonly<{ children: ReactNo
     }
 
     return (
-        <div className="min-h-screen flex flex-col md:flex-row bg-muted/30">
-            <Sidebar/>
-            <main className="flex-1 overflow-auto pb-16 md:pb-0 animate-fade-in-up">
-                {children}
-            </main>
+        <div className="min-h-screen flex flex-col bg-muted/30">
+            <header className="h-14 border-b bg-background flex items-center px-6 shrink-0">
+                <h1 className="text-xl font-semibold tracking-tight">Expense Tracker</h1>
+            </header>
+            <div className="flex flex-1 overflow-hidden">
+                <Sidebar/>
+                <main className="flex-1 overflow-auto pb-16 md:pb-0 animate-fade-in-up">
+                    {children}
+                </main>
+            </div>
             <div className="hidden md:block">
                 <AddExpenseFab/>
             </div>

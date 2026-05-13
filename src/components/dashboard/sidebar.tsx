@@ -14,9 +14,6 @@ export function Sidebar() {
 
     return (
         <aside className="hidden md:flex flex-col w-64 border-r bg-sidebar">
-            <div className="p-6 border-b">
-                <h1 className="text-xl font-semibold tracking-tight">Expense Tracker</h1>
-            </div>
             <nav className="flex-1 p-4 space-y-1">
                 {NAV_ITEMS.map((item) => {
                     const isActive = pathname === item.href;
