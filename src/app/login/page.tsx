@@ -63,7 +63,7 @@ export default function LoginPage() {
     const [transitioning, setTransitioning] = useState(false);
 
     useEffect(() => {
-        if (!isLoading) { setLoadingMsgIdx(0); return; }
+        if (!isLoading) return;
         const id = setInterval(() => setLoadingMsgIdx(i => (i + 1) % LOADING_MESSAGES.length), 420);
         return () => clearInterval(id);
     }, [isLoading]);
@@ -86,6 +86,7 @@ export default function LoginPage() {
         }
 
         setError(null);
+        setLoadingMsgIdx(0);
         setIsLoading(true);
 
         const [result] = await Promise.allSettled([
