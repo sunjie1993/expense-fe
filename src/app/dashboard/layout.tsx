@@ -7,7 +7,13 @@ import {MobileNav} from "@/components/dashboard/mobile-nav";
 import {AddExpenseFab} from "@/components/expenses/add-expense-fab";
 import Link from "next/link";
 import {Loader2, LogOut, Settings, User} from "lucide-react";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 export default function DashboardLayout({children}: Readonly<{ children: ReactNode }>) {
     const {isAuthenticated, isLoading, logout} = useAuth();
@@ -36,7 +42,8 @@ export default function DashboardLayout({children}: Readonly<{ children: ReactNo
                 <h1 className="text-xl font-semibold tracking-tight">Expense Tracker</h1>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-accent transition-colors">
+                        <button
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-accent transition-colors">
                             <User className="h-4 w-4"/>
                         </button>
                     </DropdownMenuTrigger>

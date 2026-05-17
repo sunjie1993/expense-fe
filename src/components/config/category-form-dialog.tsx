@@ -10,7 +10,7 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {categorySchema, type CategoryFormValues} from "@/lib/validations/category";
+import {type CategoryFormValues, categorySchema} from "@/lib/validations/category";
 import {useCategoryMutations} from "@/hooks/use-category-mutations";
 import type {Category, MainCategory} from "@/types/api";
 
@@ -25,12 +25,12 @@ interface CategoryFormDialogProps {
 }
 
 export function CategoryFormDialog({
-    open,
-    onOpenChange,
-    category,
-    defaultParentId,
-    mainCategories,
-}: CategoryFormDialogProps) {
+                                       open,
+                                       onOpenChange,
+                                       category,
+                                       defaultParentId,
+                                       mainCategories,
+                                   }: CategoryFormDialogProps) {
     const {create, update} = useCategoryMutations();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ export function CategoryFormDialog({
                 setError(null);
             });
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, category?.id]);
 
     const onSubmit = useCallback(
@@ -181,7 +181,8 @@ export function CategoryFormDialog({
                                     name="icon"
                                     render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Icon <span className="text-muted-foreground font-normal">(emoji)</span></FormLabel>
+                                            <FormLabel>Icon <span
+                                                className="text-muted-foreground font-normal">(emoji)</span></FormLabel>
                                             <FormControl>
                                                 <Input placeholder="🍔" disabled={isSubmitting} {...field} />
                                             </FormControl>

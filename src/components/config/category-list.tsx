@@ -12,10 +12,10 @@ import {useCategoryMutations} from "@/hooks/use-category-mutations";
 import type {CategoryDetail, MainCategory} from "@/types/api";
 
 type DialogState =
-    | {open: false}
-    | {open: true; mode: "create-main"}
-    | {open: true; mode: "create-sub"; defaultParentId: number}
-    | {open: true; mode: "edit"; category: CategoryDetail};
+    | { open: false }
+    | { open: true; mode: "create-main" }
+    | { open: true; mode: "create-sub"; defaultParentId: number }
+    | { open: true; mode: "edit"; category: CategoryDetail };
 
 interface CategoryListProps {
     readonly categories: CategoryDetail[];
@@ -46,7 +46,8 @@ export function CategoryList({categories, mainCategories, isLoading}: CategoryLi
     const subsByParent: Record<number, CategoryDetail[]> = {};
     for (const c of categories) {
         if (c.parent_category_id !== null) {
-            (subsByParent[c.parent_category_id] ??= []).push(c);
+            subsByParent[c.parent_category_id] ??= [];
+            subsByParent[c.parent_category_id].push(c);
         }
     }
 
@@ -130,7 +131,7 @@ export function CategoryList({categories, mainCategories, isLoading}: CategoryLi
                                     <span className="font-medium text-sm truncate">{cat.name}</span>
                                     {subs.length > 0 && (
                                         <span className="text-xs text-muted-foreground shrink-0">
-                                            {subs.length} sub{subs.length !== 1 ? "s" : ""}
+                                            {subs.length} sub{subs.length === 1 ? "" : "s"}
                                         </span>
                                     )}
                                 </button>

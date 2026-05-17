@@ -2,7 +2,7 @@
 
 import {useCallback} from "react";
 import {useSWRConfig} from "swr";
-import {apiPost, apiPut, apiDelete} from "@/lib/api";
+import {apiDelete, apiPost, apiPut} from "@/lib/api";
 import type {ApiResponse, CategoryDetail} from "@/types/api";
 
 const isCategoryKey = (key: unknown): boolean =>

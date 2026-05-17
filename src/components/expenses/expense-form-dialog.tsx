@@ -24,10 +24,10 @@ interface ExpenseFormDialogProps {
 }
 
 export const ExpenseFormDialog = memo(function ExpenseFormDialog({
-    expense,
-    open,
-    onOpenChange,
-}: ExpenseFormDialogProps) {
+                                                                     expense,
+                                                                     open,
+                                                                     onOpenChange,
+                                                                 }: ExpenseFormDialogProps) {
     const isEdit = !!expense;
     const submitLabel = isEdit ? "Save Changes" : "Save Expense";
 
@@ -99,7 +99,9 @@ export const ExpenseFormDialog = memo(function ExpenseFormDialog({
                                     type="button"
                                     variant="outline"
                                     className="flex-1"
-                                    onClick={() => { if (!isSubmitting) onOpenChange(false); }}
+                                    onClick={() => {
+                                        if (!isSubmitting) onOpenChange(false);
+                                    }}
                                     disabled={isSubmitting}
                                 >
                                     Cancel

@@ -66,7 +66,7 @@ export function useExpenseForm({expense, open, onSuccess}: UseExpenseFormProps) 
                 setError(null);
             });
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, expense?.id]);
 
     const onSubmit = useCallback(

@@ -18,14 +18,14 @@ interface CategoryInlineFieldProps {
     readonly disabled?: boolean;
 }
 
-type Group = {main: MainCategory; subs: Category[]};
+type Group = { main: MainCategory; subs: Category[] };
 
 export const CategoryInlineField = memo(function CategoryInlineField({
-    control,
-    mainCategories,
-    allCategories,
-    disabled = false,
-}: CategoryInlineFieldProps) {
+                                                                         control,
+                                                                         mainCategories,
+                                                                         allCategories,
+                                                                         disabled = false,
+                                                                     }: CategoryInlineFieldProps) {
     const [open, setOpen] = useState(false);
     const [activeGroup, setActiveGroup] = useState<Group | null>(null);
 
@@ -159,7 +159,8 @@ export const CategoryInlineField = memo(function CategoryInlineField({
                                                 />
                                                 <span className="flex-1 truncate">{group.main.name}</span>
                                                 {group.subs.length > 0 ? (
-                                                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground"/>
+                                                    <ChevronRight
+                                                        className="h-3.5 w-3.5 shrink-0 text-muted-foreground"/>
                                                 ) : (
                                                     isActive && <Check className="h-3.5 w-3.5 shrink-0"/>
                                                 )}
