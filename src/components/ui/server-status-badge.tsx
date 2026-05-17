@@ -7,10 +7,10 @@ import {API_BASE_URL} from "@/lib/api";
 
 type HealthStatus = "checking" | "online" | "offline";
 
-const STATUS_CONFIG: Record<HealthStatus, {dot: string; label: string; ping: boolean}> = {
-    checking: {dot: "bg-amber-400",   label: "Connecting…",    ping: true},
-    online:   {dot: "bg-emerald-400", label: "Server online",  ping: true},
-    offline:  {dot: "bg-red-400",     label: "Server offline", ping: false},
+const STATUS_CONFIG: Record<HealthStatus, { dot: string; label: string; ping: boolean }> = {
+    checking: {dot: "bg-amber-400", label: "Connecting…", ping: true},
+    online: {dot: "bg-emerald-400", label: "Server online", ping: true},
+    offline: {dot: "bg-red-400", label: "Server offline", ping: false},
 };
 
 function useHealthCheck() {
@@ -19,11 +19,13 @@ function useHealthCheck() {
     const fetchStatus = useCallback(() => {
         fetch(`${API_BASE_URL}/`, {signal: AbortSignal.timeout(5000)})
             .then(r => r.json())
-            .then((d: {status?: string}) => setStatus(d.status === "healthy" ? "online" : "offline"))
+            .then((d: { status?: string }) => setStatus(d.status === "healthy" ? "online" : "offline"))
             .catch(() => setStatus("offline"));
     }, []);
 
-    useEffect(() => { fetchStatus(); }, [fetchStatus]);
+    useEffect(() => {
+        fetchStatus();
+    }, [fetchStatus]);
 
     const check = useCallback(() => {
         setStatus("checking");
@@ -45,7 +47,8 @@ export function ServerStatusBadge() {
         >
             <span className="relative flex h-2 w-2 shrink-0">
                 {cfg.ping && (
-                    <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-60", cfg.dot)}/>
+                    <span
+                        className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-60", cfg.dot)}/>
                 )}
                 <span className={cn("relative inline-flex h-2 w-2 rounded-full", cfg.dot)}/>
             </span>

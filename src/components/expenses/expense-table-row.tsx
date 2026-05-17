@@ -5,12 +5,7 @@ import {format} from "date-fns";
 import {MoreHorizontal, Pencil, Trash2} from "lucide-react";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import {SpenderBadge} from "./spender-badge";
 import {CategoryCell} from "./category-cell";
 import {formatCurrency} from "@/lib/utils";

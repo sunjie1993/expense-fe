@@ -11,10 +11,10 @@ import {ServerStatusBadge} from "@/components/ui/server-status-badge";
 const LOADING_MESSAGES = ["Verifying...", "Checking passcode...", "Almost there...", "Signing you in..."];
 
 const TIME_GREETINGS = {
-    morning:   {en: "Good Morning",   ko: "좋은 아침이에요"},
+    morning: {en: "Good Morning", ko: "좋은 아침이에요"},
     afternoon: {en: "Good Afternoon", ko: "좋은 오후예요"},
-    evening:   {en: "Good Evening",   ko: "좋은 저녁이에요"},
-    night:     {en: "Good Night",     ko: "안녕히 주무세요"},
+    evening: {en: "Good Evening", ko: "좋은 저녁이에요"},
+    night: {en: "Good Night", ko: "안녕히 주무세요"},
 } as const;
 
 function getTimeKey(h: number): keyof typeof TIME_GREETINGS {
@@ -30,7 +30,10 @@ function useRotatingGreeting(intervalMs = 2500) {
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
-        const flip = () => { setIsKorean(v => !v); setVisible(true); };
+        const flip = () => {
+            setIsKorean(v => !v);
+            setVisible(true);
+        };
         const id = setInterval(() => {
             setVisible(false);
             setTimeout(flip, 300);
@@ -47,7 +50,8 @@ function getPasscodeDisplay(showPassword: boolean, passcode: string): React.Reac
     return (
         <div className="flex items-center gap-2 flex-wrap">
             {Array.from({length: passcode.length}).map((_, i) => (
-                <div key={passcode.slice(0, i + 1)} className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"/>
+                <div key={passcode.slice(0, i + 1)}
+                     className="w-2.5 h-2.5 rounded-full bg-foreground shrink-0 animate-dot-pop"/>
             ))}
         </div>
     );
@@ -63,7 +67,7 @@ export default function LoginPage() {
     const [transitioning, setTransitioning] = useState(false);
 
     useEffect(() => {
-        if (!isLoading) { setLoadingMsgIdx(0); return; }
+        if (!isLoading) return;
         const id = setInterval(() => setLoadingMsgIdx(i => (i + 1) % LOADING_MESSAGES.length), 420);
         return () => clearInterval(id);
     }, [isLoading]);
@@ -86,6 +90,7 @@ export default function LoginPage() {
         }
 
         setError(null);
+        setLoadingMsgIdx(0);
         setIsLoading(true);
 
         const [result] = await Promise.allSettled([
@@ -101,7 +106,9 @@ export default function LoginPage() {
             inputRef.current?.focus();
         } else {
             setTransitioning(true);
-            setTimeout(() => { globalThis.location.href = "/dashboard/"; }, 450);
+            setTimeout(() => {
+                globalThis.location.href = "/dashboard/";
+            }, 450);
         }
     }, [passcode, login]);
 
@@ -113,7 +120,7 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
             {transitioning && (
-                <div className="fixed inset-0 z-50 bg-background animate-fade-in pointer-events-none" />
+                <div className="fixed inset-0 z-50 bg-background animate-fade-in pointer-events-none"/>
             )}
             <Card
                 ref={cardRef}
@@ -224,7 +231,7 @@ export default function LoginPage() {
                         )}
                     </form>
                     <div className="mt-5 pt-4 border-t border-border/50">
-                        <ServerStatusBadge />
+                        <ServerStatusBadge/>
                     </div>
                 </CardContent>
             </Card>

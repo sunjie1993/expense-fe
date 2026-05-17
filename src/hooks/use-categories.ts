@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import type {ApiResponse, Category, MainCategory} from "@/types/api";
+import type {ApiResponse, Category, CategoryDetail, MainCategory} from "@/types/api";
 
 export function useMainCategories() {
     return useSWR<ApiResponse<MainCategory[]>>("/api/categories/main");
@@ -13,4 +13,9 @@ export function useSubCategories(parentId: number | null) {
 
 export function useAllCategories() {
     return useSWR<ApiResponse<Category[]>>("/api/categories/all");
+}
+
+/** Returns all categories including inactive ones. Use on the Config/management page only. */
+export function useAdminCategories() {
+    return useSWR<ApiResponse<CategoryDetail[]>>("/api/categories/all-admin");
 }

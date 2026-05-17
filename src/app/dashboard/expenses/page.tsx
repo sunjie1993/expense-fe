@@ -156,12 +156,16 @@ export default function ExpensesPage() {
             <ExpenseFormDialog
                 expense={editingExpense}
                 open={!!editingExpense}
-                onOpenChange={(open) => { if (!open) setEditingExpense(null); }}
+                onOpenChange={(open) => {
+                    if (!open) setEditingExpense(null);
+                }}
             />
 
             <Dialog
                 open={!!deletingExpense}
-                onOpenChange={(open) => { if (!open && !isDeleting) setDeletingExpense(null); }}
+                onOpenChange={(open) => {
+                    if (!open && !isDeleting) setDeletingExpense(null);
+                }}
             >
                 <DialogContent className="sm:max-w-sm" aria-describedby={undefined}>
                     <DialogHeader>
@@ -171,7 +175,8 @@ export default function ExpensesPage() {
                         <div className="space-y-4">
                             <p className="text-sm text-muted-foreground">
                                 {"Are you sure you want to delete the "}
-                                <span className="font-medium text-foreground">{formatCurrency(deletingExpense.amount)}</span>
+                                <span
+                                    className="font-medium text-foreground">{formatCurrency(deletingExpense.amount)}</span>
                                 {" expense from "}
                                 <span className="font-medium text-foreground">{deletingExpense.category_name}</span>
                                 {"? This cannot be undone."}

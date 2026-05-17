@@ -5,8 +5,15 @@ import {useAuth} from "@/contexts/auth-context";
 import {Sidebar} from "@/components/dashboard/sidebar";
 import {MobileNav} from "@/components/dashboard/mobile-nav";
 import {AddExpenseFab} from "@/components/expenses/add-expense-fab";
-import {Loader2, LogOut, User} from "lucide-react";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import {Loader2, LogOut, Settings, User} from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 export default function DashboardLayout({children}: Readonly<{ children: ReactNode }>) {
     const {isAuthenticated, isLoading, logout} = useAuth();
@@ -35,11 +42,19 @@ export default function DashboardLayout({children}: Readonly<{ children: ReactNo
                 <h1 className="text-xl font-semibold tracking-tight">Expense Tracker</h1>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-accent transition-colors">
+                        <button
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-accent transition-colors">
                             <User className="h-4 w-4"/>
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem asChild>
+                            <Link href="/dashboard/config/" className="flex items-center gap-2">
+                                <Settings className="h-4 w-4"/>
+                                Config
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive gap-2">
                             <LogOut className="h-4 w-4"/>
                             Logout

@@ -63,8 +63,12 @@
     }
 
     @keyframes fade-in {
-        from { opacity: 0; }
-        to   { opacity: 1; }
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
 
     .animate-fade-in {
@@ -72,11 +76,21 @@
     }
 
     @keyframes coin-flip {
-        0%   { transform: perspective(400px) rotateY(0deg); }
-        40%  { transform: perspective(400px) rotateY(180deg) scaleX(0.8); }
-        50%  { transform: perspective(400px) rotateY(180deg) scaleX(0); }
-        60%  { transform: perspective(400px) rotateY(180deg) scaleX(0.8); }
-        100% { transform: perspective(400px) rotateY(360deg); }
+        0% {
+            transform: perspective(400px) rotateY(0deg);
+        }
+        40% {
+            transform: perspective(400px) rotateY(180deg) scaleX(0.8);
+        }
+        50% {
+            transform: perspective(400px) rotateY(180deg) scaleX(0);
+        }
+        60% {
+            transform: perspective(400px) rotateY(180deg) scaleX(0.8);
+        }
+        100% {
+            transform: perspective(400px) rotateY(360deg);
+        }
     }
 
     .animate-coin-flip {

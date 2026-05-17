@@ -41,6 +41,10 @@ export interface Category {
     parent_name: string | null;
 }
 
+export interface CategoryDetail extends Category {
+    is_active: number;
+}
+
 export interface MainCategory {
     id: number;
     name: string;
