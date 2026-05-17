@@ -14,6 +14,8 @@ import {categorySchema, type CategoryFormValues} from "@/lib/validations/categor
 import {useCategoryMutations} from "@/hooks/use-category-mutations";
 import type {Category, MainCategory} from "@/types/api";
 
+const HEX_COLOR_RE = /^#[0-9A-Fa-f]{6}$/;
+
 interface CategoryFormDialogProps {
     readonly open: boolean;
     readonly onOpenChange: (open: boolean) => void;
@@ -38,9 +40,8 @@ export function CategoryFormDialog({
         ? category.parent_category_id !== null
         : defaultParentId !== undefined;
 
-    const title = isEdit
-        ? `Edit ${isSubMode ? "Subcategory" : "Category"}`
-        : `Add ${isSubMode ? "Subcategory" : "Category"}`;
+    const categoryKind = isSubMode ? "Subcategory" : "Category";
+    const title = isEdit ? `Edit ${categoryKind}` : `Add ${categoryKind}`;
 
     const form = useForm<CategoryFormValues>({
         resolver: zodResolver(categorySchema),
@@ -94,8 +95,8 @@ export function CategoryFormDialog({
                     if (values.color) payload.color = values.color;
                 }
 
-                if (isEdit) {
-                    await update(category!.id, payload);
+                if (category) {
+                    await update(category.id, payload);
                     toast.success("Category updated");
                 } else {
                     await create(payload);
@@ -111,8 +112,10 @@ export function CategoryFormDialog({
                 setIsSubmitting(false);
             }
         },
-        [isSubMode, isEdit, category, create, update, onOpenChange, form]
+        [isSubMode, category, create, update, onOpenChange, form]
     );
+
+    const submitLabel = isEdit ? "Save Changes" : "Create";
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -191,7 +194,7 @@ export function CategoryFormDialog({
                                     control={form.control}
                                     name="color"
                                     render={({field}) => {
-                                        const pickerVal = /^#[0-9A-Fa-f]{6}$/.test(field.value ?? "")
+                                        const pickerVal = HEX_COLOR_RE.test(field.value ?? "")
                                             ? field.value!
                                             : "#6366f1";
                                         return (
@@ -240,9 +243,7 @@ export function CategoryFormDialog({
                                 variant="outline"
                                 className="flex-1"
                                 disabled={isSubmitting}
-                                onClick={() => {
-                                    if (!isSubmitting) onOpenChange(false);
-                                }}
+                                onClick={() => onOpenChange(false)}
                             >
                                 Cancel
                             </Button>
@@ -252,7 +253,7 @@ export function CategoryFormDialog({
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true"/>
                                         Saving...
                                     </>
-                                ) : isEdit ? "Save Changes" : "Create"}
+                                ) : submitLabel}
                             </Button>
                         </div>
                     </form>
