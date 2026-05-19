@@ -152,8 +152,8 @@ export default function ConfigPage() {
                 {isLoading ? (
                     <Card>
                         <CardContent className="p-4 space-y-3">
-                            {Array.from({length: 6}).map((_, i) => (
-                                <Skeleton key={i} className="h-10 w-full"/>
+                            {Array.from({length: 6}, (_, i) => (
+                                <Skeleton key={`skeleton-${i}`} className="h-10 w-full"/>
                             ))}
                         </CardContent>
                     </Card>

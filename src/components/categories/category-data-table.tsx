@@ -145,11 +145,11 @@ function StatusCell({
     row,
     processingId,
     onToggleActive,
-}: {
+}: Readonly<{
     row: CategoryRow;
     processingId: number | null | undefined;
     onToggleActive?: (row: CategoryRow, active: boolean) => void;
-}) {
+}>) {
     return (
         <Switch
             checked={row.isActive}
@@ -165,12 +165,12 @@ function ActionsCell({
     onEdit,
     onDelete,
     onAddSub,
-}: {
+}: Readonly<{
     row: CategoryRow;
     onEdit?: (row: CategoryRow) => void;
     onDelete?: (row: CategoryRow) => void;
     onAddSub?: (parentId: number) => void;
-}) {
+}>) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -209,7 +209,7 @@ export function CategoryDataTable({
     onDelete,
     onToggleActive,
     onAddSub,
-}: CategoryDataTableProps) {
+}: Readonly<CategoryDataTableProps>) {
     const [expanded, setExpanded] = useState<ExpandedState>({});
 
     const cbRef = useRef<Callbacks>({});

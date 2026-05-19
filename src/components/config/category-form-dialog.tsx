@@ -25,7 +25,7 @@ interface IconPickerFieldProps {
     disabled?: boolean;
 }
 
-function IconPickerField({value, onChange, disabled}: IconPickerFieldProps) {
+function IconPickerField({value, onChange, disabled}: Readonly<IconPickerFieldProps>) {
     const [open, setOpen] = useState(false);
 
     return (
