@@ -10,9 +10,80 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {CategoryIcon, iconMap} from "@/components/ui/category-icon";
+import {cn} from "@/lib/utils";
 import {type CategoryFormValues, categorySchema} from "@/lib/validations/category";
 import {useCategoryMutations} from "@/hooks/use-category-mutations";
 import type {Category, MainCategory} from "@/types/api";
+
+const ICON_KEYS = Object.keys(iconMap);
+
+interface IconPickerFieldProps {
+    value: string;
+    onChange: (iconKey: string) => void;
+    disabled?: boolean;
+}
+
+function IconPickerField({value, onChange, disabled}: Readonly<IconPickerFieldProps>) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    type="button"
+                    variant="outline"
+                    disabled={disabled}
+                    className="w-full justify-start gap-2 font-normal"
+                >
+                    {value ? (
+                        <>
+                            <CategoryIcon iconName={value} className="h-4 w-4 shrink-0"/>
+                            <span className="text-sm">{value}</span>
+                        </>
+                    ) : (
+                        <span className="text-muted-foreground">Pick an icon…</span>
+                    )}
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-72 p-3">
+                <div className="max-h-56 overflow-y-auto pr-1">
+                    <div className="grid grid-cols-6 gap-1">
+                        {ICON_KEYS.map((key) => (
+                            <button
+                                key={key}
+                                type="button"
+                                title={key}
+                                onClick={() => {
+                                    onChange(key);
+                                    setOpen(false);
+                                }}
+                                className={cn("flex items-center justify-center p-2 rounded hover:bg-accent transition-colors", value === key && "bg-accent ring-1 ring-ring")}
+                            >
+                                <CategoryIcon iconName={key} className="h-4 w-4"/>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                {value && (
+                    <div className="border-t mt-3 pt-3">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                onChange("");
+                                setOpen(false);
+                            }}
+                            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            Clear icon
+                        </button>
+                    </div>
+                )}
+            </PopoverContent>
+        </Popover>
+    );
+}
 
 const HEX_COLOR_RE = /^#[0-9A-Fa-f]{6}$/;
 
@@ -163,7 +234,10 @@ export function CategoryFormDialog({
                                             <SelectContent>
                                                 {mainCategories.map((cat) => (
                                                     <SelectItem key={cat.id} value={cat.id.toString()}>
-                                                        {cat.icon} {cat.name}
+                                                        <span className="flex items-center gap-2">
+                                                            <CategoryIcon iconName={cat.icon} className="h-4 w-4 shrink-0"/>
+                                                            {cat.name}
+                                                        </span>
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -181,10 +255,13 @@ export function CategoryFormDialog({
                                     name="icon"
                                     render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Icon <span
-                                                className="text-muted-foreground font-normal">(emoji)</span></FormLabel>
+                                            <FormLabel>Icon</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="🍔" disabled={isSubmitting} {...field} />
+                                                <IconPickerField
+                                                    value={field.value ?? ""}
+                                                    onChange={field.onChange}
+                                                    disabled={isSubmitting}
+                                                />
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>

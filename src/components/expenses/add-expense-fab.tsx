@@ -1,7 +1,7 @@
 "use client";
 
 import {useState} from "react";
-import {ChevronLeft, Plus} from "lucide-react";
+import {Plus} from "lucide-react";
 import {ExpenseFormDialog} from "./expense-form-dialog";
 
 export function AddExpenseFab() {
@@ -9,19 +9,21 @@ export function AddExpenseFab() {
 
     return (
         <>
-            <div className="fixed right-0 top-1/3 z-50 hidden md:block">
-                <button
-                    onClick={() => setOpen(true)}
-                    className="group flex items-center gap-2 bg-primary text-primary-foreground
-                               translate-x-[calc(100%-36px)] hover:translate-x-0
-                               transition-transform duration-300 ease-in-out
-                               rounded-l-full shadow-lg py-3 pl-3 pr-5 cursor-pointer"
-                >
-                    <ChevronLeft className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:rotate-180"/>
-                    <Plus className="h-4 w-4 shrink-0"/>
-                    <span className="text-sm font-medium whitespace-nowrap">Add Expense</span>
-                </button>
-            </div>
+            <button
+                onClick={() => setOpen(true)}
+                aria-label="Add expense"
+                className="fixed bottom-6 left-6 z-40
+                           flex items-center gap-2
+                           bg-primary text-primary-foreground
+                           rounded-full shadow-lg
+                           px-5 py-3
+                           hover:bg-primary/90 active:scale-95
+                           transition-all duration-150
+                           cursor-pointer"
+            >
+                <Plus className="h-5 w-5 shrink-0"/>
+                <span className="text-sm font-medium whitespace-nowrap">Add Expense</span>
+            </button>
 
             <ExpenseFormDialog open={open} onOpenChange={setOpen}/>
         </>

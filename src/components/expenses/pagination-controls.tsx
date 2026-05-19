@@ -35,14 +35,9 @@ export const PaginationControls = memo(function PaginationControls({
 
     return (
         <nav
-            className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 pt-4 border-t"
+            className="flex flex-col items-center gap-2 mt-4 pt-4 border-t"
             aria-label="Pagination"
         >
-            <div className="text-sm text-muted-foreground tabular-nums">
-                Showing <span className="font-medium">{startItem}</span> to{" "}
-                <span className="font-medium">{endItem}</span> of{" "}
-                <span className="font-medium">{totalItems}</span> expenses
-            </div>
             <div className="flex items-center gap-2">
                 <Button
                     variant="outline"
@@ -69,6 +64,11 @@ export const PaginationControls = memo(function PaginationControls({
                     Next
                     <ChevronRight className="h-4 w-4 ml-1" aria-hidden="true"/>
                 </Button>
+            </div>
+            <div className="text-sm text-muted-foreground tabular-nums">
+                Showing <span className="font-medium">{startItem}</span> to{" "}
+                <span className="font-medium">{endItem}</span> of{" "}
+                <span className="font-medium">{totalItems}</span> expenses
             </div>
         </nav>
     );
