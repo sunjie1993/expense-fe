@@ -123,7 +123,7 @@ export default function ConfigPage() {
                     }
                 },
             },
-            cancel: {label: "Cancel"},
+            cancel: {label: "Cancel", onClick: () => {}},
         });
     }, [remove]);
 
